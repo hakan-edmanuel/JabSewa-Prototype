@@ -1,10 +1,10 @@
-import Navbar from '../components/Navbar';
+import SimpleNavbar from '../components/SimpleNavbar';
 import Footer from '../components/Footer';
 
 export default function CartPage({ onNavigate }) {
   return (
     <div className="page-shell" style={{ background: '#f8fafc', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <Navbar onNavigate={onNavigate} />
+      <SimpleNavbar onNavigate={onNavigate} />
       <main style={{ flex: 1, padding: '40px 20px', maxWidth: '800px', margin: '0 auto', width: '100%' }}>
         <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '24px', color: '#1e293b' }}>Keranjang Belanja</h1>
         <div style={{ background: 'white', borderRadius: '16px', padding: '40px', textAlign: 'center', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
