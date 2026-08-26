@@ -13,6 +13,138 @@ export default function SellerOrders() {
   const [notice, setNotice] = useState('')
   const visibleOrders = useMemo(() => orders.filter((order) => `${order.id} ${order.item} ${order.customer}`.toLowerCase().includes(query.toLowerCase()) && (filter === 'Semua Status' || order.status === filter)), [filter, orders, query])
   const updateStatus = (id, status) => { setOrders((current) => current.map((order) => order.id === id ? { ...order, status } : order)); setNotice(`Pesanan ${id} diperbarui menjadi ${status}.`) }
-  return <div className="seller-orders"><div className="orders-header"><div><p className="section-kicker">Permintaan sewa</p><h1>Pesanan Saya</h1></div><div className="orders-summary"><div className="summary-item"><span className="summary-label">Total</span><span className="summary-value">{orders.length}</span></div><div className="summary-item"><span className="summary-label">Pending</span><span className="summary-value">{orders.filter((order) => order.status === 'Pending').length}</span></div><div className="summary-item"><span className="summary-label">Aktif</span><span className="summary-value">{orders.filter((order) => order.status === 'Active').length}</span></div></div></div>{notice && <p className="request-success">{notice}</p>}<div className="orders-filters"><input value={query} onChange={(event) => setQuery(event.target.value)} type="search" placeholder="Cari pesanan..." className="search-box-small" /><select value={filter} onChange={(event) => setFilter(event.target.value)} className="filter-select"><option>Semua Status</option><option>Pending</option><option>Accepted</option><option>Active</option><option>Completed</option><option>Cancelled</option></select></div>    <div className="orders-list" style={{ display: 'grid', gap: '20px', marginTop: '24px' }}>{visibleOrders.map((order) => <article key={order.id} className="order-card" style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)' }}><div className="order-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid #f1f5f9', paddingBottom: '16px', marginBottom: '16px' }}><div className="order-info"><h3 className="order-id" style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#1e293b', margin: '0 0 4px 0' }}>{order.id}</h3><p className="order-item" style={{ color: '#64748b', margin: 0, fontSize: '0.95rem' }}>{order.item}</p></div><span className={`status-badge status-${order.status.toLowerCase()}`} style={{ padding: '6px 12px', borderRadius: '999px', fontSize: '0.8rem', fontWeight: 'bold', background: order.status === 'Pending' ? '#fef3c7' : order.status === 'Active' ? '#dcfce7' : order.status === 'Completed' ? '#f1f5f9' : '#fee2e2', color: order.status === 'Pending' ? '#d97706' : order.status === 'Active' ? '#16a34a' : order.status === 'Completed' ? '#64748b' : '#ef4444' }}>{order.status}</span></div><div className="order-details-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '20px' }}><div className="detail-col"><p className="detail-label" style={{ fontSize: '0.8rem', color: '#94a3b8', marginBottom: '4px' }}>Pelanggan</p><p className="detail-value" style={{ fontWeight: '500', color: '#334155' }}>{order.customer}</p></div><div className="detail-col"><p className="detail-label" style={{ fontSize: '0.8rem', color: '#94a3b8', marginBottom: '4px' }}>Periode sewa</p><p className="detail-value" style={{ fontWeight: '500', color: '#334155' }}>{order.period}</p></div><div className="detail-col"><p className="detail-label" style={{ fontSize: '0.8rem', color: '#94a3b8', marginBottom: '4px' }}>Total</p><p className="detail-value detail-price" style={{ fontWeight: 'bold', color: '#0f172a', fontSize: '1.1rem' }}>Rp {order.total.toLocaleString('id-ID')}</p></div></div><div className="order-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '16px', borderTop: '1px solid #f1f5f9' }}><button className="btn-small" onClick={() => setNotice(`${order.id}: ${order.customer} menyewa ${order.item}.`)} style={{ background: 'transparent', border: '1px solid #cbd5e1', padding: '8px 16px', borderRadius: '8px', color: '#475569', fontWeight: '600', cursor: 'pointer' }}>Lihat detail</button><div className="order-actions" style={{ display: 'flex', gap: '8px' }}>{order.status === 'Pending' && <><button className="btn-small" onClick={() => updateStatus(order.id, 'Accepted')} style={{ background: '#4f46e5', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>Terima</button><button className="btn-small btn-danger" onClick={() => updateStatus(order.id, 'Cancelled')} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>Tolak</button></>}{order.status === 'Accepted' && <button className="btn-small" onClick={() => updateStatus(order.id, 'Active')} style={{ background: '#4f46e5', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>Mulai sewa</button>}{order.status === 'Active' && <button className="btn-small" onClick={() => updateStatus(order.id, 'Completed')} style={{ background: '#10b981', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>Selesaikan</button>}</div></div></article>)}{!visibleOrders.length && <p className="empty-state" style={{ textAlign: 'center', padding: '40px', background: 'white', borderRadius: '16px', border: '1px dashed #cbd5e1', color: '#64748b' }}>Tidak ada pesanan yang sesuai.</p>}</div></div>
+  return (
+    <div className="seller-orders">
+      <div className="orders-header">
+        <div>
+          <p className="section-kicker">Permintaan sewa</p>
+          <h1>Pesanan Saya</h1>
+        </div>
+        <div className="orders-summary">
+          <div className="summary-item">
+            <span className="summary-label">Total</span>
+            <span className="summary-value">{orders.length}</span>
+          </div>
+          <div className="summary-item">
+            <span className="summary-label">Pending</span>
+            <span className="summary-value">
+              {orders.filter((order) => order.status === 'Pending').length}
+            </span>
+          </div>
+          <div className="summary-item">
+            <span className="summary-label">Aktif</span>
+            <span className="summary-value">
+              {orders.filter((order) => order.status === 'Active').length}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {notice && <p className="request-success">{notice}</p>}
+
+      <div className="orders-filters">
+        <input
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          type="search"
+          placeholder="Cari pesanan..."
+          className="search-box-small"
+        />
+        <select
+          value={filter}
+          onChange={(event) => setFilter(event.target.value)}
+          className="filter-select"
+        >
+          <option>Semua Status</option>
+          <option>Pending</option>
+          <option>Accepted</option>
+          <option>Active</option>
+          <option>Completed</option>
+          <option>Cancelled</option>
+        </select>
+      </div>
+
+      <div className="orders-list">
+        {visibleOrders.map((order) => (
+          <article key={order.id} className="order-card">
+            <div className="order-header">
+              <div className="order-info">
+                <h3 className="order-id">{order.id}</h3>
+                <p className="order-item">{order.item}</p>
+              </div>
+              <span className={`status-badge status-${order.status.toLowerCase()}`}>
+                {order.status}
+              </span>
+            </div>
+
+            <div className="order-details-grid">
+              <div className="detail-col">
+                <p className="detail-label">Pelanggan</p>
+                <p className="detail-value">{order.customer}</p>
+              </div>
+              <div className="detail-col">
+                <p className="detail-label">Periode sewa</p>
+                <p className="detail-value">{order.period}</p>
+              </div>
+              <div className="detail-col">
+                <p className="detail-label">Total</p>
+                <p className="detail-value detail-price">
+                  Rp {order.total.toLocaleString('id-ID')}
+                </p>
+              </div>
+            </div>
+
+            <div className="order-footer">
+              <button
+                className="btn-small btn-secondary"
+                onClick={() =>
+                  setNotice(`${order.id}: ${order.customer} menyewa ${order.item}.`)
+                }
+              >
+                Lihat detail
+              </button>
+              <div className="order-actions">
+                {order.status === 'Pending' && (
+                  <>
+                    <button
+                      className="btn-small btn-primary"
+                      onClick={() => updateStatus(order.id, 'Accepted')}
+                    >
+                      Terima
+                    </button>
+                    <button
+                      className="btn-small btn-danger"
+                      onClick={() => updateStatus(order.id, 'Cancelled')}
+                    >
+                      Tolak
+                    </button>
+                  </>
+                )}
+                {order.status === 'Accepted' && (
+                  <button
+                    className="btn-small btn-primary"
+                    onClick={() => updateStatus(order.id, 'Active')}
+                  >
+                    Mulai sewa
+                  </button>
+                )}
+                {order.status === 'Active' && (
+                  <button
+                    className="btn-small btn-success"
+                    onClick={() => updateStatus(order.id, 'Completed')}
+                  >
+                    Selesaikan
+                  </button>
+                )}
+              </div>
+            </div>
+          </article>
+        ))}
+        {!visibleOrders.length && (
+          <p className="empty-state">Tidak ada pesanan yang sesuai.</p>
+        )}
+      </div>
+    </div>
+  )
 
 }

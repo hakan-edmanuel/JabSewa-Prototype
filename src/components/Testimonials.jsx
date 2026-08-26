@@ -48,11 +48,11 @@ export default function Testimonials() {
         </div>
 
         {/* Testimonials Grid */}
-        <div className="testimonials-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '24px', marginTop: '40px' }}>
+        <div className="testimonials-grid">
           {testimonials.map(testimonial => (
-            <div key={testimonial.id} className="testimonial-card" style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div key={testimonial.id} className="testimonial-card">
               {/* Rating */}
-              <div className="rating-stars" style={{ color: '#fbbf24', fontSize: '1.2rem' }}>
+              <div className="rating-stars">
                 {[...Array(5)].map((_, i) => (
                   <span key={i}>
                     {i < Math.floor(testimonial.rating) ? '⭐' : '☆'}
@@ -61,17 +61,17 @@ export default function Testimonials() {
               </div>
 
               {/* Review Text */}
-              <p className="testimonial-text" style={{ color: '#475569', lineHeight: '1.6', fontSize: '0.95rem', flex: 1 }}>"{testimonial.content}"</p>
+              <p className="testimonial-text">"{testimonial.content}"</p>
 
               {/* User Info */}
-              <div className="testimonial-author" style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: 'auto', paddingTop: '16px', borderTop: '1px solid #f1f5f9' }}>
-                <div className="author-avatar" style={{ fontSize: '2rem', background: '#f8fafc', width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%' }}>{testimonial.avatar}</div>
+              <div className="testimonial-author">
+                <div className="author-avatar">{testimonial.avatar}</div>
                 <div className="author-info">
-                  <p className="author-name" style={{ fontWeight: '700', color: '#1e293b', margin: 0, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <p className="author-name">
                     {testimonial.name}
-                    {testimonial.verified && <span className="verified-check" style={{ color: '#3b82f6', fontSize: '0.8rem' }}>✓</span>}
+                    {testimonial.verified && <span className="verified-check">✓</span>}
                   </p>
-                  <p className="author-role" style={{ fontSize: '0.8rem', color: '#64748b', margin: 0 }}>{testimonial.role}</p>
+                  <p className="author-role">{testimonial.role}</p>
                 </div>
               </div>
             </div>
@@ -79,8 +79,8 @@ export default function Testimonials() {
         </div>
 
         {/* More Testimonials */}
-        <div className="view-all-container" style={{ textAlign: 'center', marginTop: '40px' }}>
-          <button className="btn-outline" style={{ background: 'transparent', border: '1px solid #cbd5e1', padding: '10px 24px', borderRadius: '8px', fontWeight: '600', color: '#475569', cursor: 'pointer' }}>Lihat Semua Ulasan →</button>
+        <div className="view-all-container">
+          <button className="btn-outline">Lihat Semua Ulasan →</button>
         </div>
       </div>
     </section>

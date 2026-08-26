@@ -28,11 +28,102 @@ export default function ConsumerBrowser({ category, search, priceRange, onSelect
   }, [category, priceRange.max, search, sort])
   const toggleWishlist = (id) => setWishlist((saved) => saved.includes(id) ? saved.filter((itemId) => itemId !== id) : [...saved, id])
 
-  return <section className="consumer-browser" id="explore">
-    <div className="browser-header"><div><p className="section-kicker">Jelajahi marketplace</p><h2>Barang untuk kebutuhanmu</h2><p className="results-count">Ditemukan <strong>{filteredItems.length}</strong> pilihan di sekitar Anda</p></div><label className="browser-sort">Urutkan<select value={sort} onChange={(event) => setSort(event.target.value)}><option value="recommended">Rekomendasi</option><option value="price-low">Harga Terendah</option><option value="rating">Rating Tertinggi</option></select></label></div>
-    <div className="items-browser-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px', padding: '20px 0' }}>{filteredItems.map((item) => <article key={item.id} className="browser-item-card" style={{ background: '#fff', border: '1px solid #e5ebf4', borderRadius: '24px', overflow: 'hidden', transition: 'transform 0.25s ease, box-shadow 0.25s ease', cursor: 'pointer' }} onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.boxShadow = '0 22px 38px rgba(17, 17, 17, 0.08)'; e.currentTarget.style.borderColor = 'rgba(99, 102, 241, 0.22)'; }} onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = '#e5ebf4'; }}>
-      <button className="item-badge-container item-select" onClick={() => onSelect(item)} aria-label={`Lihat ${item.name}`} style={{ width: '100%', height: '200px', border: 'none', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '4rem', position: 'relative', cursor: 'pointer' }}><div className="browser-item-image">{item.image}</div>{!item.available && <span className="unavailable-badge" style={{ position: 'absolute', top: '16px', left: '16px', background: 'rgba(255, 255, 255, 0.9)', color: '#111', padding: '6px 12px', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 'bold' }}>Sedang disewa</span>}</button>
-      <div className="browser-item-info" style={{ padding: '20px' }}><div className="card-heading-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}><p className="listing-category" style={{ fontSize: '0.75rem', fontWeight: 'bold', color: '#64748b', textTransform: 'uppercase' }}>{item.category}</p><button className={`wishlist-button ${wishlist.includes(item.id) ? 'is-saved' : ''}`} onClick={() => toggleWishlist(item.id)} aria-label="Simpan ke wishlist" style={{ background: 'transparent', border: 'none', fontSize: '1.2rem', cursor: 'pointer', color: wishlist.includes(item.id) ? '#ef4444' : '#cbd5e1' }}>{wishlist.includes(item.id) ? '❤️' : '♡'}</button></div><button className="item-title-button" onClick={() => onSelect(item)} style={{ background: 'transparent', border: 'none', textAlign: 'left', padding: '0', cursor: 'pointer', width: '100%' }}><h3 className="browser-item-name" style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#1e293b', marginBottom: '8px' }}>{item.name}</h3></button><p className="browser-item-seller" style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '12px' }}>{item.seller} <span className="verified-badge-small" style={{ color: '#3b82f6' }}>✓</span></p><div className="browser-item-rating" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', color: '#64748b', marginBottom: '20px' }}><span className="rating-value" style={{ fontWeight: 'bold', color: '#fbbf24' }}>★ {item.rating}</span><span className="rating-reviews">({item.reviews}) · {item.location}</span></div><div className="browser-item-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', borderTop: '1px solid #f1f5f9', paddingTop: '16px' }}><div><p className="price-label" style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '4px' }}>Mulai dari</p><p className="browser-item-price" style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#1e293b' }}>{formatPrice(item.price)}<small style={{ fontSize: '0.75rem', fontWeight: 'normal', color: '#64748b' }}>/hari</small></p></div><div style={{ display: 'flex', gap: '8px' }}><button className="btn-add-cart" disabled={!item.available} onClick={() => onSelect(item)} style={{ background: item.available ? '#4f46e5' : '#e2e8f0', color: item.available ? 'white' : '#94a3b8', border: 'none', padding: '8px 16px', borderRadius: '8px', fontWeight: 'bold', cursor: item.available ? 'pointer' : 'not-allowed' }}>{item.available ? 'Lihat' : 'Kosong'}</button><button disabled={!item.available} onClick={(e) => { e.stopPropagation(); alert('Ditambahkan ke keranjang!'); }} style={{ background: item.available ? '#f59e0b' : '#e2e8f0', color: item.available ? 'white' : '#94a3b8', border: 'none', padding: '8px 12px', borderRadius: '8px', fontWeight: 'bold', cursor: item.available ? 'pointer' : 'not-allowed' }} title="Masukkan Keranjang">🛒</button></div></div></div>
-    </article>)}{!filteredItems.length && <div className="no-results" style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px 20px', background: 'white', borderRadius: '16px', border: '1px dashed #cbd5e1' }}><p className="no-results-text" style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#475569', marginBottom: '8px' }}>Belum ada barang yang sesuai</p><p className="no-results-suggestion" style={{ color: '#64748b' }}>Ubah kata kunci atau filter Anda.</p></div>}</div>
-  </section>
+  return (
+    <section className="consumer-browser" id="explore">
+      <div className="browser-header">
+        <div>
+          <p className="section-kicker">Jelajahi marketplace</p>
+          <h2>Barang untuk kebutuhanmu</h2>
+          <p className="results-count">
+            Ditemukan <strong>{filteredItems.length}</strong> pilihan di sekitar Anda
+          </p>
+        </div>
+        <label className="browser-sort">
+          Urutkan
+          <select value={sort} onChange={(event) => setSort(event.target.value)}>
+            <option value="recommended">Rekomendasi</option>
+            <option value="price-low">Harga Terendah</option>
+            <option value="rating">Rating Tertinggi</option>
+          </select>
+        </label>
+      </div>
+
+      <div className="items-browser-grid">
+        {filteredItems.map((item) => (
+          <article key={item.id} className="browser-item-card">
+            <button
+              className="item-badge-container item-select"
+              onClick={() => onSelect(item)}
+              aria-label={`Lihat ${item.name}`}
+            >
+              <div className="browser-item-image">{item.image}</div>
+              {!item.available && (
+                <span className="unavailable-badge">Sedang disewa</span>
+              )}
+            </button>
+            <div className="browser-item-info">
+              <div className="card-heading-row">
+                <p className="listing-category">{item.category}</p>
+                <button
+                  className={`wishlist-button ${wishlist.includes(item.id) ? 'is-saved' : ''}`}
+                  onClick={() => toggleWishlist(item.id)}
+                  aria-label="Simpan ke wishlist"
+                >
+                  {wishlist.includes(item.id) ? '❤️' : '♡'}
+                </button>
+              </div>
+              <button
+                className="item-title-button"
+                onClick={() => onSelect(item)}
+              >
+                <h3 className="browser-item-name">{item.name}</h3>
+              </button>
+              <p className="browser-item-seller">
+                {item.seller} <span className="verified-badge-small">✓</span>
+              </p>
+              <div className="browser-item-rating">
+                <span className="rating-value">★ {item.rating}</span>
+                <span className="rating-reviews">({item.reviews}) · {item.location}</span>
+              </div>
+              <div className="browser-item-footer">
+                <div>
+                  <p className="price-label">Mulai dari</p>
+                  <p className="browser-item-price">
+                    {formatPrice(item.price)}
+                    <small>/hari</small>
+                  </p>
+                </div>
+                <div className="browser-item-buttons">
+                  <button
+                    className="btn-add-cart"
+                    disabled={!item.available}
+                    onClick={() => onSelect(item)}
+                  >
+                    {item.available ? 'Lihat' : 'Kosong'}
+                  </button>
+                  <button
+                    className="btn-icon-cart"
+                    disabled={!item.available}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      alert('Ditambahkan ke keranjang!');
+                    }}
+                    title="Masukkan Keranjang"
+                  >
+                    🛒
+                  </button>
+                </div>
+              </div>
+            </div>
+          </article>
+        ))}
+        {!filteredItems.length && (
+          <div className="no-results">
+            <p className="no-results-text">Belum ada barang yang sesuai</p>
+            <p className="no-results-suggestion">Ubah kata kunci atau filter Anda.</p>
+          </div>
+        )}
+      </div>
+    </section>
+  )
 }
