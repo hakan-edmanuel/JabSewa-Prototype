@@ -117,7 +117,7 @@ export default function FeaturedListings() {
                     <p className="listing-price">{item.price}</p>
                     <span className="listing-period">{item.period}</span>
                   </div>
-                  <button className="mini-button" style={{ background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)', color: 'white', border: 'none' }}>Sewa</button>
+                  <button className="mini-button" style={{ background: '#fbbf24', color: '#0f172a', border: 'none' }}>Sewa</button>
                 </div>
               </div>
             </article>

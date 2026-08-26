@@ -1,4 +1,3 @@
-
 /* App.css - JabSewa premium market design */
 
 .reveal-on-scroll {
@@ -1223,6 +1222,17 @@
 
   .navbar-container {
     min-height: 72px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  .nav-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    width: 100%;
+    margin-top: 10px;
   }
 
   .hero-section,
@@ -1237,6 +1247,26 @@
 
   .hero-visual {
     min-height: 440px;
+    padding-left: 0;
+  }
+
+  .hero-visual-card {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .hero-search-box {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-search-box input {
+    margin-bottom: 10px;
+    width: 100%;
+  }
+
+  .hero-search-box button {
+    width: 100%;
   }
 
   .hero-floating-top {

@@ -17,11 +17,10 @@ export default function Navbar({ onNavigate, onGoToConsumer, onGoToSeller }) {
         </div>
 
         <div className="nav-buttons">
-          <button className="nav-login">Login / Masuk</button>
+          <button className="nav-login" onClick={() => onNavigate('register')}>Login / Masuk</button>
           <button className="primary-button" onClick={onGoToConsumer}>Explore Rentals</button>
         </div>
       </div>
     </nav>
   )
 }
-

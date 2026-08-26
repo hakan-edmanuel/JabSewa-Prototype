@@ -14,7 +14,7 @@ export default function HeroSection({ onNavigate }) {
           </p>
 
           <div className="hero-actions">
-            <button className="primary-button" onClick={() => onNavigate('consumer')}>Explore Rentals</button>
+            <button className="primary-button" style={{ background: '#2563eb', color: 'white', border: 'none' }} onClick={() => onNavigate('consumer')}>Explore Rentals</button>
             <button className="secondary-button" onClick={() => onNavigate('seller')}>Mulai jadi seller</button>
           </div>
 
@@ -60,8 +60,8 @@ export default function HeroSection({ onNavigate }) {
             </div>
 
             <div className="hero-search-box">
-              <span>What do you need to rent?</span>
-              <button onClick={() => onNavigate('consumer')}>Search</button>
+              <input type="text" placeholder="What do you need to rent?" style={{ border: 'none', background: 'transparent', outline: 'none', flex: 1, fontSize: '0.9rem' }} onKeyDown={(e) => { if(e.key === 'Enter') onNavigate('consumer') }} />
+              <button onClick={() => onNavigate('consumer')} style={{ background: '#2563eb', color: 'white', border: 'none' }}>Search</button>
             </div>
 
             <div className="hero-chip-row">

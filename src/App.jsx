@@ -15,6 +15,7 @@ import ConsumerPage from './pages/ConsumerPage'
 import SellerPage from './pages/SellerPage'
 import AboutPage from './pages/AboutPage'
 import CartPage from './pages/CartPage'
+import RegisterPage from './pages/RegisterPage'
 
 function getPageFromPath(pathname) {
   if (pathname === '/consumer') return 'consumer'
@@ -22,6 +23,7 @@ function getPageFromPath(pathname) {
   if (pathname === '/agent') return 'agent'
   if (pathname === '/about') return 'about'
   if (pathname === '/cart') return 'cart'
+  if (pathname === '/register') return 'register'
   return 'home'
 }
 
@@ -76,6 +78,7 @@ function App() {
   if (page === 'agent') return <AgentChat title="jabsewa Coding Agent" />
   if (page === 'about') return <AboutPage onNavigate={navigate} />
   if (page === 'cart') return <CartPage onNavigate={navigate} />
+  if (page === 'register') return <RegisterPage onNavigate={navigate} />
 
   return (
     <div className="page-shell">
