@@ -56,7 +56,7 @@ export default function ConsumerFooter() {
           </div>
 
           <div className="footer-copyright-consumer">
-            <p>&copy; 2024 JabSewa. Semua hak dilindungi.</p>
+            <p>&copy; 2026 JabSewa. Semua hak dilindungi.</p>
           </div>
 
           <div className="footer-contact-consumer">
