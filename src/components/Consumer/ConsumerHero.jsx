@@ -7,13 +7,8 @@ export default function ConsumerHero({ onSearch }) {
     <section className="consumer-hero">
       <div className="consumer-hero-content">
         <h1 className="consumer-hero-title">
-          Sewa Barang Berkualitas, <br />
-          <span className="hero-highlight">Lebih Hemat & Praktis.</span>
+          Sewa Barang Sesuai Kebutuhanmu
         </h1>
-
-        <p className="consumer-hero-subtitle">
-          Dari perlengkapan kamera untuk project akhir pekan hingga tenda untuk camping, temukan semuanya di JabSewa.
-        </p>
 
         <div className="consumer-search-container">
           <span className="consumer-search-icon">🔍</span>

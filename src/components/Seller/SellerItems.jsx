@@ -16,5 +16,128 @@ export default function SellerItems() {
   const [editing, setEditing] = useState(null)
   const visibleItems = useMemo(() => items.filter((item) => item.name.toLowerCase().includes(query.toLowerCase()) && (status === 'Semua Status' || item.status === status)), [items, query, status])
   const saveListing = (event) => { event.preventDefault(); const data = new FormData(event.currentTarget); const listing = { id: editing?.id || Date.now(), name: data.get('name'), category: data.get('category'), price: Number(data.get('price')), status: data.get('status'), image: '📦', rented: editing?.rented || 0 }; setItems((current) => editing ? current.map((item) => item.id === editing.id ? listing : item) : [listing, ...current]); setEditing(null); setShowForm(false) }
-  return <div className="seller-items"><div className="items-header"><div><p className="section-kicker">Manajemen listing</p><h1>Barang Saya</h1><p>Kelola ketersediaan dan performa barang sewaan Anda.</p></div><button className="btn-primary" onClick={() => { setEditing(null); setShowForm(true) }}>+ Tambah listing</button></div>{showForm && <form className="listing-form" onSubmit={saveListing}><div className="form-heading"><h2>{editing ? 'Edit listing' : 'Tambah listing baru'}</h2><button type="button" className="btn-small" onClick={() => setShowForm(false)}>Tutup</button></div><label>Nama barang<input required name="name" defaultValue={editing?.name} placeholder="Contoh: Sony Alpha Camera" /></label><label>Kategori<select name="category" defaultValue={editing?.category || 'Kamera'}><option>Kamera</option><option>Gaming</option><option>Outdoor</option><option>Olahraga</option><option>Elektronik</option></select></label><label>Harga sewa per hari<input required name="price" type="number" min="0" defaultValue={editing?.price} /></label><label>Status<select name="status" defaultValue={editing?.status || 'Aktif'}><option>Aktif</option><option>Nonaktif</option></select></label><label className="form-wide">Deskripsi<textarea placeholder="Jelaskan kondisi, kelengkapan, dan aturan sewa" /></label><label>Deposit keamanan<input type="number" min="0" placeholder="Contoh: 500000" /></label><label>Lokasi<input placeholder="Jakarta Selatan" /></label><button className="btn-primary form-submit">Simpan listing</button></form>}<div className="items-filters"><input value={query} onChange={(event) => setQuery(event.target.value)} type="search" placeholder="Cari listing..." className="search-box-small" /><select value={status} onChange={(event) => setStatus(event.target.value)} className="filter-select"><option>Semua Status</option><option>Aktif</option><option>Tersewa</option><option>Nonaktif</option></select></div><div className="items-grid">{visibleItems.map((item) => <article key={item.id} className="item-card"><div className="item-image-large">{item.image}</div><div className="item-details"><span className={`status-badge ${item.status.toLowerCase()}`}>{item.status}</span><h3 className="item-title">{item.name}</h3><p className="item-category">{item.category}</p><div className="item-info"><p><span>Harga sewa</span><strong>Rp {item.price.toLocaleString('id-ID')}/hari</strong></p><p><span>Total disewa</span><strong>{item.rented}x</strong></p></div><div className="item-actions"><button className="btn-small" onClick={() => { setEditing(item); setShowForm(true) }}>Edit</button><button className="btn-small" onClick={() => alert(`Detail ${item.name}`)}>Lihat</button><button className="btn-small btn-danger" onClick={() => setItems((current) => current.filter((listing) => listing.id !== item.id))}>Hapus</button></div></div></article>)}{!visibleItems.length && <p className="empty-state">Tidak ada listing yang sesuai.</p>}</div></div>
+  return (
+    <div className="seller-items">
+      <div className="items-header">
+        <div>
+          <h1 className="seller-page-title">Barang Saya</h1>
+          <p className="seller-page-desc">Kelola barang sewaan Anda di sini.</p>
+        </div>
+        <button className="btn-primary-solid" onClick={() => { setEditing(null); setShowForm(true) }}>+ Tambah Barang</button>
+      </div>
+
+      {showForm && (
+        <div className="seller-form-container">
+          <div className="form-header-simple">
+            <h2>{editing ? 'Edit Barang' : 'Tambah Barang'}</h2>
+            <button type="button" className="btn-secondary-solid" onClick={() => setShowForm(false)}>Batal</button>
+          </div>
+          
+          <form className="structured-listing-form" onSubmit={saveListing}>
+            <section className="form-section">
+              <h3 className="form-section-title">Informasi Dasar</h3>
+              <div className="form-group-grid">
+                <label>
+                  Nama Barang <span className="required-star">*</span>
+                  <input required name="name" defaultValue={editing?.name} placeholder="Masukkan nama barang" />
+                </label>
+                <label>
+                  Kategori <span className="required-star">*</span>
+                  <select name="category" defaultValue={editing?.category || 'Kamera'}>
+                    <option>Kamera</option>
+                    <option>Gaming</option>
+                    <option>Outdoor</option>
+                    <option>Olahraga</option>
+                    <option>Elektronik</option>
+                  </select>
+                </label>
+              </div>
+              <label className="form-wide">
+                Deskripsi Barang
+                <textarea placeholder="Jelaskan kondisi dan kelengkapan barang..." rows="4" />
+              </label>
+            </section>
+
+            <div className="form-divider"></div>
+
+            <section className="form-section">
+              <h3 className="form-section-title">Detail Sewa</h3>
+              <div className="form-group-grid">
+                <label>
+                  Harga Sewa (per hari) <span className="required-star">*</span>
+                  <div className="input-prefix">
+                    <span className="prefix">Rp</span>
+                    <input required name="price" type="number" min="0" defaultValue={editing?.price} />
+                  </div>
+                </label>
+                <label>
+                  Deposit Keamanan
+                  <div className="input-prefix">
+                    <span className="prefix">Rp</span>
+                    <input type="number" min="0" placeholder="0" />
+                  </div>
+                </label>
+                <label>
+                  Status
+                  <select name="status" defaultValue={editing?.status || 'Aktif'}>
+                    <option>Aktif</option>
+                    <option>Nonaktif</option>
+                  </select>
+                </label>
+              </div>
+            </section>
+
+            <div className="form-divider"></div>
+
+            <section className="form-section">
+              <h3 className="form-section-title">Foto Barang</h3>
+              <div className="simple-image-upload">
+                <div className="upload-placeholder">
+                  <span className="upload-icon">📷</span>
+                  <span className="upload-text">Klik untuk tambah foto</span>
+                </div>
+              </div>
+            </section>
+
+            <div className="form-actions-footer">
+              <button type="submit" className="btn-primary-solid form-submit-btn">Simpan Barang</button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {!showForm && (
+        <>
+          <div className="items-filters">
+            <input value={query} onChange={(event) => setQuery(event.target.value)} type="search" placeholder="Cari barang..." className="search-box-solid" />
+            <select value={status} onChange={(event) => setStatus(event.target.value)} className="filter-select-solid">
+              <option>Semua Status</option>
+              <option>Aktif</option>
+              <option>Tersewa</option>
+              <option>Nonaktif</option>
+            </select>
+          </div>
+          <div className="items-grid-solid">
+            {visibleItems.map((item) => (
+              <article key={item.id} className="item-card-solid">
+                <div className="item-image-box">{item.image}</div>
+                <div className="item-details-box">
+                  <div className="item-header-row">
+                    <h3 className="item-title-solid">{item.name}</h3>
+                    <span className={`status-dot ${item.status.toLowerCase()}`}></span>
+                  </div>
+                  <p className="item-price-solid">Rp {item.price.toLocaleString('id-ID')}/hari</p>
+                  <div className="item-actions-row">
+                    <button className="btn-text-action" onClick={() => { setEditing(item); setShowForm(true) }}>Edit</button>
+                    <button className="btn-text-action danger" onClick={() => setItems((current) => current.filter((listing) => listing.id !== item.id))}>Hapus</button>
+                  </div>
+                </div>
+              </article>
+            ))}
+            {!visibleItems.length && <p className="empty-state-solid">Tidak ada barang yang ditemukan.</p>}
+          </div>
+        </>
+      )}
+    </div>
+  )
 }

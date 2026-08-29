@@ -25,11 +25,16 @@ export default function SellerNavbar({ onNavigate }) {
 
           <div className="seller-profile">
             <button className="profile-btn" title="Profile">👤</button>
-            <div className="profile-dropdown">
-              <a href="#profile">Profil Saya</a>
-              <a href="#settings">Pengaturan</a>
-              <a href="#help">Bantuan</a>
-              <a href="#logout">Logout</a>
+            <div className="profile-dropdown-menu">
+              <div className="dropdown-header">
+                <span className="dropdown-name">Toko Adit</span>
+                <span className="dropdown-email">adit@example.com</span>
+              </div>
+              <div className="dropdown-divider"></div>
+              <a href="#profile" className="dropdown-item">Profil Toko</a>
+              <a href="#settings" className="dropdown-item">Pengaturan</a>
+              <div className="dropdown-divider"></div>
+              <a href="#logout" className="dropdown-item text-danger">Log Out</a>
             </div>
           </div>
         </div>

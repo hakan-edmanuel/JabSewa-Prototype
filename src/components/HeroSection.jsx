@@ -21,9 +21,8 @@ export default function HeroSection({ onNavigate }) {
     <section className="hero-section">
       <div className="hero-inner">
         <div className="hero-copy">
-          <div className="hero-badge">
-            <span className="hero-badge-dot"></span>
-            Marketplace Rental Terpercaya
+          <div className="hero-kicker">
+            Platform Rental Terpercaya
           </div>
 
           <h1>
