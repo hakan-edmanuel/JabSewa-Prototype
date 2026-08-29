@@ -52,9 +52,10 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--font-display);
-  letter-spacing: -0.04em;
+  font-family: var(--font-sans);
+  letter-spacing: -0.025em;
   font-weight: 700;
+  color: var(--jabsewa-black);
 }
 
 img {

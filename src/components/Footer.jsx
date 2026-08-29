@@ -6,14 +6,13 @@ export default function Footer({ onNavigate }) {
       <div className="footer-inner">
         <div className="footer-top">
           <div className="footer-brand">
-            <div className="logo">
+            <div className="logo footer-logo">
               <img src={logo} alt="JabSewa logo" className="logo-image" />
               <span className="logo-text">JabSewa</span>
             </div>
             <p>
-              Modern rental ecosystem built for everyday flexibility and smarter ownership.
+              Platform marketplace rental barang harian dan mingguan terpercaya. Membantu masyarakat berhemat dan menghasilkan pendapatan tambahan.
             </p>
-            {/* Social Media Links - Placeholder for user to fill */}
             <div className="socials">
               <a href="#" aria-label="Instagram">IG</a>
               <a href="#" aria-label="Facebook">FB</a>
@@ -23,50 +22,73 @@ export default function Footer({ onNavigate }) {
           </div>
 
           <div className="footer-column">
-            <h4>About</h4>
+            <h4>Navigasi</h4>
             <ul>
               <li>
-                <a 
-                  href="/about" 
+                <a
+                  href="/about"
                   onClick={(e) => {
                     e.preventDefault();
                     if (onNavigate) onNavigate('about');
                   }}
                 >
-                  About Us
+                  Tentang Kami
                 </a>
               </li>
-              <li><a href="#">Explore</a></li>
-              <li><a href="#">Categories</a></li>
-              <li><a href="#">How It Works</a></li>
+              <li>
+                <a
+                  href="/consumer"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (onNavigate) onNavigate('consumer');
+                  }}
+                >
+                  Jelajahi Semua Barang
+                </a>
+              </li>
+              <li><a href="#kategori">Kategori Rental</a></li>
+              <li><a href="#cara-kerja">Cara Kerja</a></li>
             </ul>
           </div>
 
           <div className="footer-column">
-            <h4>Company</h4>
+            <h4>Untuk Pemilik (Seller)</h4>
             <ul>
-              <li><a href="#">Become a Seller</a></li>
-              <li><a href="#">Help</a></li>
-              <li><a href="#">Support</a></li>
-              <li><a href="#">Privacy</a></li>
+              <li>
+                <a
+                  href="/seller"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (onNavigate) onNavigate('seller');
+                  }}
+                >
+                  Daftar Jadi Seller
+                </a>
+              </li>
+              <li><a href="#cara-kerja">Panduan Deposit Aman</a></li>
+              <li><a href="#faq">Aturan & Kebijakan Sewa</a></li>
+              <li><a href="#support">Pusat Bantuan</a></li>
             </ul>
           </div>
 
           <div className="footer-column footer-contact">
-            <h4>Contact</h4>
-            {/* Contact Info - Placeholder for user to fill */}
+            <h4>Hubungi Kami</h4>
             <ul>
-              <li><a href="mailto:hello@jabsewa.id">Email: [Isi Email Nanti]</a></li>
-              <li><a href="tel:+622112345678">Telp: [Isi Nomor Nanti]</a></li>
-              <li><a href="#">Alamat: [Isi Alamat Nanti]</a></li>
-              <li><a href="#">Jam Operasional: [Isi Jam Nanti]</a></li>
+              <li><span>Email: support@jabsewa.id</span></li>
+              <li><span>WhatsApp: +62 812-3456-7890</span></li>
+              <li><span>Lokasi: Jakarta Selatan, DKI Jakarta</span></li>
+              <li><span>Senin – Minggu (08.00 – 21.00 WIB)</span></li>
             </ul>
           </div>
         </div>
 
         <div className="footer-bottom">
-          <span>© 2026 JabSewa.id</span>
-          <span>All rights reserved.</span>
+          <span>© 2026 JabSewa Indonesia · Seluruh hak cipta dilindungi.</span>
+          <div className="footer-bottom-links">
+            <a href="#terms">Syarat & Ketentuan</a>
+            <span>•</span>
+            <a href="#privacy">Kebijakan Privasi</a>
+          </div>
         </div>
       </div>
     </footer>

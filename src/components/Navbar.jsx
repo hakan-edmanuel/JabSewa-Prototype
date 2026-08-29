@@ -10,15 +10,15 @@ export default function Navbar({ onNavigate, onGoToConsumer, onGoToSeller }) {
         </button>
 
         <div className="nav-links" aria-label="Main navigation">
-          <button type="button" onClick={onGoToConsumer} className="nav-link">Explore</button>
-          <a href="#kategori" className="nav-link">Categories</a>
-          <a href="#cara-kerja" className="nav-link">How It Works</a>
-          <button type="button" onClick={onGoToSeller} className="nav-link">Become a Seller</button>
+          <button type="button" onClick={onGoToConsumer} className="nav-link">Jelajahi Rental</button>
+          <a href="#kategori" className="nav-link">Kategori</a>
+          <a href="#cara-kerja" className="nav-link">Cara Kerja</a>
+          <button type="button" onClick={onGoToSeller} className="nav-link">Buka Rental</button>
         </div>
 
         <div className="nav-buttons">
-          <button className="nav-login" onClick={() => onNavigate('register')}>Login / Masuk</button>
-          <button className="primary-button" onClick={onGoToConsumer}>Explore Rentals</button>
+          <button className="nav-login" onClick={() => onNavigate('register')}>Masuk / Daftar</button>
+          <button className="primary-button" onClick={onGoToConsumer}>Cari Barang</button>
         </div>
       </div>
     </nav>

@@ -1,23 +1,23 @@
 const trustPoints = [
   {
-    title: 'Seller terverifikasi',
-    description: 'Setiap pemilik barang melewati proses pengecekan identitas dan kualitas item.',
-    icon: '✓',
+    icon: '🪪',
+    title: 'Verifikasi Identitas & KTP',
+    description: 'Setiap penyewa dan pemilik barang melalui verifikasi data untuk memastikan transaksi terpercaya.',
   },
   {
-    title: 'Transaksi aman',
-    description: 'Pembayaran dan jadwal sewa diproses dengan sistem yang jelas dan terstruktur.',
     icon: '🔒',
+    title: 'Deposit Aman & Transparan',
+    description: 'Dana deposit tersimpan aman dan otomatis dikembalikan setelah masa sewa selesai tanpa potongan tersembunyi.',
   },
   {
-    title: 'Info rental jelas',
-    description: 'Detail harga, lokasi, dan kondisi barang tersedia sebelum kamu memutuskan sewa.',
     icon: '📋',
+    title: 'Checklist Kondisi Barang',
+    description: 'Dokumentasi foto dan kondisi fisik barang disepakati bersama sebelum serah terima dimulai.',
   },
   {
-    title: 'Support saat masalah',
-    description: 'Tim JabSewa siap membantu bila ada kendala saat proses sewa atau pengembalian.',
-    icon: '☎',
+    icon: '🛡️',
+    title: 'Bantuan & Mediasi Cepat',
+    description: 'Tim JabSewa siap mendampingi bila terjadi kendala keterlambatan, kerusakan, atau pembatalan sewa.',
   },
 ]
 
@@ -26,20 +26,17 @@ export default function TrustSection() {
     <section className="trust-section">
       <div className="container trust-inner">
         <div className="section-heading trust-heading">
-          <p className="eyebrow eyebrow-dark">MENGAPA PILIH JABSEWA</p>
-          <h2>Platform sewa yang dibuat untuk ketenangan.</h2>
+          <p className="eyebrow eyebrow-dark">KEAMANAN & KEPERCAYAAN</p>
+          <h2>Platform sewa yang mengutamakan rasa aman kedua belah pihak</h2>
+          <p className="trust-subtitle">JabSewa membangun ekosistem rental yang tertib dengan sistem deposit dan verifikasi terstandarisasi.</p>
         </div>
 
         <div className="trust-grid">
-          {trustPoints.map((point, index) => (
-            <article
-              key={point.title}
-              className="trust-card reveal-on-scroll"
-              style={{ transitionDelay: `${index * 100}ms` }}
-            >
-              <div className="trust-icon">{point.icon}</div>
-              <h3>{point.title}</h3>
-              <p>{point.description}</p>
+          {trustPoints.map((point) => (
+            <article key={point.title} className="trust-card">
+              <div className="trust-icon-box">{point.icon}</div>
+              <h3 className="trust-title">{point.title}</h3>
+              <p className="trust-description">{point.description}</p>
             </article>
           ))}
         </div>
