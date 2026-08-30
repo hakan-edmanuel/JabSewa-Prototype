@@ -1,46 +1,61 @@
-export default function ConsumerFooter() {
+import logo from '../../assets/logo-jabsewa.jpeg';
+
+export default function ConsumerFooter({ onNavigate }) {
+  const go = (page) => (e) => {
+    e.preventDefault();
+    if (onNavigate) onNavigate(page);
+  };
+
   return (
-    <footer className="consumer-footer-structured">
-      <div className="footer-structured-container">
-        <div className="footer-structured-main">
-          <div className="footer-structured-brand">
-            <h3 className="footer-brand-name">JabSewa</h3>
-            <p className="footer-brand-desc">Platform sewa barang terpercaya. Temukan kebutuhan Anda atau mulai sewakan barang Anda hari ini.</p>
+    <footer className="footer">
+      <div className="footer-inner">
+        <div className="footer-top">
+          <div className="footer-brand">
+            <div className="logo footer-logo">
+              <img src={logo} alt="JabSewa logo" className="logo-image" />
+              <span className="logo-text">JabSewa</span>
+            </div>
+            <p>Barang untuk nyoba atau event. Sewa aja.</p>
+            <div className="socials">
+              <a href="#" aria-label="Instagram">IG</a>
+              <a href="#" aria-label="Facebook">FB</a>
+              <a href="#" aria-label="X">X</a>
+              <a href="#" aria-label="TikTok">TT</a>
+            </div>
           </div>
 
-          <div className="footer-structured-links">
-            <div className="footer-structured-col">
-              <h4>Explore</h4>
-              <ul>
-                <li><a href="#kategori">Kategori</a></li>
-                <li><a href="#cara-kerja">Cara Kerja</a></li>
-              </ul>
-            </div>
+          <div className="footer-column">
+            <h4>Jelajahi</h4>
+            <ul>
+              <li><a href="#explore">Semua Barang</a></li>
+              <li><a href="#kategori">Kategori</a></li>
+              <li><a href="#" onClick={go('about')}>Tentang Kami</a></li>
+            </ul>
+          </div>
 
-            <div className="footer-structured-col">
-              <h4>Account</h4>
-              <ul>
-                <li><a href="#login">Login</a></li>
-                <li><a href="#daftar-seller">Daftarkan Barang</a></li>
-              </ul>
-            </div>
+          <div className="footer-column">
+            <h4>Seller</h4>
+            <ul>
+              <li><a href="#" onClick={go('seller')}>Buka Rental</a></li>
+              <li><a href="#">Panduan Deposit</a></li>
+            </ul>
+          </div>
 
-            <div className="footer-structured-col">
-              <h4>Support</h4>
-              <ul>
-                <li><a href="#bantuan">Bantuan</a></li>
-                <li><a href="#contact">Contact</a></li>
-                <li><a href="#faq">FAQ</a></li>
-              </ul>
-            </div>
+          <div className="footer-column footer-contact">
+            <h4>Bantuan</h4>
+            <ul>
+              <li><span>support@jabsewa.id</span></li>
+              <li><span>WA: +62 812-3456-7890</span></li>
+            </ul>
           </div>
         </div>
 
-        <div className="footer-structured-bottom">
-          <p className="footer-copyright">&copy; 2026 JabSewa. Hak Cipta Dilindungi.</p>
-          <div className="footer-legal">
+        <div className="footer-bottom">
+          <span>© 2026 JabSewa Indonesia</span>
+          <div className="footer-bottom-links">
             <a href="#terms">Syarat & Ketentuan</a>
-            <a href="#privacy">Privasi</a>
+            <span>·</span>
+            <a href="#privacy">Kebijakan Privasi</a>
           </div>
         </div>
       </div>

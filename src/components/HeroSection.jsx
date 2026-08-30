@@ -9,38 +9,27 @@ export default function HeroSection({ onNavigate }) {
     onNavigate('consumer')
   }
 
-  const popularTags = [
-    '📷 Sony A7 III',
-    '🎮 PlayStation 5',
-    '⛺ Tenda Camping',
-    '🚁 DJI Drone',
-    '📽️ Projector Epson',
-  ]
+  const popularTags = ['Sony A7 III', 'PlayStation 5', 'Tenda Camping', 'DJI Drone', 'Projector']
 
   return (
     <section className="hero-section">
       <div className="hero-inner">
         <div className="hero-copy">
           <div className="hero-kicker">
-            Platform Rental Terpercaya
+            Platform rental barang Jabodetabek
           </div>
 
           <h1>
-            Sewa barang yang kamu butuhkan,
-            <span className="hero-title-accent">langsung dari pemilik terdekat.</span>
+            Barang untuk nyoba atau event.
+            <span className="hero-title-accent">Sewa aja.</span>
           </h1>
-
-          <p className="hero-subtitle">
-            Hemat biaya tanpa harus membeli barang yang cuma dipakai sesekali.
-            Dari perlengkapan kamera, outdoor, konsol game, hingga peralatan event dengan jaminan deposit aman.
-          </p>
 
           <form className="hero-search-container" onSubmit={handleSearch}>
             <div className="hero-search-field hero-search-main">
               <span className="hero-search-icon">🔍</span>
               <input
                 type="text"
-                placeholder="Cari kamera, tenda, drone, PS5..."
+                placeholder="Cari kamera, tenda, PS5..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="hero-search-input"
@@ -57,7 +46,7 @@ export default function HeroSection({ onNavigate }) {
                 <option>Semua Lokasi</option>
                 <option>Jakarta Selatan</option>
                 <option>Jakarta Pusat</option>
-                <option>Jakarta Barat</option>
+                <option>Jakarta Utara</option>
                 <option>Bandung</option>
                 <option>Bogor</option>
                 <option>Depok</option>
@@ -66,7 +55,7 @@ export default function HeroSection({ onNavigate }) {
             </div>
 
             <button type="submit" className="primary-button hero-search-submit">
-              Cari Rental
+              Cari
             </button>
           </form>
 
@@ -86,18 +75,18 @@ export default function HeroSection({ onNavigate }) {
 
           <div className="hero-trust-bar">
             <div className="trust-stat">
-              <strong>5.600+</strong>
-              <span>Barang Tersedia</span>
+              <strong>1.200+</strong>
+              <span>barang terdaftar</span>
             </div>
             <div className="trust-divider"></div>
             <div className="trust-stat">
-              <strong>2.400+</strong>
-              <span>Pemilik Terverifikasi</span>
+              <strong>Rp25rb</strong>
+              <span>sewa mulai per hari</span>
             </div>
             <div className="trust-divider"></div>
             <div className="trust-stat">
-              <strong>⭐ 4.9/5</strong>
-              <span>Skor Kepuasan</span>
+              <strong>100%</strong>
+              <span>deposit dikembalikan</span>
             </div>
           </div>
         </div>
@@ -105,10 +94,7 @@ export default function HeroSection({ onNavigate }) {
         <div className="hero-showcase">
           <div className="showcase-card">
             <div className="showcase-header">
-              <div className="showcase-live-badge">
-                <span className="live-dot"></span>
-                Spotlight Hari Ini
-              </div>
+              <span className="accent-pill">Spotlight</span>
               <span className="showcase-location">Jakarta Selatan</span>
             </div>
 
@@ -123,24 +109,23 @@ export default function HeroSection({ onNavigate }) {
 
             <div className="showcase-body">
               <div className="showcase-meta">
-                <span className="showcase-category">Fotografi & Video</span>
-                <span className="showcase-rating">★ 4.9 (128 ulasan)</span>
+                <span className="showcase-category">Fotografi &amp; Video</span>
+                <span className="showcase-rating">★ 4.9</span>
               </div>
 
-              <h3 className="showcase-title">Sony Alpha A7 III Full-Frame Kit</h3>
-              <p className="showcase-snippet">Termasuk Lensa 28-70mm, 2x Baterai Ori, Memory Card 64GB.</p>
+              <h3 className="showcase-title">Sony Alpha A7 III Kit</h3>
+              <p className="showcase-snippet">Lensa 28-70mm · 2x baterai · SD 64GB</p>
 
               <div className="showcase-seller">
                 <div className="seller-avatar-mini">A</div>
                 <div className="seller-info-mini">
                   <strong>Adit Studio</strong>
-                  <span>Pemilik Terverifikasi ✓ · Respon &lt; 15 menit</span>
+                  <span>Terverifikasi ✓ Respon &lt; 15 mnt</span>
                 </div>
               </div>
 
               <div className="showcase-footer">
                 <div className="showcase-price-box">
-                  <span className="price-label-mini">Harga Sewa</span>
                   <div className="price-amount-wrap">
                     <strong className="price-amount">Rp150.000</strong>
                     <span className="price-unit">/ hari</span>
@@ -152,15 +137,13 @@ export default function HeroSection({ onNavigate }) {
                   className="primary-button showcase-rent-btn"
                   onClick={() => onNavigate('consumer')}
                 >
-                  Sewa Sekarang
+                  Sewa
                 </button>
               </div>
             </div>
 
             <div className="showcase-security-note">
-              <span>🛡️ Jaminan deposit kembali aman</span>
-              <span>•</span>
-              <span>KTP Terverifikasi</span>
+              <span>🛡 Deposit dikembalikan penuh setelah barang dicek</span>
             </div>
           </div>
         </div>

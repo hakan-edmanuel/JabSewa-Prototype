@@ -1,29 +1,31 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --jabsewa-primary: #2563eb;
-  --jabsewa-secondary: #0f172a;
-  --jabsewa-accent: #fbbf24;
-  --jabsewa-blue: #2563eb;
-  --jabsewa-blue-deep: #1d4ed8;
-  --jabsewa-black: #0f172a;
+  --jabsewa-primary: #3D84D8;
+  --jabsewa-secondary: #191c1f;
+  --jabsewa-accent: #F6C945;
+  --jabsewa-accent-soft: #fdf3d3;
+  --jabsewa-blue: #3D84D8;
+  --jabsewa-blue-deep: #2c6ab4;
+  --jabsewa-black: #191c1f;
   --jabsewa-white: #ffffff;
-  --jabsewa-soft: #f8fafc;
-  --jabsewa-text: #0f172a;
-  --jabsewa-text-soft: #475569;
-  --jabsewa-border: #e2e8f0;
-  --jabsewa-dark-blue: #0f172a;
-  --jabsewa-medium-blue: #2563eb;
-  --jabsewa-tertiary-blue: #1d4ed8;
-  --jabsewa-light-blue: #dbeafe;
-  --light-bg: #f8fafc;
-  --border-color: #e2e8f0;
-  --text-dark: #0f172a;
-  --text-light: #64748b;
-  --accent-dark: #0f172a;
-  --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.08);
-  --font-sans: 'Manrope', 'Segoe UI', sans-serif;
-  --font-display: 'Fraunces', Georgia, serif;
+  --jabsewa-soft: #f5f4f0;
+  --jabsewa-bg: #faf9f6;
+  --jabsewa-text: #191c1f;
+  --jabsewa-text-soft: #5b6167;
+  --jabsewa-border: #e6e4de;
+  --jabsewa-dark-blue: #191c1f;
+  --jabsewa-medium-blue: #3D84D8;
+  --jabsewa-tertiary-blue: #2c6ab4;
+  --jabsewa-light-blue: #eaf3fb;
+  --light-bg: #faf9f6;
+  --border-color: #e6e4de;
+  --text-dark: #191c1f;
+  --text-light: #5b6167;
+  --accent-dark: #191c1f;
+  --shadow-soft: 0 2px 8px rgba(25, 28, 31, 0.05);
+  --font-sans: 'Plus Jakarta Sans', 'Manrope', 'Segoe UI', sans-serif;
+  --font-display: 'Plus Jakarta Sans', Georgia, serif;
 }
 
 * {
@@ -75,7 +77,7 @@ button {
 }
 
 :focus-visible {
-  outline: 3px solid rgba(37, 99, 235, 0.55);
+  outline: 3px solid rgba(61, 132, 216, 0.55);
   outline-offset: 3px;
 }
 

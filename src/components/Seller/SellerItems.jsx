@@ -8,6 +8,12 @@ const INITIAL_ITEMS = [
   { id: 5, name: 'Mountain Bike', category: 'Olahraga', price: 90000, status: 'Nonaktif', image: '🚲', rented: 7 },
 ]
 
+const STATUS_LABELS = {
+  'Aktif': 'Tersedia',
+  'Tersewa': 'Sedang Disewa',
+  'Nonaktif': 'Nonaktif',
+}
+
 export default function SellerItems() {
   const [items, setItems] = useState(INITIAL_ITEMS)
   const [query, setQuery] = useState('')
@@ -32,7 +38,7 @@ export default function SellerItems() {
             <h2>{editing ? 'Edit Barang' : 'Tambah Barang'}</h2>
             <button type="button" className="btn-secondary-solid" onClick={() => setShowForm(false)}>Batal</button>
           </div>
-          
+
           <form className="structured-listing-form" onSubmit={saveListing}>
             <section className="form-section">
               <h3 className="form-section-title">Informasi Dasar</h3>
@@ -119,22 +125,40 @@ export default function SellerItems() {
           </div>
           <div className="items-grid-solid">
             {visibleItems.map((item) => (
-              <article key={item.id} className="item-card-solid">
-                <div className="item-image-box">{item.image}</div>
+              <article key={item.id} className={`item-card-solid ${item.status === 'Nonaktif' ? 'is-inactive' : ''}`}>
+                <div className="item-image-box">
+                  <span aria-hidden="true">{item.image}</span>
+                  <span className={`item-status-chip status-${item.status.toLowerCase()}`}>
+                    <span className="status-dot-small" aria-hidden="true"></span>
+                    {STATUS_LABELS[item.status] || item.status}
+                  </span>
+                </div>
                 <div className="item-details-box">
-                  <div className="item-header-row">
-                    <h3 className="item-title-solid">{item.name}</h3>
-                    <span className={`status-dot ${item.status.toLowerCase()}`}></span>
+                  <p className="item-category-label">{item.category}</p>
+                  <h3 className="item-title-solid">{item.name}</h3>
+                  <div className="item-price-row">
+                    <strong className="item-price-solid">Rp {item.price.toLocaleString('id-ID')}</strong>
+                    <span className="item-price-unit">/hari</span>
                   </div>
-                  <p className="item-price-solid">Rp {item.price.toLocaleString('id-ID')}/hari</p>
-                  <div className="item-actions-row">
-                    <button className="btn-text-action" onClick={() => { setEditing(item); setShowForm(true) }}>Edit</button>
-                    <button className="btn-text-action danger" onClick={() => setItems((current) => current.filter((listing) => listing.id !== item.id))}>Hapus</button>
-                  </div>
+                  <p className="item-rented-note">Disewa {item.rented}x</p>
+                </div>
+                <div className="item-actions-row">
+                  <button className="btn-text-action" onClick={() => { setEditing(item); setShowForm(true) }}>Edit</button>
+                  <button className="btn-text-action" onClick={() => setItems((current) => current.map((listing) => listing.id === item.id ? { ...listing, status: listing.status === 'Nonaktif' ? 'Aktif' : 'Nonaktif' } : listing))}>
+                    {item.status === 'Nonaktif' ? 'Aktifkan' : 'Nonaktifkan'}
+                  </button>
+                  <button className="btn-text-action danger" onClick={() => setItems((current) => current.filter((listing) => listing.id !== item.id))}>Hapus</button>
                 </div>
               </article>
             ))}
-            {!visibleItems.length && <p className="empty-state-solid">Tidak ada barang yang ditemukan.</p>}
+            {!visibleItems.length && (
+              <div className="empty-state-solid">
+                <span className="empty-state-icon" aria-hidden="true">📦</span>
+                <p className="empty-state-title">Belum ada barang di sini</p>
+                <p className="empty-state-desc">Coba ubah kata kunci atau filter status, atau tambahkan barang baru.</p>
+                <button className="btn-primary-solid" onClick={() => { setEditing(null); setShowForm(true) }}>+ Tambah Barang</button>
+              </div>
+            )}
           </div>
         </>
       )}

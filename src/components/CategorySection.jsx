@@ -61,10 +61,10 @@ export default function CategorySection() {
       <div className="container">
         <div className="section-heading split-heading">
           <div>
-            <p className="eyebrow eyebrow-dark">KATEGORI PILIHAN</p>
-            <h2>Temukan barang sewa sesuai kebutuhan acaramu</h2>
+            <p className="eyebrow eyebrow-dark"><span className="accent-mark" aria-hidden="true"></span>KATEGORI</p>
+            <h2>Kategori populer</h2>
           </div>
-          <span className="section-kicker">Siap sewa harian & mingguan</span>
+          <span className="section-kicker">Sewa harian & mingguan</span>
         </div>
 
         <div className="category-grid">

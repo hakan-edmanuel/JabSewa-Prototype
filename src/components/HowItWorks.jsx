@@ -24,9 +24,9 @@ export default function HowItWorks() {
     <section className="how-section" id="cara-kerja">
       <div className="container">
         <div className="section-heading">
-          <p className="eyebrow eyebrow-dark">ALUR MUDAH</p>
-          <h2>Cara menyewa barang di JabSewa</h2>
-          <p className="how-subtitle">Proses 3 langkah sederhana yang aman bagi penyewa maupun pemilik barang.</p>
+          <p className="eyebrow eyebrow-dark">CARA KERJA</p>
+          <h2>Cara sewa di JabSewa</h2>
+          <p className="how-subtitle">Tiga langkah, aman untuk penyewa dan pemilik.</p>
         </div>
 
         <div className="how-grid">
