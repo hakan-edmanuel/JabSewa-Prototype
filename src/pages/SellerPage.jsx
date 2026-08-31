@@ -33,8 +33,6 @@ export default function SellerPage({ onNavigate }) {
         <div className="seller-content">
           {showWelcome && (
             <section className="seller-welcome-banner">
-              <div className="seller-motif-1"></div>
-              <div className="seller-motif-2"></div>
 
               <div className="seller-welcome-inner">
                 <div className="seller-welcome-info">
@@ -44,7 +42,7 @@ export default function SellerPage({ onNavigate }) {
                     <span>Barang Nganggurmu.</span>
                   </h1>
                   <p className="seller-welcome-desc">
-                    Kelola inventaris, pantau pesanan, dan tingkatkan pendapatanmu dengan mudah melalui dashboard interaktif ini.
+                    Kelola barang, pesanan, dan pendapatan dari satu dashboard.
                   </p>
                 </div>
                 <div className="seller-welcome-buttons">

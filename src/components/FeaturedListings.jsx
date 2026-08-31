@@ -104,8 +104,8 @@ export default function FeaturedListings() {
         <div className="featured-header-wrap">
           <div className="section-heading split-heading">
             <div>
-              <p className="eyebrow eyebrow-dark">REKOMENDASI SEWA TERPOPULER</p>
-              <h2>Pilihan rental favorit komunitas JabSewa minggu ini</h2>
+              <p className="eyebrow eyebrow-dark">SEDANG RAMAI</p>
+              <h2>Barang favorit minggu ini</h2>
             </div>
             <a href="#kategori" className="featured-explore-link">
               Lihat 5.600+ barang lainnya →

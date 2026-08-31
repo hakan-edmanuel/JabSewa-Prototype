@@ -5,10 +5,8 @@ import Navbar from './components/Navbar'
 import HeroSection from './components/HeroSection'
 import CategorySection from './components/CategorySection'
 import FeaturedListings from './components/FeaturedListings'
-import TrustSection from './components/TrustSection'
 import HowItWorks from './components/HowItWorks'
 import SellerCTA from './components/SellerCTA'
-import Testimonials from './components/Testimonials'
 import AboutUs from './components/AboutUs'
 import Footer from './components/Footer'
 import ConsumerPage from './pages/ConsumerPage'
@@ -92,9 +90,7 @@ function App() {
         <HeroSection onNavigate={navigate} />
         <CategorySection />
         <FeaturedListings />
-        <TrustSection />
         <HowItWorks />
-        <Testimonials />
         <SellerCTA onNavigate={navigate} />
       </main>
 

@@ -11,10 +11,7 @@ export default function ConsumerNavbar({ onNavigate }) {
         </button>
 
         <div className="consumer-nav-menu">
-          <button onClick={() => onNavigate('home')} className="nav-menu-item" style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span>🏠</span> Beranda Utama
-          </button>
-          <a href="#kategori" className="nav-menu-item">Kategori</a>
+          <a href="#explore" className="nav-menu-item">Kategori</a>
           <a href="#" onClick={(e) => { e.preventDefault(); onNavigate('about'); }} className="nav-menu-item">Tentang</a>
         </div>
 

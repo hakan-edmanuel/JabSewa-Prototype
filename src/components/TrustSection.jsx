@@ -1,8 +1,8 @@
 const trustPoints = [
   {
-    icon: '🪪',
-    title: 'Verifikasi Identitas & KTP',
-    description: 'Setiap penyewa dan pemilik barang melalui verifikasi data untuk memastikan transaksi terpercaya.',
+    icon: '💼',
+    title: 'Sistem Escrow Aman',
+    description: 'Saldo ditahan dengan aman oleh sistem JabSewa dan baru diteruskan ke pemilik setelah barang dikembalikan dengan baik.',
   },
   {
     icon: '🔒',

@@ -79,11 +79,11 @@ export default function ConsumerBrowser({ category, search, priceRange, onSelect
                 <h3 className="browser-item-name">{item.name}</h3>
               </button>
               <p className="browser-item-seller">
-                {item.seller} <span className="verified-badge-small">✓</span>
+                {item.seller}
               </p>
               <div className="browser-item-rating">
                 <span className="rating-value">★ {item.rating}</span>
-                <span className="rating-reviews">({item.reviews}) · {item.location}</span>
+                <span className="rating-reviews">({item.reviews})</span>
               </div>
               <div className="browser-item-footer">
                 <div>

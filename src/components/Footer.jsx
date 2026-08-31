@@ -11,7 +11,7 @@ export default function Footer({ onNavigate }) {
               <span className="logo-text">JabSewa</span>
             </div>
             <p>
-              Platform marketplace rental barang harian dan mingguan terpercaya. Membantu masyarakat berhemat dan menghasilkan pendapatan tambahan.
+              Barang untuk nyoba atau event. Sewa aja.
             </p>
             <div className="socials">
               <a href="#" aria-label="Instagram">IG</a>

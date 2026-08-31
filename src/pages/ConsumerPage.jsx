@@ -34,7 +34,7 @@ export default function ConsumerPage({ onNavigate }) {
         />
       </div>
       
-      <ConsumerFooter />
+      <ConsumerFooter onNavigate={onNavigate} />
     </div>
   );
 }

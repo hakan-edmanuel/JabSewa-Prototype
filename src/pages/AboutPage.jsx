@@ -7,9 +7,7 @@ export default function AboutPage({ onNavigate }) {
     <div className="page-shell page-about-shell">
       <SimpleNavbar onNavigate={onNavigate} />
       <main className="about-page-main">
-        <div className="about-page-card">
-          <AboutUs />
-        </div>
+        <AboutUs />
       </main>
       <Footer onNavigate={onNavigate} />
     </div>
