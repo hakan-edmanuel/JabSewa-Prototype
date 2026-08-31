@@ -15,14 +15,8 @@ export default function HeroSection({ onNavigate }) {
     <section className="hero-section">
       <div className="hero-inner">
         <div className="hero-copy">
-<<<<<<< HEAD
-          <div className="hero-badge">
-            <span className="hero-badge-dot"></span>
-            JabSewa · Sewa & Rental
-=======
           <div className="hero-kicker">
             Platform rental barang Jabodetabek
->>>>>>> 040c3d1ad3f390882feab2bf6f02ecc084aa43e8
           </div>
 
           <h1>

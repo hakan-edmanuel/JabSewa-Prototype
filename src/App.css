@@ -4013,7 +4013,6 @@
     gap: 8px;
   }
 
-<<<<<<< HEAD
   .orders-summary {
     width: 100%;
   }
@@ -4051,7 +4050,8 @@
     flex-direction: column;
     align-items: stretch;
     gap: 8px;
-=======
+  }
+
   .items-grid-solid {
     grid-template-columns: 1fr;
     gap: 14px;
@@ -4097,7 +4097,6 @@
 
   .about-founder-card {
     width: 100%;
->>>>>>> 040c3d1ad3f390882feab2bf6f02ecc084aa43e8
   }
 }
 /* ==================== YELLOW ACCENT SYSTEM (v2) ==================== */
