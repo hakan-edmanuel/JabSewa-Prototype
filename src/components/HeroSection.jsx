@@ -23,7 +23,7 @@ export default function HeroSection({ onNavigate }) {
         <div className="hero-copy">
           <div className="hero-badge">
             <span className="hero-badge-dot"></span>
-            Marketplace Rental Terpercaya
+            JabSewa · Sewa & Rental
           </div>
 
           <h1>
