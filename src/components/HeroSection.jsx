@@ -1,6 +1,11 @@
 import { useState } from 'react'
 
-export default function HeroSection({ onNavigate }) {
+/*
+ * Hero landing — menjawab dua hal: apa itu JabSewa, dan apa yang bisa
+ * dilakukan user. Satu titik fokus visual (barang nyata dari katalog),
+ * tanpa statistik palsu, tanpa elemen dekoratif.
+ */
+export default function HeroSection({ onNavigate, onSellerIntent }) {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCity, setSelectedCity] = useState('Semua Lokasi')
 
@@ -9,39 +14,40 @@ export default function HeroSection({ onNavigate }) {
     onNavigate('consumer')
   }
 
-  const popularTags = ['Sony A7 III', 'PlayStation 5', 'Tenda Camping', 'DJI Drone', 'Projector']
+  const popularTags = ['Kamera', 'PS5', 'Tenda', 'Proyektor']
 
   return (
     <section className="hero-section">
       <div className="hero-inner">
         <div className="hero-copy">
-          <div className="hero-kicker">
-            Platform rental barang Jabodetabek
-          </div>
-
           <h1>
-            Barang untuk nyoba atau event.
-            <span className="hero-title-accent">Sewa aja.</span>
+            Sewa barang untuk nyoba atau event,
+            <span className="hero-title-accent">tanpa harus beli.</span>
           </h1>
+
+          <p className="hero-subtitle">
+            Kamera, konsol, tenda, sampai alat event — disewakan orang di
+            sekitar kamu. Ambil yang kamu butuhkan, kembalikan kalau selesai.
+          </p>
 
           <form className="hero-search-container" onSubmit={handleSearch}>
             <div className="hero-search-field hero-search-main">
-              <span className="hero-search-icon">🔍</span>
               <input
                 type="text"
                 placeholder="Cari kamera, tenda, PS5..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="hero-search-input"
+                aria-label="Cari barang"
               />
             </div>
 
             <div className="hero-search-field hero-search-city">
-              <span className="hero-search-icon">📍</span>
               <select
                 value={selectedCity}
                 onChange={(e) => setSelectedCity(e.target.value)}
                 className="hero-search-select"
+                aria-label="Lokasi"
               >
                 <option>Semua Lokasi</option>
                 <option>Jakarta Selatan</option>
@@ -73,79 +79,29 @@ export default function HeroSection({ onNavigate }) {
             ))}
           </div>
 
-          <div className="hero-trust-bar">
-            <div className="trust-stat">
-              <strong>1.200+</strong>
-              <span>barang terdaftar</span>
-            </div>
-            <div className="trust-divider"></div>
-            <div className="trust-stat">
-              <strong>Rp25rb</strong>
-              <span>sewa mulai per hari</span>
-            </div>
-            <div className="trust-divider"></div>
-            <div className="trust-stat">
-              <strong>100%</strong>
-              <span>deposit dikembalikan</span>
-            </div>
-          </div>
+          <button type="button" className="hero-seller-link" onClick={onSellerIntent}>
+            Punya barang nganggur? Sewakan di sini →
+          </button>
         </div>
 
         <div className="hero-showcase">
-          <div className="showcase-card">
-            <div className="showcase-header">
-              <span className="accent-pill">Spotlight</span>
-              <span className="showcase-location">Jakarta Selatan</span>
-            </div>
-
-            <div className="showcase-image-wrap">
-              <img
-                src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=1000&q=80"
-                alt="Sony Alpha A7 III Kit"
-                className="showcase-image"
-              />
-              <span className="showcase-item-tag">Ready Sewa</span>
-            </div>
-
-            <div className="showcase-body">
-              <div className="showcase-meta">
-                <span className="showcase-category">Fotografi &amp; Video</span>
-                <span className="showcase-rating">★ 4.9</span>
+          <figure className="hero-visual">
+            <img
+              src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=1200&q=80"
+              alt="Kamera mirrorless yang tersedia untuk disewa di JabSewa"
+              className="hero-visual-img"
+            />
+            <figcaption className="hero-visual-caption">
+              <div className="hero-visual-info">
+                <strong>Sony Alpha A7 III</strong>
+                <span>Jakarta Utara · Sony Alpha A7 III</span>
               </div>
-
-              <h3 className="showcase-title">Sony Alpha A7 III Kit</h3>
-              <p className="showcase-snippet">Lensa 28-70mm · 2x baterai · SD 64GB</p>
-
-              <div className="showcase-seller">
-                <div className="seller-avatar-mini">A</div>
-                <div className="seller-info-mini">
-                  <strong>Adit Studio</strong>
-                  <span>Terverifikasi ✓ Respon &lt; 15 mnt</span>
-                </div>
+              <div className="hero-visual-price">
+                <strong>Rp150.000</strong>
+                <span>/ hari</span>
               </div>
-
-              <div className="showcase-footer">
-                <div className="showcase-price-box">
-                  <div className="price-amount-wrap">
-                    <strong className="price-amount">Rp150.000</strong>
-                    <span className="price-unit">/ hari</span>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  className="primary-button showcase-rent-btn"
-                  onClick={() => onNavigate('consumer')}
-                >
-                  Sewa
-                </button>
-              </div>
-            </div>
-
-            <div className="showcase-security-note">
-              <span>🛡 Deposit dikembalikan penuh setelah barang dicek</span>
-            </div>
-          </div>
+            </figcaption>
+          </figure>
         </div>
       </div>
     </section>

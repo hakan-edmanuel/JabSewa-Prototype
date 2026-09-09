@@ -8,9 +8,8 @@ export default function CartPage({ onNavigate }) {
       <main className="cart-page-main">
         <h1 className="cart-page-title">Keranjang Belanja</h1>
         <div className="cart-empty-card">
-          <div className="cart-empty-icon">🛒</div>
-          <h2 className="cart-empty-title">Keranjang Anda masih kosong</h2>
-          <p className="cart-empty-subtitle">Belum ada barang yang disimpan untuk disewa.</p>
+          <h2 className="cart-empty-title">Belum ada barang di keranjang</h2>
+          <p className="cart-empty-subtitle">Barang yang kamu pilih untuk disewa akan muncul di sini.</p>
           <button
             onClick={() => onNavigate('consumer')}
             className="primary-button cart-empty-btn"

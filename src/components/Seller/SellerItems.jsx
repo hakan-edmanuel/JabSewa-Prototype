@@ -1,11 +1,14 @@
 import { useMemo, useState } from 'react'
 
+const IMG = 'https://images.unsplash.com'
+const DEFAULT_IMG = `${IMG}/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80`
+
 const INITIAL_ITEMS = [
-  { id: 1, name: 'Sony Alpha Camera', category: 'Kamera', price: 150000, status: 'Aktif', image: '📷', rented: 24 },
-  { id: 2, name: 'PlayStation 5', category: 'Gaming', price: 100000, status: 'Aktif', image: '🎮', rented: 18 },
-  { id: 3, name: 'Camping Tent', category: 'Outdoor', price: 75000, status: 'Tersewa', image: '⛺', rented: 12 },
-  { id: 4, name: 'DJI Mini Drone', category: 'Kamera', price: 220000, status: 'Aktif', image: '🚁', rented: 9 },
-  { id: 5, name: 'Mountain Bike', category: 'Olahraga', price: 90000, status: 'Nonaktif', image: '🚲', rented: 7 },
+  { id: 1, name: 'Sony Alpha Camera', category: 'Kamera', price: 150000, status: 'Aktif', image: `${IMG}/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=80` },
+  { id: 2, name: 'PlayStation 5', category: 'Gaming', price: 100000, status: 'Aktif', image: `${IMG}/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=800&q=80` },
+  { id: 3, name: 'Camping Tent', category: 'Outdoor', price: 75000, status: 'Tersewa', image: `${IMG}/photo-1522163182402-834f871fd851?auto=format&fit=crop&w=800&q=80` },
+  { id: 4, name: 'DJI Mini Drone', category: 'Kamera', price: 220000, status: 'Aktif', image: `${IMG}/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=800&q=80` },
+  { id: 5, name: 'Mountain Bike', category: 'Olahraga', price: 90000, status: 'Nonaktif', image: `${IMG}/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=800&q=80` },
 ]
 
 const STATUS_LABELS = {
@@ -21,7 +24,7 @@ export default function SellerItems() {
   const [showForm, setShowForm] = useState(false)
   const [editing, setEditing] = useState(null)
   const visibleItems = useMemo(() => items.filter((item) => item.name.toLowerCase().includes(query.toLowerCase()) && (status === 'Semua Status' || item.status === status)), [items, query, status])
-  const saveListing = (event) => { event.preventDefault(); const data = new FormData(event.currentTarget); const listing = { id: editing?.id || Date.now(), name: data.get('name'), category: data.get('category'), price: Number(data.get('price')), status: data.get('status'), image: '📦', rented: editing?.rented || 0 }; setItems((current) => editing ? current.map((item) => item.id === editing.id ? listing : item) : [listing, ...current]); setEditing(null); setShowForm(false) }
+  const saveListing = (event) => { event.preventDefault(); const data = new FormData(event.currentTarget); const listing = { id: editing?.id || Date.now(), name: data.get('name'), category: data.get('category'), price: Number(data.get('price')), status: data.get('status'), image: DEFAULT_IMG }; setItems((current) => editing ? current.map((item) => item.id === editing.id ? listing : item) : [listing, ...current]); setEditing(null); setShowForm(false) }
   return (
     <div className="seller-items">
       <div className="items-header">
@@ -127,7 +130,7 @@ export default function SellerItems() {
             {visibleItems.map((item) => (
               <article key={item.id} className={`item-card-solid ${item.status === 'Nonaktif' ? 'is-inactive' : ''}`}>
                 <div className="item-image-box">
-                  <span aria-hidden="true">{item.image}</span>
+                  <img src={item.image} alt={item.name} />
                   <span className={`item-status-chip status-${item.status.toLowerCase()}`}>
                     <span className="status-dot-small" aria-hidden="true"></span>
                     {STATUS_LABELS[item.status] || item.status}
@@ -140,7 +143,7 @@ export default function SellerItems() {
                     <strong className="item-price-solid">Rp {item.price.toLocaleString('id-ID')}</strong>
                     <span className="item-price-unit">/hari</span>
                   </div>
-                  <p className="item-rented-note">Disewa {item.rented}x</p>
+                  <p className="item-rented-note">{item.status === 'Tersewa' ? 'Sedang dipakai penyewa' : 'Siap disewa'}</p>
                 </div>
                 <div className="item-actions-row">
                   <button className="btn-text-action" onClick={() => { setEditing(item); setShowForm(true) }}>Edit</button>

@@ -72,7 +72,7 @@
 }
 
 .eyebrow-light {
-  color: #93c5fd;
+  color: #FFD758;
 }
 
 .split-heading {
@@ -381,240 +381,7 @@
   border-color: #cbd5e1;
 }
 
-/* Hero Trust Metrics Bar */
-.hero-trust-bar {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  margin-top: 32px;
-  padding-top: 20px;
-  border-top: 1px solid var(--jabsewa-border);
-}
-
-.trust-stat {
-  display: flex;
-  flex-direction: column;
-}
-
-.trust-stat strong {
-  font-size: 1.25rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  color: var(--jabsewa-black);
-}
-
-.trust-stat span {
-  font-size: 0.78rem;
-  color: var(--jabsewa-text-soft);
-  font-weight: 500;
-  margin-top: 2px;
-}
-
-.trust-divider {
-  width: 1px;
-  height: 28px;
-  background: var(--jabsewa-border);
-}
-
-/* Hero Showcase Card */
-.hero-showcase {
-  position: relative;
-}
-
-.showcase-card {
-  background: var(--jabsewa-white);
-  border: 1px solid var(--jabsewa-border);
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
-}
-
-.showcase-header {
-  padding: 12px 18px;
-  background: var(--jabsewa-bg);
-  border-bottom: 1px solid var(--jabsewa-border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.showcase-live-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.76rem;
-  font-weight: 700;
-  color: #15803d;
-}
-
-.live-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #16a34a;
-}
-
-.showcase-location {
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--jabsewa-text-soft);
-}
-
-.showcase-image-wrap {
-  position: relative;
-  height: 210px;
-  background: #e2e8f0;
-}
-
-.showcase-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.showcase-item-tag {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  background: #15803d;
-  color: #ffffff;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-}
-
-.showcase-body {
-  padding: 18px 20px;
-}
-
-.showcase-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 6px;
-}
-
-.showcase-category {
-  font-size: 0.76rem;
-  font-weight: 700;
-  color: var(--jabsewa-primary);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.showcase-rating {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #b45309;
-}
-
-.showcase-title {
-  font-size: 1.15rem;
-  font-weight: 800;
-  line-height: 1.3;
-  margin-bottom: 4px;
-  color: var(--jabsewa-black);
-}
-
-.showcase-snippet {
-  font-size: 0.82rem;
-  color: var(--jabsewa-text-soft);
-  margin-bottom: 14px;
-}
-
-.showcase-seller {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 0;
-  border-top: 1px solid #efeeea;
-  border-bottom: 1px solid #efeeea;
-  margin-bottom: 14px;
-}
-
-.seller-avatar-mini {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #26292e;
-  color: #ffffff;
-  font-weight: 800;
-  font-size: 0.85rem;
-  display: grid;
-  place-items: center;
-}
-
-.seller-info-mini {
-  display: flex;
-  flex-direction: column;
-}
-
-.seller-info-mini strong {
-  font-size: 0.84rem;
-  color: var(--jabsewa-black);
-}
-
-.seller-info-mini span {
-  font-size: 0.72rem;
-  color: var(--jabsewa-text-soft);
-}
-
-.showcase-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-}
-
-.showcase-price-box {
-  display: flex;
-  flex-direction: column;
-}
-
-.price-label-mini {
-  font-size: 0.72rem;
-  color: var(--jabsewa-text-soft);
-  font-weight: 600;
-}
-
-.price-amount-wrap {
-  display: flex;
-  align-items: baseline;
-  gap: 4px;
-}
-
-.price-amount {
-  font-size: 1.3rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  color: var(--jabsewa-primary);
-}
-
-.price-unit {
-  font-size: 0.76rem;
-  color: var(--jabsewa-text-soft);
-  font-weight: 600;
-}
-
-.showcase-rent-btn {
-  padding: 9px 18px;
-  font-size: 0.85rem;
-}
-
-.showcase-security-note {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 14px;
-  background: var(--jabsewa-bg);
-  border-top: 1px solid var(--jabsewa-border);
-  font-size: 0.74rem;
-  font-weight: 600;
-  color: var(--jabsewa-text-soft);
-}
+/* Hero visual — ditata di bagian DESIGN SYSTEM v4 di akhir file */
 
 /* --- Category Section --- */
 .category-section {
@@ -661,7 +428,7 @@
   position: absolute;
   top: 10px;
   left: 10px;
-  background: #191c1f;
+  background: #091540;
   color: #ffffff;
   font-size: 0.68rem;
   font-weight: 700;
@@ -695,10 +462,10 @@
   font-size: 0.72rem;
   font-weight: 700;
   color: var(--jabsewa-primary);
-  background: #eff6ff;
+  background: #E9ECFB;
   padding: 2px 7px;
   border-radius: 4px;
-  border: 1px solid #dbeafe;
+  border: 1px solid #D5DAF5;
 }
 
 .category-desc {
@@ -717,7 +484,7 @@
   font-weight: 700;
   color: var(--jabsewa-primary);
   padding-top: 10px;
-  border-top: 1px solid #efeeea;
+  border-top: 1px solid #EDEFF7;
 }
 
 .category-arrow {
@@ -790,7 +557,7 @@
   position: absolute;
   bottom: 12px;
   left: 12px;
-  background: #191c1f;
+  background: #091540;
   color: #ffffff;
   font-size: 0.68rem;
   font-weight: 700;
@@ -846,8 +613,8 @@
   justify-content: space-between;
   font-size: 0.76rem;
   padding: 8px 0;
-  border-top: 1px solid #efeeea;
-  border-bottom: 1px solid #efeeea;
+  border-top: 1px solid #EDEFF7;
+  border-bottom: 1px solid #EDEFF7;
   margin-bottom: 14px;
 }
 
@@ -862,7 +629,7 @@
 .deposit-tag {
   color: #64748b;
   font-weight: 600;
-  background: #efeeea;
+  background: #EDEFF7;
   padding: 2px 6px;
   border-radius: 4px;
 }
@@ -910,78 +677,6 @@
   font-size: 0.84rem;
 }
 
-/* --- Trust Section --- */
-.trust-section {
-  padding: 80px 0;
-  background: var(--jabsewa-soft);
-  border-bottom: 1px solid var(--jabsewa-border);
-}
-
-.trust-inner {
-  display: flex;
-  flex-direction: column;
-}
-
-.trust-heading {
-  text-align: center;
-  max-width: 680px;
-  margin: 0 auto 40px auto;
-}
-
-.trust-subtitle {
-  font-size: 0.95rem;
-  color: var(--jabsewa-text-soft);
-  margin-top: 8px;
-  line-height: 1.6;
-}
-
-.trust-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 20px;
-}
-
-.trust-card {
-  background: var(--jabsewa-white);
-  border: 1px solid var(--jabsewa-border);
-  border-radius: 12px;
-  padding: 24px 20px;
-  display: flex;
-  flex-direction: column;
-  transition: border-color 0.15s ease;
-}
-
-.trust-card:hover {
-  border-color: #cbd5e1;
-}
-
-.trust-icon-box {
-  width: 44px;
-  height: 44px;
-  border-radius: 8px;
-  background: #eff6ff;
-  border: 1px solid #dbeafe;
-  display: grid;
-  place-items: center;
-  font-size: 1.25rem;
-  margin-bottom: 16px;
-}
-
-.trust-title {
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: var(--jabsewa-black);
-  margin-bottom: 8px;
-  line-height: 1.3;
-}
-
-.trust-description {
-  font-size: 0.84rem;
-  color: var(--jabsewa-text-soft);
-  line-height: 1.6;
-}
-
-
 /* --- How It Works --- */
 .how-section {
   padding: 80px 0;
@@ -1020,7 +715,7 @@
   width: 38px;
   height: 38px;
   border-radius: 8px;
-  background: #191c1f;
+  background: #091540;
   color: #ffffff;
   font-size: 0.92rem;
   font-weight: 800;
@@ -1047,7 +742,7 @@
   padding: 10px 12px;
   background: var(--jabsewa-bg);
   border-radius: 6px;
-  border: 1px solid #efeeea;
+  border: 1px solid #EDEFF7;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1062,111 +757,6 @@
   font-weight: 600;
   color: #475569;
 }
-
-/* --- Testimonials --- */
-.testimonials-section {
-  padding: 80px 0;
-  background: var(--jabsewa-soft);
-  border-bottom: 1px solid var(--jabsewa-border);
-}
-
-.testimonials-subtitle {
-  font-size: 0.95rem;
-  color: var(--jabsewa-text-soft);
-  margin-top: 8px;
-}
-
-.testimonials-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
-}
-
-.testimonial-card {
-  background: var(--jabsewa-white);
-  border: 1px solid var(--jabsewa-border);
-  border-radius: 12px;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-}
-
-.testimonial-card-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-
-.rating-stars {
-  color: #b45309;
-  font-size: 1rem;
-  letter-spacing: 2px;
-}
-
-.testimonial-item-tag {
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--jabsewa-primary);
-  background: #eff6ff;
-  padding: 3px 8px;
-  border-radius: 4px;
-  border: 1px solid #dbeafe;
-}
-
-.testimonial-text {
-  font-size: 0.9rem;
-  color: var(--jabsewa-text);
-  line-height: 1.65;
-  margin-bottom: 18px;
-}
-
-.testimonial-author {
-  margin-top: auto;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding-top: 14px;
-  border-top: 1px solid #efeeea;
-}
-
-.author-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #efeeea;
-  display: grid;
-  place-items: center;
-  font-size: 1.3rem;
-}
-
-.author-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.author-name {
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: var(--jabsewa-black);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.verified-check {
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: #15803d;
-}
-
-.author-role {
-  font-size: 0.75rem;
-  color: var(--jabsewa-text-soft);
-  margin-top: 2px;
-}
-
 /* --- Seller CTA Box --- */
 .seller-cta {
   padding: 80px 0;
@@ -1174,7 +764,7 @@
 }
 
 .seller-cta-box {
-  background: #191c1f;
+  background: #091540;
   color: #ffffff;
   border-radius: 16px;
   padding: 48px;
@@ -1182,19 +772,6 @@
   grid-template-columns: 1.3fr 0.9fr;
   align-items: center;
   gap: 40px;
-}
-
-.seller-cta-badge {
-  display: inline-block;
-  background: #26292e;
-  color: #93c5fd;
-  font-size: 0.74rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  padding: 4px 10px;
-  border-radius: 4px;
-  border: 1px solid #3a3e44;
-  margin-bottom: 16px;
 }
 
 .seller-cta-title {
@@ -1210,56 +787,6 @@
   color: #94a3b8;
   line-height: 1.65;
   margin-bottom: 24px;
-}
-
-.seller-cta-benefits {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.benefit-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.86rem;
-  color: #e2e8f0;
-  font-weight: 600;
-}
-
-.benefit-icon {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #26292e;
-  color: #60a5fa;
-  display: grid;
-  place-items: center;
-  font-size: 0.72rem;
-  font-weight: 800;
-}
-
-.seller-cta-action-card {
-  background: #26292e;
-  border: 1px solid #3a3e44;
-  border-radius: 12px;
-  padding: 28px 24px;
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-}
-
-.action-card-label {
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: #ffffff;
-  margin-bottom: 6px;
-}
-
-.action-card-sub {
-  font-size: 0.82rem;
-  color: #94a3b8;
-  margin-bottom: 20px;
 }
 
 .seller-cta-btn {
@@ -1283,10 +810,10 @@
 
 /* --- Main Footer --- */
 .footer {
-  background: #191c1f;
+  background: #091540;
   color: #ffffff;
   padding: 56px 0 28px;
-  border-top: 1px solid #26292e;
+  border-top: 1px solid var(--jabsewa-dark-border);
 }
 
 .footer-inner {
@@ -1296,7 +823,7 @@
 
 .footer-top {
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+  grid-template-columns: 1.5fr 1fr 1fr;
   gap: 36px;
   margin-bottom: 40px;
 }
@@ -1314,36 +841,10 @@
   color: #ffffff;
 }
 
-.socials {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.socials a {
-  width: 34px;
-  height: 34px;
-  display: grid;
-  place-items: center;
-  border-radius: 6px;
-  background: #26292e;
-  color: #e2e8f0;
-  font-size: 0.75rem;
-  font-weight: 700;
-  border: 1px solid #3a3e44;
-  transition: all 0.15s ease;
-}
-
-.socials a:hover {
-  background: var(--jabsewa-primary);
-  border-color: var(--jabsewa-primary);
-  color: #ffffff;
-}
-
 .footer-column h4 {
   font-size: 0.8rem;
   font-weight: 700;
-  color: #efeeea;
+  color: #EDEFF7;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   margin-bottom: 16px;
@@ -1372,7 +873,7 @@
   align-items: center;
   justify-content: space-between;
   padding-top: 24px;
-  border-top: 1px solid #26292e;
+  border-top: 1px solid var(--jabsewa-dark-border);
   font-size: 0.78rem;
   color: #64748b;
   flex-wrap: wrap;
@@ -1600,7 +1101,7 @@
 .input-prefix .prefix {
   padding: 0 12px;
   color: var(--jabsewa-text-soft);
-  background: #efeeea;
+  background: #EDEFF7;
   border-right: 1px solid var(--jabsewa-border);
   font-weight: 600;
   display: flex;
@@ -1675,7 +1176,7 @@
 .item-image-box {
   position: relative;
   height: 150px;
-  background: #efeeea;
+  background: #EDEFF7;
   display: grid;
   place-items: center;
   font-size: 3rem;
@@ -1848,7 +1349,7 @@
   background: var(--jabsewa-white);
   border: 1px solid var(--jabsewa-border);
   border-radius: 8px;
-  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.1);
+  box-shadow: 0 10px 25px rgba(9, 21, 64, 0.12);
   flex-direction: column;
   z-index: 50;
   overflow: hidden;
@@ -2089,7 +1590,7 @@
   width: 38px;
   height: 38px;
   border-radius: 8px;
-  background: #efeeea;
+  background: #EDEFF7;
   border: 1px solid var(--jabsewa-border);
   display: grid;
   place-items: center;
@@ -2195,7 +1696,7 @@
 }
 
 .suggestion-tag {
-  background: #efeeea;
+  background: #EDEFF7;
   border: 1px solid var(--jabsewa-border);
   color: var(--jabsewa-black);
   padding: 3px 10px;
@@ -2227,7 +1728,7 @@
 .filter-section {
   margin-bottom: 22px;
   padding-bottom: 18px;
-  border-bottom: 1px solid #efeeea;
+  border-bottom: 1px solid #EDEFF7;
 }
 
 .filter-title {
@@ -2265,15 +1766,15 @@
 }
 
 .filter-option.active {
-  background: #191c1f;
-  border-color: #191c1f;
+  background: #091540;
+  border-color: #091540;
   color: #ffffff;
 }
 
 .btn-reset-filters {
   width: 100%;
   padding: 8px;
-  background: #efeeea;
+  background: #EDEFF7;
   border: 1px solid var(--jabsewa-border);
   border-radius: 6px;
   font-size: 0.8rem;
@@ -2352,7 +1853,7 @@
 .item-badge-container {
   position: relative;
   height: 140px;
-  background: #efeeea;
+  background: #EDEFF7;
   border: none;
   display: flex;
   align-items: center;
@@ -2443,7 +1944,7 @@
   align-items: flex-end;
   justify-content: space-between;
   padding-top: 10px;
-  border-top: 1px solid #efeeea;
+  border-top: 1px solid #EDEFF7;
   gap: 8px;
 }
 
@@ -2480,7 +1981,7 @@
 
 .btn-icon-cart {
   padding: 6px 8px;
-  background: #efeeea;
+  background: #EDEFF7;
   border: 1px solid var(--jabsewa-border);
   border-radius: 6px;
   font-size: 0.78rem;
@@ -2533,7 +2034,7 @@
 
 .product-main-image {
   height: 320px;
-  background: #efeeea;
+  background: #EDEFF7;
   border: 1px solid var(--jabsewa-border);
   border-radius: 12px;
   display: grid;
@@ -2591,7 +2092,7 @@
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: #191c1f;
+  background: #091540;
   color: #ffffff;
   display: grid;
   place-items: center;
@@ -2611,7 +2112,7 @@
 .seller-summary .btn-small {
   margin-left: auto;
   padding: 6px 12px;
-  background: #efeeea;
+  background: #EDEFF7;
   border: 1px solid var(--jabsewa-border);
   border-radius: 6px;
   font-size: 0.78rem;
@@ -2751,7 +2252,7 @@
   font-size: 0.65rem;
   font-weight: 800;
   color: var(--jabsewa-primary);
-  background: #eff6ff;
+  background: #E9ECFB;
   padding: 2px 6px;
   border-radius: 4px;
   margin-left: 6px;
@@ -2777,7 +2278,7 @@
   width: 38px;
   height: 38px;
   border-radius: 8px;
-  background: #efeeea;
+  background: #EDEFF7;
   border: 1px solid var(--jabsewa-border);
   display: grid;
   place-items: center;
@@ -2841,19 +2342,19 @@
 }
 
 .seller-menu-item:hover {
-  background: #efeeea;
+  background: #EDEFF7;
   color: var(--jabsewa-black);
 }
 
 .seller-menu-item.active {
-  background: #191c1f;
+  background: #091540;
   color: #ffffff;
 }
 
 .seller-sidebar-footer {
   margin-top: 16px;
   padding-top: 12px;
-  border-top: 1px solid #efeeea;
+  border-top: 1px solid #EDEFF7;
 }
 
 .seller-stats-mini {
@@ -2864,7 +2365,7 @@
 
 .mini-stat {
   background: var(--jabsewa-bg);
-  border: 1px solid #efeeea;
+  border: 1px solid #EDEFF7;
   border-radius: 8px;
   padding: 8px;
   text-align: center;
@@ -2879,73 +2380,6 @@
 .mini-stat-label {
   font-size: 0.65rem;
   color: var(--jabsewa-text-soft);
-}
-
-.seller-welcome-banner {
-  background: #191c1f;
-  color: #ffffff;
-  border-radius: 14px;
-  padding: 32px;
-  margin-bottom: 24px;
-}
-
-.seller-welcome-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  flex-wrap: wrap;
-}
-
-.seller-welcome-tag {
-  display: inline-block;
-  background: #26292e;
-  color: #93c5fd;
-  font-size: 0.7rem;
-  font-weight: 800;
-  padding: 3px 8px;
-  border-radius: 4px;
-  margin-bottom: 8px;
-}
-
-.seller-welcome-heading {
-  font-size: 1.6rem;
-  font-weight: 800;
-  line-height: 1.2;
-  color: #ffffff;
-  margin-bottom: 6px;
-}
-
-.seller-welcome-heading span {
-  color: #60a5fa;
-}
-
-.seller-welcome-desc {
-  font-size: 0.88rem;
-  color: #94a3b8;
-  max-width: 520px;
-}
-
-.seller-welcome-buttons {
-  display: flex;
-  gap: 10px;
-}
-
-.seller-btn-main {
-  background: var(--jabsewa-primary);
-  color: #ffffff;
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-size: 0.88rem;
-}
-
-.seller-btn-close {
-  background: #26292e;
-  border: 1px solid #3a3e44;
-  color: #ffffff;
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-size: 0.88rem;
 }
 
 .seller-dashboard,
@@ -2989,7 +2423,7 @@
   width: 36px;
   height: 36px;
   border-radius: 8px;
-  background: #efeeea;
+  background: #EDEFF7;
   display: grid;
   place-items: center;
   font-size: 1.1rem;
@@ -3070,7 +2504,7 @@
 .orders-table td {
   padding: 12px;
   font-size: 0.84rem;
-  border-bottom: 1px solid #efeeea;
+  border-bottom: 1px solid #EDEFF7;
 }
 
 .status-badge {
@@ -3098,7 +2532,7 @@
 
 .status-badge.status-cancelled,
 .status-badge.status-nonaktif {
-  background: #efeeea;
+  background: #EDEFF7;
   color: #64748b;
 }
 
@@ -3123,7 +2557,7 @@
 }
 
 .action-btn:hover {
-  background: #eff6ff;
+  background: #E9ECFB;
   border-color: #bfdbfe;
   color: var(--jabsewa-primary);
 }
@@ -3168,7 +2602,7 @@
 
 .item-image-large {
   height: 120px;
-  background: #efeeea;
+  background: #EDEFF7;
   display: grid;
   place-items: center;
   font-size: 3rem;
@@ -3387,7 +2821,7 @@
 }
 
 .status-badge.status-accepted {
-  background: #dbeafe;
+  background: #D5DAF5;
   color: #1d4ed8;
 }
 
@@ -3399,42 +2833,6 @@
   border-radius: 10px;
   color: var(--jabsewa-text-soft);
   font-size: 0.9rem;
-}
-
-/* --- Hero: subtle visual depth (no gradients / no floating cards) --- */
-.hero-showcase::before {
-  content: "";
-  position: absolute;
-  inset: 16px -14px -14px 16px;
-  border: 1px solid var(--jabsewa-border);
-  border-radius: 16px;
-  background: var(--jabsewa-soft);
-  z-index: -1;
-}
-
-.hero-section {
-  position: relative;
-  overflow: hidden;
-}
-
-.hero-section::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  width: 46%;
-  background-image: radial-gradient(var(--jabsewa-border) 1px, transparent 1px);
-  background-size: 22px 22px;
-  -webkit-mask-image: linear-gradient(to left, #000 30%, transparent 90%);
-  mask-image: linear-gradient(to left, #000 30%, transparent 90%);
-  z-index: 0;
-  pointer-events: none;
-}
-
-.hero-inner {
-  position: relative;
-  z-index: 1;
 }
 
 /* ==================== STATIC / AUTH PAGES ==================== */
@@ -3525,13 +2923,13 @@
   display: grid;
   place-items: center;
   font-size: 2rem;
-  background: #efeeea;
-  border: 1px solid #efeeea;
+  background: #EDEFF7;
+  border: 1px solid #EDEFF7;
 }
 
 .about-photo.blue {
-  background: #eff6ff;
-  border-color: #dbeafe;
+  background: #E9ECFB;
+  border-color: #D5DAF5;
 }
 
 .about-photo.yellow {
@@ -3581,7 +2979,7 @@
   align-items: flex-start;
   padding: 14px;
   background: var(--jabsewa-bg);
-  border: 1px solid #efeeea;
+  border: 1px solid #EDEFF7;
   border-radius: 10px;
 }
 
@@ -3625,7 +3023,7 @@
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  background: #191c1f;
+  background: #091540;
   color: #ffffff;
   font-weight: 800;
   font-size: 1rem;
@@ -4127,20 +3525,21 @@
   border-color: var(--jabsewa-accent);
 }
 
+/* Selection state = blue (primary), bukan yellow penuh */
 .filter-option.active {
-  background: var(--jabsewa-accent) !important;
-  border-color: var(--jabsewa-accent) !important;
-  color: var(--jabsewa-black) !important;
+  background: var(--jabsewa-light-blue) !important;
+  border-color: var(--jabsewa-primary) !important;
+  color: var(--jabsewa-primary) !important;
 }
 
 .seller-menu-item.active {
-  background: var(--jabsewa-accent) !important;
-  color: var(--jabsewa-black) !important;
+  background: var(--jabsewa-primary) !important;
+  color: #ffffff !important;
 }
 
 .hero-search-container:focus-within {
   border-color: var(--jabsewa-blue);
-  box-shadow: 0 0 0 3px rgba(61, 132, 216, 0.15);
+  box-shadow: 0 0 0 3px rgba(27, 44, 193, 0.15);
 }
 
 .quick-tag-label::before {
@@ -4151,4 +3550,1365 @@
   background: var(--jabsewa-accent);
   border-radius: 2px;
   margin-right: 6px;
+}
+
+/* ==========================================================================
+   FLOW v2 — AUTH-AWARE NAV, MOBILE MENU, MODE SWITCH, BUYER, ONBOARDING
+   ========================================================================== */
+
+/* --- Hamburger (mobile) --- */
+.nav-mobile-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 40px;
+  height: 40px;
+  padding: 10px;
+  background: var(--jabsewa-soft);
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.nav-mobile-toggle span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background: var(--jabsewa-black);
+  border-radius: 2px;
+}
+
+.nav-mobile-panel {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .nav-mobile-toggle {
+    display: inline-flex;
+  }
+
+  .nav-mobile-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 16px 18px;
+    background: var(--jabsewa-white);
+    border-bottom: 1px solid var(--jabsewa-border);
+  }
+
+  .nav-mobile-panel .nav-link,
+  .nav-mobile-panel .nav-menu-item {
+    text-align: left;
+    width: 100%;
+    padding: 12px 8px;
+    font-size: 0.95rem;
+    border-bottom: 1px solid var(--jabsewa-border);
+  }
+
+  .nav-mobile-panel .nav-login {
+    display: inline-flex !important;
+    width: 100%;
+    justify-content: center;
+    margin-top: 8px;
+  }
+
+  .nav-buttons,
+  .consumer-navbar-actions {
+    display: none;
+  }
+}
+
+/* Consumer navbar: menu desktop sudah disembunyikan di <768px,
+   jadi hamburger + panel aktif lebih awal. */
+@media (max-width: 768px) {
+  .consumer-navbar .nav-mobile-toggle {
+    display: inline-flex;
+  }
+
+  .consumer-navbar .nav-mobile-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 16px 18px;
+    background: var(--jabsewa-white);
+    border-bottom: 1px solid var(--jabsewa-border);
+  }
+
+  .consumer-navbar .nav-mobile-panel .nav-link,
+  .consumer-navbar .nav-mobile-panel .nav-menu-item {
+    text-align: left;
+    width: 100%;
+    padding: 12px 8px;
+    font-size: 0.95rem;
+    border-bottom: 1px solid var(--jabsewa-border);
+  }
+
+  .consumer-navbar .nav-mobile-panel .nav-login {
+    display: inline-flex !important;
+    width: 100%;
+    justify-content: center;
+    margin-top: 8px;
+  }
+
+  .consumer-navbar .consumer-navbar-actions {
+    display: none;
+  }
+}
+
+/* --- Mode switch Penyewa / Seller --- */
+.nav-mode-switch {
+  display: inline-flex;
+  align-items: center;
+  background: var(--jabsewa-soft);
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.nav-mode-btn {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--jabsewa-text-soft);
+  background: transparent;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.nav-mode-btn:hover {
+  color: var(--jabsewa-black);
+}
+
+.nav-mode-btn.is-active {
+  background: var(--jabsewa-light-blue);
+  color: var(--jabsewa-primary);
+  box-shadow: none;
+}
+
+.nav-mode-switch-mobile {
+  width: 100%;
+  margin: 6px 0;
+}
+
+.nav-mode-switch-mobile .nav-mode-btn {
+  flex: 1;
+  text-align: center;
+}
+
+/* --- CTA seller di navbar --- */
+.nav-seller-cta {
+  background: var(--jabsewa-accent);
+  color: var(--jabsewa-black);
+  font-size: 0.85rem;
+  font-weight: 800;
+  padding: 9px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.nav-seller-cta:hover {
+  background: #F0C33C;
+}
+
+.nav-link-accent {
+  color: var(--jabsewa-primary) !important;
+  font-weight: 700;
+}
+
+.nav-link-danger {
+  color: #dc2626 !important;
+}
+
+/* --- User menu (profil) --- */
+.user-menu {
+  position: relative;
+}
+
+.profile-btn.avatar-initial {
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--jabsewa-black);
+}
+
+.profile-dropdown-menu.is-open {
+  display: flex;
+}
+
+.seller-store-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--jabsewa-text-soft);
+}
+
+/* --- CTA teks di consumer navbar --- */
+.consumer-nav-action {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--jabsewa-text-soft);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px 0;
+  transition: color 0.15s ease;
+}
+
+.consumer-nav-action:hover {
+  color: var(--jabsewa-primary);
+}
+
+.consumer-nav-accent {
+  color: var(--jabsewa-primary);
+}
+
+/* --- Auth page: intent note & error --- */
+.auth-context-note {
+  background: var(--jabsewa-accent-soft);
+  border: 1px solid #f0e0a8;
+  color: var(--jabsewa-black);
+  font-size: 0.84rem;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 18px;
+  line-height: 1.5;
+}
+
+.auth-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  font-size: 0.84rem;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 14px;
+}
+
+/* ==================== BUYER DASHBOARD (MODE PENYEWA) ==================== */
+.page-buyer-shell {
+  background: var(--jabsewa-bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.buyer-page {
+  flex: 1;
+  width: min(1100px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 40px 0 64px;
+}
+
+.buyer-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+
+.buyer-kicker {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--jabsewa-primary);
+  margin-bottom: 8px;
+}
+
+.buyer-head h1 {
+  font-size: clamp(1.6rem, 3vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.buyer-head p {
+  color: var(--jabsewa-text-soft);
+  font-size: 0.92rem;
+  margin-top: 6px;
+}
+
+.buyer-section {
+  background: var(--jabsewa-white);
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.buyer-section-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.buyer-section-head h2 {
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.buyer-count {
+  background: var(--jabsewa-soft);
+  color: var(--jabsewa-text-soft);
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 2px 10px;
+  border-radius: 999px;
+}
+
+.buyer-rental-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.buyer-rental-card {
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.buyer-rental-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.buyer-rental-top h3 {
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+
+.buyer-rental-top p {
+  font-size: 0.82rem;
+  color: var(--jabsewa-text-soft);
+  margin-top: 2px;
+}
+
+.buyer-rental-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--jabsewa-border);
+  font-size: 0.85rem;
+  color: var(--jabsewa-text-soft);
+}
+
+.buyer-rental-meta strong {
+  color: var(--jabsewa-black);
+  font-size: 0.95rem;
+}
+
+.buyer-empty {
+  padding: 28px 12px;
+  text-align: center;
+}
+
+.buyer-empty p {
+  color: var(--jabsewa-text);
+  font-size: 0.92rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.buyer-empty .buyer-empty-sub {
+  color: var(--jabsewa-text-soft);
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+
+.buyer-empty .primary-button {
+  margin-top: 16px;
+}
+
+.buyer-wish-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.buyer-wish-card {
+  display: flex;
+  gap: 12px;
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.buyer-wish-thumb {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  font-size: 1.8rem;
+  background: var(--jabsewa-soft);
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 8px;
+}
+
+.buyer-wish-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.buyer-wish-info h3 {
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.buyer-wish-info p {
+  font-size: 0.8rem;
+  color: var(--jabsewa-text-soft);
+}
+
+.buyer-wish-price {
+  font-weight: 800;
+  color: var(--jabsewa-black);
+}
+
+.buyer-wish-price small {
+  font-weight: 600;
+  color: var(--jabsewa-text-soft);
+}
+
+.buyer-wish-info .btn-small {
+  margin-top: 6px;
+}
+
+.buyer-cta-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  background: var(--jabsewa-black);
+  border-radius: 14px;
+  padding: 28px;
+}
+
+.buyer-cta-strip h2 {
+  color: var(--jabsewa-white);
+  font-size: 1.2rem;
+}
+
+.buyer-cta-strip p {
+  color: #a9b1b8;
+  font-size: 0.88rem;
+  margin-top: 4px;
+}
+
+/* ==================== SELLER ONBOARDING ==================== */
+.onboarding-main {
+  flex: 1;
+  width: min(720px, 100%);
+  margin: 0 auto;
+  padding: 48px 20px 64px;
+}
+
+.onboarding-card {
+  background: var(--jabsewa-white);
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 14px;
+  padding: 36px;
+}
+
+.onboarding-card h1 {
+  font-size: clamp(1.5rem, 3vw, 1.9rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 10px;
+}
+
+.onboarding-lede {
+  font-size: 0.93rem;
+  line-height: 1.6;
+  color: var(--jabsewa-text-soft);
+  max-width: 560px;
+}
+
+.onboarding-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 24px 0 28px;
+  padding: 18px;
+  background: var(--jabsewa-bg);
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 10px;
+}
+
+.onboarding-step {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.onboarding-step .benefit-icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.onboarding-step strong {
+  display: block;
+  font-size: 0.9rem;
+}
+
+.onboarding-step p {
+  font-size: 0.83rem;
+  color: var(--jabsewa-text-soft);
+  margin-top: 2px;
+  line-height: 1.5;
+}
+
+@media (max-width: 640px) {
+  .buyer-page {
+    width: min(100%, calc(100% - 24px));
+    padding: 28px 0 48px;
+  }
+
+  .buyer-section {
+    padding: 18px 14px;
+  }
+
+  .buyer-wish-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .buyer-cta-strip {
+    padding: 22px 18px;
+  }
+
+  .onboarding-main {
+    padding: 32px 16px 48px;
+  }
+
+  .onboarding-card {
+    padding: 24px 18px;
+  }
+}
+
+/* Seller navbar: ringkas di layar kecil */
+@media (max-width: 768px) {
+  .seller-store-name {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .seller-navbar .nav-mode-btn {
+    padding: 6px 8px;
+    font-size: 0.72rem;
+  }
+}
+
+/* ==========================================================================
+   DESIGN SYSTEM v2 — ACTIVE NAV, SELLER CTA, PROFILE
+   ========================================================================== */
+
+/* Active nav link → biru primary */
+.nav-link.is-active {
+  color: var(--jabsewa-primary);
+  font-weight: 700;
+}
+
+/* CTA seller = aksen kuning (pembeda dari CTA sewa yang biru) */
+.seller-cta-btn {
+  background: var(--jabsewa-accent) !important;
+  color: var(--jabsewa-black) !important;
+}
+
+.seller-cta-btn:hover {
+  background: var(--jabsewa-accent-deep) !important;
+  color: var(--jabsewa-black) !important;
+}
+
+.onboarding-form .auth-submit-btn {
+  background: var(--jabsewa-accent);
+  color: var(--jabsewa-black);
+}
+
+.onboarding-form .auth-submit-btn:hover {
+  background: var(--jabsewa-accent-deep);
+  color: var(--jabsewa-black);
+}
+
+/* ==================== PROFILE PAGE ==================== */
+.profile-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 4px;
+  border-bottom: 1px solid var(--jabsewa-border);
+}
+
+.profile-row:last-child {
+  border-bottom: none;
+}
+
+.profile-row-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--jabsewa-text-soft);
+}
+
+.profile-row-value {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--jabsewa-text);
+}
+
+.profile-mode-switch {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.profile-mode-switch .nav-mode-btn {
+  border: 1px solid var(--jabsewa-border);
+  background: var(--jabsewa-white);
+  padding: 10px 18px;
+  font-size: 0.88rem;
+}
+
+.profile-mode-switch .nav-mode-btn.is-active {
+  border-color: var(--jabsewa-primary);
+}
+
+.profile-logout-btn {
+  background: transparent;
+  color: #dc2626;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 9px 16px;
+  border: 1px solid #f3c1c1;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.profile-logout-btn:hover {
+  background: #fef2f2;
+}
+
+@media (max-width: 640px) {
+  .profile-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+
+/* ==========================================================================
+   REDESIGN v3 — LAYOUT CLEANUP (override kaskade di akhir file)
+   ========================================================================== */
+
+/* Footer wajib hitam, sederhana */
+.footer {
+  background: #000000;
+  border-top: 1px solid #1f1f1f;
+}
+
+.footer-bottom {
+  border-top-color: #1f1f1f;
+}
+
+/* Spacing section landing yang konsisten */
+.category-section,
+.featured-section,
+.how-section,
+.seller-cta {
+  padding: 72px 0;
+}
+
+.section-subtitle {
+  color: var(--jabsewa-text-soft);
+  font-size: 0.92rem;
+  margin-top: 6px;
+}
+
+/* Landing: hero lebih ringkas */
+.hero-subtitle {
+  font-size: 0.98rem;
+  line-height: 1.6;
+  color: var(--jabsewa-text-soft);
+  margin: 14px 0 20px;
+  max-width: 520px;
+}
+
+.hero-seller-link {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-top: 20px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--jabsewa-primary);
+  cursor: pointer;
+}
+
+.hero-seller-link:hover {
+  text-decoration: underline;
+}
+
+/* Kategori: card bersih, tanpa tag/count */
+.category-card {
+  padding: 0;
+  text-align: left;
+  width: 100%;
+}
+
+.category-image-container {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+.category-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.category-card-content {
+  padding: 16px;
+}
+
+.category-name {
+  font-size: 1.02rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.category-desc {
+  font-size: 0.84rem;
+  color: var(--jabsewa-text-soft);
+  margin-bottom: 12px;
+}
+
+.featured-explore-link {
+  background: transparent;
+  padding: 0;
+}
+
+/* Cara kerja: langkah polos dengan divider, bukan card */
+.step-item {
+  border-top: 2px solid var(--jabsewa-border);
+  padding-top: 16px;
+}
+
+.step-number {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--jabsewa-primary);
+  margin-bottom: 10px;
+}
+
+.step-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.step-description {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--jabsewa-text-soft);
+}
+
+/* Explore: header ringkas + thumbnail asli */
+.consumer-hero {
+  padding: 32px 20px 28px;
+}
+
+.consumer-hero-title {
+  font-size: clamp(1.45rem, 2.4vw, 1.9rem);
+}
+
+.consumer-hero-kicker {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--jabsewa-primary);
+  margin-bottom: 8px;
+}
+
+.item-badge-container {
+  overflow: hidden;
+  padding: 0;
+}
+
+.browser-item-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Seller items: gambar asli */
+.item-image-box {
+  overflow: hidden;
+}
+
+.item-image-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Buyer wishlist: thumbnail gambar */
+.buyer-wish-thumb {
+  display: block;
+  object-fit: cover;
+}
+
+/* Product detail: layout asimetris + divider */
+.product-detail-grid {
+  grid-template-columns: 1.1fr 0.9fr;
+}
+
+.product-main-image {
+  width: 100%;
+  height: 420px;
+  object-fit: cover;
+  display: block;
+  padding: 0;
+}
+
+.detail-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 18px 0;
+}
+
+.detail-price-row strong {
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: var(--jabsewa-black);
+}
+
+.detail-price-row span {
+  color: var(--jabsewa-text-soft);
+  font-size: 0.9rem;
+}
+
+.product-detail-sections {
+  margin-top: 16px;
+  border-top: 1px solid var(--jabsewa-border);
+}
+
+.product-info-block {
+  padding: 28px 0;
+  border-bottom: 1px solid var(--jabsewa-border);
+  max-width: 720px;
+}
+
+.product-info-block:last-child {
+  border-bottom: none;
+}
+
+.product-info-block h2 {
+  font-size: 1.02rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.product-info-block p {
+  font-size: 0.93rem;
+  line-height: 1.7;
+  color: var(--jabsewa-text-soft);
+}
+
+/* Profile: satu panel, blok dipisah divider */
+.profile-block {
+  padding: 4px 0;
+}
+
+.profile-block-title {
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--jabsewa-text-soft);
+  margin-bottom: 12px;
+}
+
+.profile-block-desc {
+  font-size: 0.88rem;
+  color: var(--jabsewa-text-soft);
+  margin-bottom: 14px;
+}
+
+.profile-divider {
+  height: 1px;
+  background: var(--jabsewa-border);
+  margin: 20px 0;
+}
+
+/* ==========================================================================
+   DESIGN SYSTEM v4 — FINAL PASS
+   Palet: #091540 fondasi · #1B2CC1 interaksi · #FFD758 aksen · #000 footer
+   Tanpa gradien, tanpa glow, tanpa dekorasi.
+   ========================================================================== */
+
+/* --- Landing hero: dua kolom seimbang, satu titik fokus visual --- */
+.hero-inner {
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 64px;
+}
+
+.hero-copy h1 {
+  font-size: clamp(1.7rem, 3vw, 2.35rem);
+  line-height: 1.18;
+}
+
+.hero-title-accent {
+  color: var(--jabsewa-primary);
+}
+
+.hero-showcase {
+  position: relative;
+  align-self: center;
+}
+
+.hero-visual {
+  margin: 0;
+  background: var(--jabsewa-white);
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(9, 21, 64, 0.07);
+}
+
+.hero-visual-img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+}
+
+.hero-visual-caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 18px;
+  border-top: 1px solid var(--jabsewa-border);
+}
+
+.hero-visual-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.hero-visual-info strong {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--jabsewa-black);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hero-visual-info span {
+  font-size: 0.78rem;
+  color: var(--jabsewa-text-soft);
+}
+
+.hero-visual-price {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.hero-visual-price strong {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--jabsewa-primary);
+}
+
+.hero-visual-price span {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--jabsewa-text-soft);
+}
+
+@media (max-width: 980px) {
+  .hero-inner {
+    gap: 36px;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-visual-img {
+    aspect-ratio: 16 / 10;
+  }
+}
+
+/* --- Kartu listing: ringkas, fokus informasi --- */
+.listing-image-wrap {
+  padding: 0;
+  border: none;
+  background: #e2e8f0;
+  cursor: pointer;
+  width: 100%;
+  display: block;
+}
+
+.listing-category {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--jabsewa-text-soft);
+  margin-bottom: 4px;
+}
+
+.listing-location {
+  font-size: 0.8rem;
+  color: var(--jabsewa-text-soft);
+  margin-bottom: 14px;
+}
+
+.listing-card:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.listing-card:hover .listing-image {
+  opacity: 0.92;
+}
+
+/* --- CTA seller: satu band, tanpa kartu aksi --- */
+.seller-cta-box {
+  grid-template-columns: 1.4fr 0.6fr;
+  gap: 32px;
+  padding: 40px 44px;
+  border-radius: 12px;
+}
+
+.seller-cta-title {
+  font-size: clamp(1.3rem, 2.2vw, 1.7rem);
+  line-height: 1.25;
+  margin-bottom: 10px;
+}
+
+.seller-cta-title-accent {
+  display: block;
+  color: #FFD758;
+}
+
+.seller-cta-desc {
+  margin-bottom: 0;
+  max-width: 440px;
+}
+
+.seller-cta-action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.seller-cta-action .action-card-footnote {
+  color: #8b93a7;
+  margin-top: 0;
+}
+
+.seller-cta-btn {
+  width: auto;
+  white-space: nowrap;
+}
+
+@media (max-width: 980px) {
+  .seller-cta-box {
+    grid-template-columns: 1fr;
+    padding: 32px 28px;
+  }
+}
+
+/* --- Detail barang: fakta barang + aksesibilitas status --- */
+.detail-availability {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--jabsewa-text-soft);
+  margin-bottom: 16px;
+}
+
+.availability-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.availability-dot.is-available {
+  background: #16a34a;
+}
+
+.availability-dot.is-rented {
+  background: #94a3b8;
+}
+
+.detail-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  padding: 16px 0;
+  border-top: 1px solid var(--jabsewa-border);
+  border-bottom: 1px solid var(--jabsewa-border);
+  margin: 20px 0 24px;
+}
+
+.detail-fact dt {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--jabsewa-text-soft);
+  margin-bottom: 3px;
+}
+
+.detail-fact dd {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--jabsewa-black);
+}
+
+@media (max-width: 640px) {
+  .detail-facts {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+/* --- Dashboard seller: daftar praktis, tanpa metrik palsu --- */
+.dashboard-empty-note {
+  font-size: 0.88rem;
+  color: var(--jabsewa-text-soft);
+  padding: 8px 0;
+}
+
+.order-sub {
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 500;
+  color: var(--jabsewa-text-soft);
+  margin-top: 2px;
+}
+
+.dashboard-item-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dashboard-item-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid #EDEFF7;
+}
+
+.dashboard-item-row:last-child {
+  border-bottom: none;
+}
+
+.dashboard-item-thumb {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--jabsewa-border);
+  flex-shrink: 0;
+}
+
+.dashboard-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.dashboard-item-info strong {
+  font-size: 0.9rem;
+  color: var(--jabsewa-black);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dashboard-item-info span {
+  font-size: 0.76rem;
+  color: var(--jabsewa-text-soft);
+}
+
+.dashboard-item-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.dashboard-item-side strong {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--jabsewa-black);
+}
+
+.dash-status {
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.dash-status.is-available {
+  color: #15803d;
+}
+
+.dash-status.is-rented {
+  color: #b45309;
+}
+
+/* --- Seller items: filter bar + form lebar --- */
+.search-box-solid {
+  flex: 1;
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 0.84rem;
+}
+
+.filter-select-solid {
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 0.84rem;
+  background: #ffffff;
+}
+
+.form-wide {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--jabsewa-text);
+}
+
+.form-wide textarea {
+  padding: 10px 12px;
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background: var(--jabsewa-soft);
+  color: var(--jabsewa-black);
+  font-family: inherit;
+  resize: vertical;
+}
+
+/* --- Nomor langkah (onboarding seller) --- */
+.benefit-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--jabsewa-black);
+  color: #ffffff;
+  display: inline-grid;
+  place-items: center;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+/* --- Footer hitam, final --- */
+.footer {
+  background: #000000;
+  border-top: none;
+  padding: 48px 0 24px;
+}
+
+.footer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-logo-img {
+  width: 34px;
+  height: 34px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.footer-logo .logo-text {
+  color: #ffffff;
+}
+
+.footer-bottom-links span {
+  color: #4b5563;
+}
+
+/* --- Navbar: tombol Daftar (CTA primer) --- */
+.nav-register {
+  background: var(--jabsewa-primary);
+  color: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 9px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--jabsewa-primary);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.nav-register:hover {
+  background: var(--jabsewa-blue-deep);
+}
+
+.nav-mobile-auth {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.nav-mobile-auth .nav-mobile-login {
+  flex: 1;
+  margin-top: 0;
+  display: inline-flex !important;
+  justify-content: center;
+}
+
+.nav-mobile-auth .nav-mobile-register {
+  flex: 1;
+  display: inline-flex;
+  justify-content: center;
+  font-size: 0.85rem;
 }

@@ -1,6 +1,14 @@
-import logo from '../../assets/logo-jabsewa.jpeg';
+import { useAuth } from '../../auth/AuthContext'
+import UserMenu from '../UserMenu'
+import logo from '../../assets/logo-jabsewa.jpeg'
 
-export default function SellerNavbar({ onNavigate }) {
+/*
+ * Navbar seller center. Menampilkan mode aktif (Seller), tombol pindah
+ * ke mode Penyewa, nama toko, dan menu profil (keluar).
+ */
+export default function SellerNavbar({ onNavigate, currentPage = 'seller' }) {
+  const { user } = useAuth()
+
   return (
     <nav className="seller-navbar">
       <div className="seller-navbar-container">
@@ -13,32 +21,26 @@ export default function SellerNavbar({ onNavigate }) {
         </button>
 
         <div className="seller-navbar-actions">
-          <button className="seller-marketplace-link" onClick={() => onNavigate('consumer')}>
-            Lihat marketplace
-          </button>
-          <div className="seller-notifications">
-            <button className="notification-btn" title="Notifikasi">
-              🔔
-              <span className="notification-badge">3</span>
+          <div className="nav-mode-switch" role="group" aria-label="Ganti mode">
+            <button
+              type="button"
+              className={`nav-mode-btn ${currentPage === 'consumer' ? 'is-active' : ''}`}
+              onClick={() => onNavigate('consumer')}
+            >
+              Mode Penyewa
+            </button>
+            <button
+              type="button"
+              className={`nav-mode-btn ${currentPage === 'seller' ? 'is-active' : ''}`}
+              onClick={() => onNavigate('seller')}
+            >
+              Mode Seller
             </button>
           </div>
-
-          <div className="seller-profile">
-            <button className="profile-btn" title="Profile">👤</button>
-            <div className="profile-dropdown-menu">
-              <div className="dropdown-header">
-                <span className="dropdown-name">Toko Adit</span>
-                <span className="dropdown-email">adit@example.com</span>
-              </div>
-              <div className="dropdown-divider"></div>
-              <a href="#profile" className="dropdown-item">Profil Toko</a>
-              <a href="#settings" className="dropdown-item">Pengaturan</a>
-              <div className="dropdown-divider"></div>
-              <a href="#logout" className="dropdown-item text-danger">Log Out</a>
-            </div>
-          </div>
+          <span className="seller-store-name">{user?.seller?.storeName || user?.name}</span>
+          <UserMenu onLogout={() => onNavigate('home')} onNavigate={onNavigate} />
         </div>
       </div>
     </nav>
-  );
+  )
 }

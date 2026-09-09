@@ -1,92 +1,48 @@
 import logo from '../assets/logo-jabsewa.jpeg'
 
 export default function Footer({ onNavigate }) {
+  const go = (page) => (e) => {
+    e.preventDefault()
+    if (onNavigate) onNavigate(page)
+  }
+
   return (
-    <footer className="footer" id="tentang">
+    <footer className="footer">
       <div className="footer-inner">
         <div className="footer-top">
           <div className="footer-brand">
-            <div className="logo footer-logo">
-              <img src={logo} alt="JabSewa logo" className="logo-image" />
+            <div className="footer-logo">
+              <img src={logo} alt="JabSewa logo" className="footer-logo-img" />
               <span className="logo-text">JabSewa</span>
             </div>
             <p>
               Barang untuk nyoba atau event. Sewa aja.
             </p>
-            <div className="socials">
-              <a href="#" aria-label="Instagram">IG</a>
-              <a href="#" aria-label="Facebook">FB</a>
-              <a href="#" aria-label="X">X</a>
-              <a href="#" aria-label="TikTok">TT</a>
-            </div>
           </div>
 
           <div className="footer-column">
             <h4>Navigasi</h4>
             <ul>
-              <li>
-                <a
-                  href="/about"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (onNavigate) onNavigate('about');
-                  }}
-                >
-                  Tentang Kami
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/consumer"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (onNavigate) onNavigate('consumer');
-                  }}
-                >
-                  Jelajahi Semua Barang
-                </a>
-              </li>
-              <li><a href="#kategori">Kategori Rental</a></li>
-              <li><a href="#cara-kerja">Cara Kerja</a></li>
+              <li><a href="/about" onClick={go('about')}>Tentang Kami</a></li>
+              <li><a href="/consumer" onClick={go('consumer')}>Jelajahi Barang</a></li>
+              <li><a href="/seller" onClick={go('seller')}>Sewakan Barang</a></li>
             </ul>
           </div>
 
           <div className="footer-column">
-            <h4>Untuk Pemilik (Seller)</h4>
+            <h4>Bantuan</h4>
             <ul>
-              <li>
-                <a
-                  href="/seller"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (onNavigate) onNavigate('seller');
-                  }}
-                >
-                  Daftar Jadi Seller
-                </a>
-              </li>
-              <li><a href="#cara-kerja">Panduan Deposit Aman</a></li>
-              <li><a href="#faq">Aturan & Kebijakan Sewa</a></li>
-              <li><a href="#support">Pusat Bantuan</a></li>
-            </ul>
-          </div>
-
-          <div className="footer-column footer-contact">
-            <h4>Hubungi Kami</h4>
-            <ul>
-              <li><span>Email: support@jabsewa.id</span></li>
-              <li><span>WhatsApp: +62 812-3456-7890</span></li>
-              <li><span>Lokasi: Jakarta Selatan, DKI Jakarta</span></li>
-              <li><span>Senin – Minggu (08.00 – 21.00 WIB)</span></li>
+              <li><span>support@jabsewa.id</span></li>
+              <li><span>WA: +62 812-3456-7890</span></li>
             </ul>
           </div>
         </div>
 
         <div className="footer-bottom">
-          <span>© 2026 JabSewa Indonesia · Seluruh hak cipta dilindungi.</span>
+          <span>© 2026 JabSewa Indonesia</span>
           <div className="footer-bottom-links">
             <a href="#terms">Syarat & Ketentuan</a>
-            <span>•</span>
+            <span>·</span>
             <a href="#privacy">Kebijakan Privasi</a>
           </div>
         </div>

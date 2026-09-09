@@ -16,13 +16,6 @@ export default function AboutUs() {
           </div>
         </div>
 
-        {/* Small visual strip */}
-        <div className="about-photo-strip" aria-hidden="true">
-          <div className="about-photo blue">📷</div>
-          <div className="about-photo yellow">⛺</div>
-          <div className="about-photo">🎮</div>
-        </div>
-
         {/* Why */}
         <div className="about-section-block">
           <p className="about-kicker">Kenapa Ada</p>

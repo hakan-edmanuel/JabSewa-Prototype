@@ -1,29 +1,33 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --jabsewa-primary: #3D84D8;
-  --jabsewa-secondary: #191c1f;
-  --jabsewa-accent: #F6C945;
-  --jabsewa-accent-soft: #fdf3d3;
-  --jabsewa-blue: #3D84D8;
-  --jabsewa-blue-deep: #2c6ab4;
-  --jabsewa-black: #191c1f;
+  /* Brand color system: dark navy / primary blue / accent yellow */
+  --jabsewa-primary: #1B2CC1;
+  --jabsewa-secondary: #091540;
+  --jabsewa-accent: #FFD758;
+  --jabsewa-accent-soft: #FFF5D8;
+  --jabsewa-accent-deep: #F0C33C;
+  --jabsewa-blue: #1B2CC1;
+  --jabsewa-blue-deep: #141FA6;
+  --jabsewa-black: #091540;
   --jabsewa-white: #ffffff;
-  --jabsewa-soft: #f5f4f0;
-  --jabsewa-bg: #faf9f6;
-  --jabsewa-text: #191c1f;
-  --jabsewa-text-soft: #5b6167;
-  --jabsewa-border: #e6e4de;
-  --jabsewa-dark-blue: #191c1f;
-  --jabsewa-medium-blue: #3D84D8;
-  --jabsewa-tertiary-blue: #2c6ab4;
-  --jabsewa-light-blue: #eaf3fb;
-  --light-bg: #faf9f6;
-  --border-color: #e6e4de;
-  --text-dark: #191c1f;
-  --text-light: #5b6167;
-  --accent-dark: #191c1f;
-  --shadow-soft: 0 2px 8px rgba(25, 28, 31, 0.05);
+  --jabsewa-soft: #F4F5FB;
+  --jabsewa-bg: #FAFAFE;
+  --jabsewa-text: #101A3C;
+  --jabsewa-text-soft: #5A6384;
+  --jabsewa-border: #E3E6F0;
+  --jabsewa-dark-blue: #091540;
+  --jabsewa-medium-blue: #1B2CC1;
+  --jabsewa-tertiary-blue: #141FA6;
+  --jabsewa-light-blue: #E9ECFB;
+  --jabsewa-dark-surface: #0C1A50;
+  --jabsewa-dark-border: #24306A;
+  --light-bg: #FAFAFE;
+  --border-color: #E3E6F0;
+  --text-dark: #101A3C;
+  --text-light: #5A6384;
+  --accent-dark: #091540;
+  --shadow-soft: 0 2px 8px rgba(9, 21, 64, 0.06);
   --font-sans: 'Plus Jakarta Sans', 'Manrope', 'Segoe UI', sans-serif;
   --font-display: 'Plus Jakarta Sans', Georgia, serif;
 }
@@ -77,7 +81,7 @@ button {
 }
 
 :focus-visible {
-  outline: 3px solid rgba(61, 132, 216, 0.55);
+  outline: 3px solid rgba(27, 44, 193, 0.4);
   outline-offset: 3px;
 }
 
@@ -91,5 +95,5 @@ a {
 }
 
 ::selection {
-  background: rgba(61, 132, 216, 0.2);
+  background: rgba(27, 44, 193, 0.15);
 }
