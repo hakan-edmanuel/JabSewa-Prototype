@@ -2,7 +2,7 @@ export default function SellerCTA({ onNavigate }) {
   return (
     <section className="seller-cta">
       <div className="container">
-        <div className="seller-cta-box">
+        <div className="seller-cta-box texture-dots">
           <div className="seller-cta-content">
             <h2 className="seller-cta-title">
               Punya barang yang jarang dipakai?

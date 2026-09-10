@@ -72,7 +72,7 @@
 }
 
 .eyebrow-light {
-  color: #FFD758;
+  color: var(--jabsewa-primary);
 }
 
 .split-heading {
@@ -143,7 +143,7 @@
 
 .secondary-button:hover {
   background: var(--jabsewa-soft);
-  border-color: #cbd5e1;
+  border-color: var(--jabsewa-border-strong);
 }
 
 /* --- Main Navbar --- */
@@ -329,7 +329,7 @@
 }
 
 .hero-search-input::placeholder {
-  color: #94a3b8;
+  color: var(--text-faint);
 }
 
 .hero-search-select {
@@ -377,8 +377,8 @@
 }
 
 .quick-tag-pill:hover {
-  background: #e2e8f0;
-  border-color: #cbd5e1;
+  background: var(--jabsewa-placeholder);
+  border-color: var(--jabsewa-border-strong);
 }
 
 /* Hero visual — ditata di bagian DESIGN SYSTEM v4 di akhir file */
@@ -415,7 +415,7 @@
 .category-image-container {
   position: relative;
   height: 160px;
-  background: #e2e8f0;
+  background: var(--jabsewa-placeholder);
 }
 
 .category-image {
@@ -428,7 +428,7 @@
   position: absolute;
   top: 10px;
   left: 10px;
-  background: #091540;
+  background: var(--jabsewa-ink);
   color: #ffffff;
   font-size: 0.68rem;
   font-weight: 700;
@@ -462,10 +462,10 @@
   font-size: 0.72rem;
   font-weight: 700;
   color: var(--jabsewa-primary);
-  background: #E9ECFB;
+  background: var(--jabsewa-primary-soft);
   padding: 2px 7px;
   border-radius: 4px;
-  border: 1px solid #D5DAF5;
+  border: 1px solid var(--jabsewa-primary-line);
 }
 
 .category-desc {
@@ -484,7 +484,7 @@
   font-weight: 700;
   color: var(--jabsewa-primary);
   padding-top: 10px;
-  border-top: 1px solid #EDEFF7;
+  border-top: 1px solid var(--jabsewa-line-soft);
 }
 
 .category-arrow {
@@ -532,7 +532,7 @@
 .listing-image-wrap {
   position: relative;
   height: 200px;
-  background: #e2e8f0;
+  background: var(--jabsewa-placeholder);
 }
 
 .listing-image {
@@ -557,7 +557,7 @@
   position: absolute;
   bottom: 12px;
   left: 12px;
-  background: #091540;
+  background: var(--jabsewa-ink);
   color: #ffffff;
   font-size: 0.68rem;
   font-weight: 700;
@@ -613,8 +613,8 @@
   justify-content: space-between;
   font-size: 0.76rem;
   padding: 8px 0;
-  border-top: 1px solid #EDEFF7;
-  border-bottom: 1px solid #EDEFF7;
+  border-top: 1px solid var(--jabsewa-line-soft);
+  border-bottom: 1px solid var(--jabsewa-line-soft);
   margin-bottom: 14px;
 }
 
@@ -627,9 +627,9 @@
 }
 
 .deposit-tag {
-  color: #64748b;
+  color: var(--jabsewa-text-soft);
   font-weight: 600;
-  background: #EDEFF7;
+  background: var(--jabsewa-soft);
   padding: 2px 6px;
   border-radius: 4px;
 }
@@ -715,7 +715,7 @@
   width: 38px;
   height: 38px;
   border-radius: 8px;
-  background: #091540;
+  background: var(--jabsewa-ink);
   color: #ffffff;
   font-size: 0.92rem;
   font-weight: 800;
@@ -742,7 +742,7 @@
   padding: 10px 12px;
   background: var(--jabsewa-bg);
   border-radius: 6px;
-  border: 1px solid #EDEFF7;
+  border: 1px solid var(--jabsewa-line-soft);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -755,7 +755,7 @@
 .step-tip-text {
   font-size: 0.76rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--jabsewa-text);
 }
 /* --- Seller CTA Box --- */
 .seller-cta {
@@ -764,7 +764,7 @@
 }
 
 .seller-cta-box {
-  background: #091540;
+  background: var(--jabsewa-ink);
   color: #ffffff;
   border-radius: 16px;
   padding: 48px;
@@ -784,7 +784,7 @@
 
 .seller-cta-desc {
   font-size: 0.94rem;
-  color: #94a3b8;
+  color: var(--text-faint);
   line-height: 1.65;
   margin-bottom: 24px;
 }
@@ -804,13 +804,13 @@
 
 .action-card-footnote {
   font-size: 0.72rem;
-  color: #64748b;
+  color: var(--jabsewa-text-soft);
   margin-top: 10px;
 }
 
 /* --- Main Footer --- */
 .footer {
-  background: #091540;
+  background: var(--jabsewa-ink);
   color: #ffffff;
   padding: 56px 0 28px;
   border-top: 1px solid var(--jabsewa-dark-border);
@@ -830,7 +830,7 @@
 
 .footer-brand p {
   font-size: 0.84rem;
-  color: #94a3b8;
+  color: var(--text-faint);
   line-height: 1.65;
   margin-top: 12px;
   margin-bottom: 18px;
@@ -844,7 +844,7 @@
 .footer-column h4 {
   font-size: 0.8rem;
   font-weight: 700;
-  color: #EDEFF7;
+  color: var(--jabsewa-text-soft);
   letter-spacing: 0.05em;
   text-transform: uppercase;
   margin-bottom: 16px;
@@ -860,7 +860,7 @@
 .footer-column a,
 .footer-column span {
   font-size: 0.82rem;
-  color: #94a3b8;
+  color: var(--text-faint);
   transition: color 0.15s ease;
 }
 
@@ -875,7 +875,7 @@
   padding-top: 24px;
   border-top: 1px solid var(--jabsewa-dark-border);
   font-size: 0.78rem;
-  color: #64748b;
+  color: var(--jabsewa-text-soft);
   flex-wrap: wrap;
   gap: 12px;
 }
@@ -887,7 +887,7 @@
 }
 
 .footer-bottom-links a {
-  color: #94a3b8;
+  color: var(--text-faint);
 }
 
 .footer-bottom-links a:hover {
@@ -1101,7 +1101,7 @@
 .input-prefix .prefix {
   padding: 0 12px;
   color: var(--jabsewa-text-soft);
-  background: #EDEFF7;
+  background: var(--jabsewa-soft);
   border-right: 1px solid var(--jabsewa-border);
   font-weight: 600;
   display: flex;
@@ -1169,14 +1169,14 @@
 }
 
 .item-card-solid:hover {
-  border-color: #cbd5e1;
+  border-color: var(--jabsewa-border-strong);
   box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
 }
 
 .item-image-box {
   position: relative;
   height: 150px;
-  background: #EDEFF7;
+  background: var(--jabsewa-soft);
   display: grid;
   place-items: center;
   font-size: 3rem;
@@ -1208,13 +1208,13 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #cbd5e1;
+  background: var(--jabsewa-border-strong);
   flex-shrink: 0;
 }
 
 .item-status-chip.status-aktif .status-dot-small { background: #16a34a; }
 .item-status-chip.status-tersewa .status-dot-small { background: #ca8a04; }
-.item-status-chip.status-nonaktif .status-dot-small { background: #94a3b8; }
+.item-status-chip.status-nonaktif .status-dot-small { background: var(--text-faint); }
 
 .item-status-chip.status-tersewa {
   background: var(--jabsewa-accent);
@@ -1312,7 +1312,7 @@
   text-align: center;
   padding: 56px 24px;
   background: var(--jabsewa-white);
-  border: 1px dashed var(--jabsewa-border);
+  border: 1px dashed var(--jabsewa-border-strong);
   border-radius: 12px;
 }
 
@@ -1590,7 +1590,7 @@
   width: 38px;
   height: 38px;
   border-radius: 8px;
-  background: #EDEFF7;
+  background: var(--jabsewa-soft);
   border: 1px solid var(--jabsewa-border);
   display: grid;
   place-items: center;
@@ -1657,7 +1657,7 @@
 
 .consumer-search-icon {
   font-size: 1rem;
-  color: #64748b;
+  color: var(--jabsewa-text-soft);
 }
 
 .consumer-search-input {
@@ -1696,7 +1696,7 @@
 }
 
 .suggestion-tag {
-  background: #EDEFF7;
+  background: var(--jabsewa-soft);
   border: 1px solid var(--jabsewa-border);
   color: var(--jabsewa-black);
   padding: 3px 10px;
@@ -1728,7 +1728,7 @@
 .filter-section {
   margin-bottom: 22px;
   padding-bottom: 18px;
-  border-bottom: 1px solid #EDEFF7;
+  border-bottom: 1px solid var(--jabsewa-line-soft);
 }
 
 .filter-title {
@@ -1762,19 +1762,19 @@
 
 .filter-option:hover {
   background: var(--jabsewa-bg);
-  border-color: #cbd5e1;
+  border-color: var(--jabsewa-border-strong);
 }
 
 .filter-option.active {
-  background: #091540;
-  border-color: #091540;
+  background: var(--jabsewa-ink);
+  border-color: var(--jabsewa-ink);
   color: #ffffff;
 }
 
 .btn-reset-filters {
   width: 100%;
   padding: 8px;
-  background: #EDEFF7;
+  background: var(--jabsewa-soft);
   border: 1px solid var(--jabsewa-border);
   border-radius: 6px;
   font-size: 0.8rem;
@@ -1853,7 +1853,7 @@
 .item-badge-container {
   position: relative;
   height: 140px;
-  background: #EDEFF7;
+  background: var(--jabsewa-soft);
   border: none;
   display: flex;
   align-items: center;
@@ -1893,7 +1893,7 @@
   border: none;
   cursor: pointer;
   font-size: 1rem;
-  color: #94a3b8;
+  color: var(--text-faint);
 }
 
 .wishlist-button.is-saved {
@@ -1944,7 +1944,7 @@
   align-items: flex-end;
   justify-content: space-between;
   padding-top: 10px;
-  border-top: 1px solid #EDEFF7;
+  border-top: 1px solid var(--jabsewa-line-soft);
   gap: 8px;
 }
 
@@ -1981,7 +1981,7 @@
 
 .btn-icon-cart {
   padding: 6px 8px;
-  background: #EDEFF7;
+  background: var(--jabsewa-soft);
   border: 1px solid var(--jabsewa-border);
   border-radius: 6px;
   font-size: 0.78rem;
@@ -2034,7 +2034,7 @@
 
 .product-main-image {
   height: 320px;
-  background: #EDEFF7;
+  background: var(--jabsewa-soft);
   border: 1px solid var(--jabsewa-border);
   border-radius: 12px;
   display: grid;
@@ -2092,7 +2092,7 @@
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: #091540;
+  background: var(--jabsewa-ink);
   color: #ffffff;
   display: grid;
   place-items: center;
@@ -2112,7 +2112,7 @@
 .seller-summary .btn-small {
   margin-left: auto;
   padding: 6px 12px;
-  background: #EDEFF7;
+  background: var(--jabsewa-soft);
   border: 1px solid var(--jabsewa-border);
   border-radius: 6px;
   font-size: 0.78rem;
@@ -2252,7 +2252,7 @@
   font-size: 0.65rem;
   font-weight: 800;
   color: var(--jabsewa-primary);
-  background: #E9ECFB;
+  background: var(--jabsewa-primary-soft);
   padding: 2px 6px;
   border-radius: 4px;
   margin-left: 6px;
@@ -2278,7 +2278,7 @@
   width: 38px;
   height: 38px;
   border-radius: 8px;
-  background: #EDEFF7;
+  background: var(--jabsewa-soft);
   border: 1px solid var(--jabsewa-border);
   display: grid;
   place-items: center;
@@ -2342,19 +2342,19 @@
 }
 
 .seller-menu-item:hover {
-  background: #EDEFF7;
+  background: var(--jabsewa-soft);
   color: var(--jabsewa-black);
 }
 
 .seller-menu-item.active {
-  background: #091540;
+  background: var(--jabsewa-ink);
   color: #ffffff;
 }
 
 .seller-sidebar-footer {
   margin-top: 16px;
   padding-top: 12px;
-  border-top: 1px solid #EDEFF7;
+  border-top: 1px solid var(--jabsewa-line-soft);
 }
 
 .seller-stats-mini {
@@ -2365,7 +2365,7 @@
 
 .mini-stat {
   background: var(--jabsewa-bg);
-  border: 1px solid #EDEFF7;
+  border: 1px solid var(--jabsewa-line-soft);
   border-radius: 8px;
   padding: 8px;
   text-align: center;
@@ -2423,7 +2423,7 @@
   width: 36px;
   height: 36px;
   border-radius: 8px;
-  background: #EDEFF7;
+  background: var(--jabsewa-soft);
   display: grid;
   place-items: center;
   font-size: 1.1rem;
@@ -2504,7 +2504,7 @@
 .orders-table td {
   padding: 12px;
   font-size: 0.84rem;
-  border-bottom: 1px solid #EDEFF7;
+  border-bottom: 1px solid var(--jabsewa-line-soft);
 }
 
 .status-badge {
@@ -2532,8 +2532,8 @@
 
 .status-badge.status-cancelled,
 .status-badge.status-nonaktif {
-  background: #EDEFF7;
-  color: #64748b;
+  background: var(--jabsewa-soft);
+  color: var(--jabsewa-text-soft);
 }
 
 .quick-actions {
@@ -2557,7 +2557,7 @@
 }
 
 .action-btn:hover {
-  background: #E9ECFB;
+  background: var(--jabsewa-primary-soft);
   border-color: #bfdbfe;
   color: var(--jabsewa-primary);
 }
@@ -2602,7 +2602,7 @@
 
 .item-image-large {
   height: 120px;
-  background: #EDEFF7;
+  background: var(--jabsewa-soft);
   display: grid;
   place-items: center;
   font-size: 3rem;
@@ -2667,7 +2667,7 @@
   display: flex;
   flex-direction: column;
   padding: 10px 20px;
-  border-left: 1px solid #f1f5f9;
+  border-left: 1px solid var(--jabsewa-line-soft);
 }
 
 .summary-item:first-child {
@@ -2741,8 +2741,8 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
   padding: 14px 0;
-  border-top: 1px solid #f1f5f9;
-  border-bottom: 1px solid #f1f5f9;
+  border-top: 1px solid var(--jabsewa-line-soft);
+  border-bottom: 1px solid var(--jabsewa-line-soft);
 }
 
 .detail-label {
@@ -2750,7 +2750,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #94a3b8;
+  color: var(--text-faint);
 }
 
 .detail-value {
@@ -2787,7 +2787,7 @@
 
 .btn-small.btn-secondary:hover {
   background: var(--jabsewa-soft);
-  border-color: #cbd5e1;
+  border-color: var(--jabsewa-border-strong);
 }
 
 .btn-small.btn-primary {
@@ -2821,15 +2821,15 @@
 }
 
 .status-badge.status-accepted {
-  background: #D5DAF5;
-  color: #1d4ed8;
+  background: var(--jabsewa-primary-soft);
+  color: var(--jabsewa-primary-text);
 }
 
 .empty-state {
   padding: 48px 20px;
   text-align: center;
   background: #ffffff;
-  border: 1px dashed var(--jabsewa-border);
+  border: 1px dashed var(--jabsewa-border-strong);
   border-radius: 10px;
   color: var(--jabsewa-text-soft);
   font-size: 0.9rem;
@@ -2923,13 +2923,13 @@
   display: grid;
   place-items: center;
   font-size: 2rem;
-  background: #EDEFF7;
-  border: 1px solid #EDEFF7;
+  background: var(--jabsewa-soft);
+  border: 1px solid var(--jabsewa-line-soft);
 }
 
 .about-photo.blue {
-  background: #E9ECFB;
-  border-color: #D5DAF5;
+  background: var(--jabsewa-primary-soft);
+  border-color: var(--jabsewa-primary-line);
 }
 
 .about-photo.yellow {
@@ -2979,7 +2979,7 @@
   align-items: flex-start;
   padding: 14px;
   background: var(--jabsewa-bg);
-  border: 1px solid #EDEFF7;
+  border: 1px solid var(--jabsewa-line-soft);
   border-radius: 10px;
 }
 
@@ -3023,7 +3023,7 @@
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  background: #091540;
+  background: var(--jabsewa-ink);
   color: #ffffff;
   font-weight: 800;
   font-size: 1rem;
@@ -3150,7 +3150,7 @@
 .auth-switch {
   margin-top: 18px;
   padding-top: 16px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--jabsewa-line-soft);
   font-size: 0.86rem;
   color: var(--jabsewa-text-soft);
   text-align: center;
@@ -3174,7 +3174,7 @@
   margin-top: 14px;
   font-size: 0.74rem;
   line-height: 1.5;
-  color: #94a3b8;
+  color: var(--text-faint);
   text-align: center;
 }
 
@@ -3533,7 +3533,7 @@
 }
 
 .seller-menu-item.active {
-  background: var(--jabsewa-primary) !important;
+  background: var(--jabsewa-ink) !important;
   color: #ffffff !important;
 }
 
@@ -3685,7 +3685,7 @@
 
 .nav-mode-btn.is-active {
   background: var(--jabsewa-light-blue);
-  color: var(--jabsewa-primary);
+  color: var(--jabsewa-primary-text);
   box-shadow: none;
 }
 
@@ -3712,11 +3712,11 @@
 }
 
 .nav-seller-cta:hover {
-  background: #F0C33C;
+  background: var(--jabsewa-ink-2);
 }
 
 .nav-link-accent {
-  color: var(--jabsewa-primary) !important;
+  color: var(--jabsewa-primary-text) !important;
   font-weight: 700;
 }
 
@@ -3898,7 +3898,7 @@
   gap: 12px;
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px dashed var(--jabsewa-border);
+  border-top: 1px dashed var(--jabsewa-border-strong);
   font-size: 0.85rem;
   color: var(--jabsewa-text-soft);
 }
@@ -4124,15 +4124,15 @@
   font-weight: 700;
 }
 
-/* CTA seller = aksen kuning (pembeda dari CTA sewa yang biru) */
+/* CTA seller = ink band button; hover flips to the #1DCED8 accent */
 .seller-cta-btn {
-  background: var(--jabsewa-accent) !important;
-  color: var(--jabsewa-black) !important;
+  background: var(--jabsewa-ink) !important;
+  color: #ffffff !important;
 }
 
 .seller-cta-btn:hover {
-  background: var(--jabsewa-accent-deep) !important;
-  color: var(--jabsewa-black) !important;
+  background: var(--jabsewa-primary) !important;
+  color: var(--jabsewa-ink) !important;
 }
 
 .onboarding-form .auth-submit-btn {
@@ -4571,7 +4571,7 @@
 .listing-image-wrap {
   padding: 0;
   border: none;
-  background: #e2e8f0;
+  background: var(--jabsewa-placeholder);
   cursor: pointer;
   width: 100%;
   display: block;
@@ -4617,7 +4617,7 @@
 
 .seller-cta-title-accent {
   display: block;
-  color: #FFD758;
+  color: var(--jabsewa-primary);
 }
 
 .seller-cta-desc {
@@ -4672,7 +4672,7 @@
 }
 
 .availability-dot.is-rented {
-  background: #94a3b8;
+  background: var(--text-faint);
 }
 
 .detail-facts {
@@ -4734,7 +4734,7 @@
   align-items: center;
   gap: 14px;
   padding: 12px 0;
-  border-bottom: 1px solid #EDEFF7;
+  border-bottom: 1px solid var(--jabsewa-line-soft);
 }
 
 .dashboard-item-row:last-child {
@@ -4911,4 +4911,596 @@
   display: inline-flex;
   justify-content: center;
   font-size: 0.85rem;
+}
+
+/* ==========================================================================
+   UI POLISH v5 — INTENTIONAL, EDITORIAL, SLIGHTLY TECHNICAL
+   Hierarchy: #1DCED8 accent · ink text · white/off-white surfaces · gray
+   Accent is a scalpel, not a paint roller. Texture is hairline, not noise.
+   ========================================================================== */
+
+/* --- Texture: technical dot grid for hero + CTA band (accent, barely-there) --- */
+.texture-dots {
+  position: relative;
+}
+
+.texture-dots::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(29, 206, 216, 0.13) 1px, transparent 1px);
+  background-size: 22px 22px;
+  pointer-events: none;
+}
+
+.texture-dots > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* --- Global audit: the ONE accent-color audit block for the whole app --- */
+.primary-button:not(.seller-cta-btn),
+.btn-primary-solid,
+.consumer-search-btn,
+.auth-submit-btn,
+.btn-small.btn-primary,
+.nav-register {
+  background: var(--jabsewa-primary);
+  border-color: var(--jabsewa-primary);
+  color: var(--jabsewa-ink);
+}
+
+.primary-button:not(.seller-cta-btn):hover,
+.btn-primary-solid:hover,
+.consumer-search-btn:hover,
+.auth-submit-btn:hover,
+.btn-small.btn-primary:hover,
+.nav-register:hover {
+  background: var(--jabsewa-primary-strong);
+  border-color: var(--jabsewa-primary-strong);
+}
+
+.nav-register {
+  border: 1px solid var(--jabsewa-primary);
+}
+
+/* Text accents, links, icons — always the AA text-teal, never #1DCED8 on white */
+.hero-kicker,
+.hero-title-accent,
+.consumer-hero-kicker,
+.consumer-hero-title .hero-highlight,
+.about-intro-kicker,
+.about-kicker,
+.buyer-kicker,
+.step-number,
+.featured-explore-link,
+.back-button,
+.nav-link-accent,
+.consumer-nav-accent,
+.hero-seller-link,
+.link-more,
+.seller-marketplace-link,
+.auth-switch-link,
+.hero-visual-price strong,
+.listing-price,
+.browser-item-price,
+.item-price-solid,
+.detail-price-row strong,
+.rental-panel > strong,
+.category-count-badge,
+.seller-badge,
+.consumer-nav-menu .nav-menu-item:hover,
+.consumer-nav-action:hover,
+.nav-link:hover,
+.nav-link.is-active,
+.dropdown-item:hover,
+.footer-structured-col a:hover {
+  color: var(--jabsewa-primary-text);
+}
+
+/* Secondary/eyebrow labels stay NEUTRAL — accent only as a small tick mark */
+.eyebrow,
+.hero-kicker,
+.consumer-hero-kicker,
+.about-intro-kicker,
+.about-kicker,
+.buyer-kicker {
+  color: var(--jabsewa-text-soft);
+}
+
+.eyebrow::before,
+.hero-kicker::before,
+.consumer-hero-kicker::before,
+.about-intro-kicker::before,
+.about-kicker::before,
+.step-number::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 2px;
+  background: var(--jabsewa-primary);
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+/* --- Forms: gray idle, ink focus ring, teal caret --- */
+.structured-listing-form input:focus,
+.structured-listing-form select:focus,
+.structured-listing-form textarea:focus,
+.auth-input:focus,
+.date-grid input:focus,
+.search-box-solid:focus,
+.filter-select-solid:focus,
+.filter-select:focus,
+.search-box-small:focus,
+.browser-sort select:focus {
+  outline: none;
+  border-color: var(--jabsewa-ink);
+  background: var(--jabsewa-white);
+  box-shadow: 0 0 0 3px rgba(29, 206, 216, 0.22);
+  caret-color: var(--jabsewa-primary-text);
+}
+
+.structured-listing-form input,
+.structured-listing-form select,
+.structured-listing-form textarea,
+.auth-input,
+.date-grid input,
+.search-box-solid,
+.filter-select-solid,
+.filter-select,
+.search-box-small,
+.browser-sort select {
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.hero-search-container:focus-within,
+.consumer-search-container:focus-within {
+  border-color: var(--jabsewa-ink);
+  box-shadow: 0 0 0 3px rgba(29, 206, 216, 0.22);
+}
+
+/* --- Badges: quiet chips; count/seller badges get the tinted teal only --- */
+.category-count-badge,
+.seller-badge,
+.status-badge.status-accepted {
+  background: var(--jabsewa-primary-soft);
+  border: 1px solid var(--jabsewa-primary-line);
+  color: var(--jabsewa-primary-text);
+}
+
+.status-badge.status-accepted {
+  color: var(--jabsewa-primary-text);
+}
+
+/* --- Focus-visible: calm single accent ring, consistent app-wide --- */
+.primary-button:focus-visible,
+.secondary-button:focus-visible,
+.mini-button:focus-visible,
+.btn-primary-solid:focus-visible,
+.btn-secondary-solid:focus-visible,
+.nav-register:focus-visible,
+.nav-login:focus-visible,
+.nav-seller-cta:focus-visible,
+.consumer-search-btn:focus-visible,
+.auth-submit-btn:focus-visible,
+.btn-small:focus-visible,
+.quick-tag-pill:focus-visible,
+.suggestion-tag:focus-visible,
+.category-card:focus-visible,
+.filter-option:focus-visible,
+.seller-menu-item:focus-visible {
+  outline: 2px solid var(--jabsewa-primary);
+  outline-offset: 2px;
+}
+
+/* Category count pill: tinted teal chip, no saturated fill */
+.category-count-badge {
+  background: var(--jabsewa-primary-soft);
+  border: 1px solid var(--jabsewa-primary-line);
+  color: var(--jabsewa-primary-text);
+}
+
+/* ==========================================================================
+   UI POLISH v5 — PASS 2 · COLOR AUDIT (navy/lavender/yellow → new system)
+   Old hardcoded values remapped: #091540→ink, #EDEFF7→line-soft/soft,
+   #E9ECFB/#D5DAF5→primary-soft/primary-line, #1d4ed8→primary-text,
+   #FFD758 yellow → #1DCED8 accent, per role.
+   ========================================================================== */
+
+/* Dark fills: category/listing badges, step badge, avatars, seller menu */
+.category-tag-badge,
+.listing-category-badge,
+.step-number-badge,
+.seller-avatar,
+.about-founder-avatar,
+.benefit-icon,
+.seller-menu-item.active,
+.filter-option.active {
+  background: var(--jabsewa-ink);
+  color: #ffffff;
+  border-color: var(--jabsewa-ink);
+}
+
+/* Filter selection: tinted chip + teal border reads better than ink fill */
+.filter-option.active {
+  background: var(--jabsewa-primary-soft) !important;
+  border-color: var(--jabsewa-primary) !important;
+  color: var(--jabsewa-primary-text) !important;
+}
+
+/* Teal-on-white icon squares → neutral gray; active state → tinted teal */
+.cart-btn,
+.search-toggle,
+.profile-btn,
+.notification-btn,
+.stat-icon,
+.btn-icon-cart {
+  background: var(--jabsewa-soft);
+  border-color: var(--jabsewa-border);
+}
+
+.action-btn:hover,
+.seller-menu-item:hover {
+  background: var(--jabsewa-primary-soft);
+  border-color: var(--jabsewa-primary-line);
+}
+
+.action-btn:hover {
+  color: var(--jabsewa-primary-text);
+}
+
+/* Hairline dividers that used lavender #EDEFF7 */
+.category-card-link,
+.listing-seller-row,
+.browser-item-footer,
+.dashboard-item-row {
+  border-color: var(--jabsewa-line-soft);
+}
+
+.deposit-tag,
+.summary-item,
+.orders-table td {
+  border-color: var(--jabsewa-line-soft);
+}
+
+.deposit-tag {
+  background: var(--jabsewa-soft);
+}
+
+/* Placeholder image blocks → neutral */
+.item-image-box,
+.item-image-large,
+.item-badge-container,
+.about-photo {
+  background: var(--jabsewa-placeholder);
+  border-color: var(--jabsewa-border);
+}
+
+/* Yellow seller-CTA → ink band with #1DCED8 accent (single intentional use) */
+.nav-seller-cta,
+.seller-cta-btn,
+.onboarding-form .auth-submit-btn {
+  background: var(--jabsewa-ink);
+  color: #ffffff;
+}
+
+.nav-seller-cta:hover,
+.seller-cta-btn:hover,
+.onboarding-form .auth-submit-btn:hover {
+  background: var(--jabsewa-ink-2);
+  color: #ffffff;
+}
+
+.seller-cta-btn {
+  border: 1px solid var(--jabsewa-ink);
+}
+
+/* Yellow accent marks → #1DCED8 ticks (tiny, decorative-but-systematic) */
+.accent-mark,
+.quick-tag-label::before {
+  background: var(--jabsewa-primary);
+}
+
+.accent-pill {
+  background: var(--jabsewa-primary);
+  color: var(--jabsewa-ink);
+}
+
+.about-photo.yellow,
+.about-founder-note {
+  border-color: var(--jabsewa-primary);
+}
+
+.about-photo.yellow {
+  background: var(--jabsewa-primary-soft);
+}
+
+/* Eyebrow-light on dark band → accent teal */
+.eyebrow-light {
+  color: var(--jabsewa-primary);
+}
+
+/* Auth context note: yellow-soft → teal tint */
+.auth-context-note {
+  background: var(--jabsewa-primary-soft);
+  border: 1px solid var(--jabsewa-primary-line);
+  color: var(--jabsewa-text);
+}
+
+/* CTA title accent line on dark band → teal */
+.seller-cta-title-accent {
+  color: var(--jabsewa-primary);
+}
+
+/* Rented/amber chip stays amber (semantic), dot colors unchanged */
+
+/* ==========================================================================
+   UI POLISH v5 — PASS 3 · DE-SLOP LAYOUT + EDITORIAL COMPOSITION
+   ========================================================================== */
+
+/* Landing: alternating surfaces instead of same-white card seas.
+   Off-white band on category; hairline rules between sections. */
+.category-section {
+  background: var(--jabsewa-bg);
+}
+
+.how-section {
+  background: var(--jabsewa-bg);
+}
+
+.featured-section {
+  background: var(--jabsewa-white);
+}
+
+.how-section,
+.featured-section,
+.category-section {
+  border-bottom: none;
+}
+
+/* Featured grid: varied proportions — first card spans 2 columns (editorial) */
+.listing-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.listing-card:first-child {
+  grid-column: span 2;
+}
+
+.listing-card:first-child .listing-image-wrap {
+  height: 260px;
+}
+
+@media (max-width: 980px) {
+  .listing-card:first-child {
+    grid-column: auto;
+  }
+
+  .listing-card:first-child .listing-image-wrap {
+    height: 200px;
+  }
+}
+
+/* Cards: quieter hover — border shift only, no lift/translate/shadow */
+.category-card:hover,
+.listing-card:hover,
+.browser-item-card:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.listing-card:hover,
+.browser-item-card:hover,
+.category-card:hover {
+  border-color: var(--jabsewa-primary);
+}
+
+.listing-card:hover .listing-image {
+  opacity: 0.92;
+}
+
+/* How-it-works steps: editorial columns with top rule + tick, not cards */
+.how-grid {
+  gap: 32px;
+}
+
+.step-item {
+  border-top: 2px solid var(--jabsewa-ink);
+}
+
+/* Buttons: calmer radius, align with inputs (8px), subtle press state */
+.primary-button,
+.secondary-button,
+.mini-button,
+.btn-primary-solid,
+.btn-secondary-solid,
+.nav-register,
+.nav-login,
+.consumer-search-btn,
+.auth-submit-btn {
+  border-radius: 8px;
+}
+
+.primary-button:active,
+.btn-primary-solid:active,
+.consumer-search-btn:active,
+.auth-submit-btn:active,
+.nav-register:active {
+  transform: translateY(1px);
+}
+
+/* Section heading: subtitle sits close, tighter editorial rhythm */
+.section-heading {
+  margin-bottom: 36px;
+}
+
+.section-heading.center-heading {
+  text-align: left;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* Landing hero: slightly tighter, composition over size */
+.hero-section {
+  padding: 48px 0 56px;
+}
+
+/* --- Texture placement: hero + dark CTA band only, nothing else --- */
+.hero-section.texture-dots::before {
+  background-image: radial-gradient(rgba(29, 206, 216, 0.16) 1px, transparent 1px);
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.seller-cta-box.texture-dots::before {
+  background-image: radial-gradient(rgba(29, 206, 216, 0.2) 1px, transparent 1px);
+}
+
+/* Dark CTA band: ink (not navy), technical dot texture, accent title line */
+.seller-cta-box {
+  background: var(--jabsewa-ink);
+}
+
+/* The one saturated accent moment on the landing page: teal CTA on ink band */
+.seller-cta .seller-cta-btn {
+  background: var(--jabsewa-primary) !important;
+  border: 1px solid var(--jabsewa-primary);
+  color: var(--jabsewa-ink) !important;
+}
+
+.seller-cta .seller-cta-btn:hover {
+  background: var(--jabsewa-primary-strong) !important;
+  border-color: var(--jabsewa-primary-strong);
+  color: var(--jabsewa-ink) !important;
+}
+
+.seller-cta-desc {
+  color: #9AA7AE;
+}
+
+.seller-cta-btn:hover {
+  background: #1DCED8;
+  color: var(--jabsewa-ink);
+}
+
+/* Footer: near-black ink with hairline rules (was pure #000 + navy border) */
+.footer {
+  background: var(--jabsewa-ink);
+}
+
+/* Hero search: border thick enough to feel intentional, not heavy */
+.hero-search-container,
+.consumer-search-container {
+  border-width: 1.5px;
+}
+
+/* Rating values: neutral amber → ink for hierarchy (accent stays teal) */
+.listing-rating,
+.rating-value {
+  color: #B45309;
+}
+
+/* Consumer page hero: editorial, left-aligned, kicker + tight title */
+.consumer-hero {
+  text-align: left;
+  padding: 36px 20px 30px;
+}
+
+.consumer-hero-content {
+  max-width: 960px;
+  margin: 0;
+}
+
+.consumer-hero-title {
+  text-align: left;
+}
+
+.consumer-search-container {
+  max-width: 640px;
+  margin: 0 0 14px;
+}
+
+.consumer-suggestions {
+  justify-content: flex-start;
+}
+
+/* Prices on cards: ink for hierarchy; teal text-teal reserved for links */
+.listing-price,
+.browser-item-price,
+.item-price-solid,
+.hero-visual-price strong,
+.detail-price-row strong {
+  color: var(--jabsewa-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.detail-price-row strong {
+  color: var(--jabsewa-ink);
+}
+
+/* ==========================================================================
+   UI POLISH v5 — PASS 4 · RESPONSIVE REFINEMENTS (tablet 980 / mobile 640)
+   ========================================================================== */
+
+@media (max-width: 980px) {
+  .consumer-hero {
+    padding: 30px 16px 26px;
+  }
+
+  .consumer-hero-content {
+    max-width: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-section {
+    padding: 32px 0 40px;
+  }
+
+  .hero-inner {
+    gap: 28px;
+  }
+
+  .listing-grid {
+    gap: 14px;
+  }
+
+  .listing-card:first-child .listing-image-wrap {
+    height: 170px;
+  }
+
+  .section-heading {
+    margin-bottom: 24px;
+  }
+
+  .category-section,
+  .featured-section,
+  .how-section,
+  .seller-cta {
+    padding: 44px 0;
+  }
+
+  .consumer-hero-title {
+    font-size: 1.5rem;
+  }
+
+  .consumer-search-container {
+    flex-direction: row;
+  }
+
+  .consumer-search-input {
+    min-width: 0;
+  }
+
+  .texture-dots::before {
+    background-size: 18px 18px;
+  }
+
+  .seller-cta-box {
+    padding: 28px 20px;
+  }
 }

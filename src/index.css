@@ -1,33 +1,56 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
-  /* Brand color system: dark navy / primary blue / accent yellow */
-  --jabsewa-primary: #1B2CC1;
-  --jabsewa-secondary: #091540;
-  --jabsewa-accent: #FFD758;
-  --jabsewa-accent-soft: #FFF5D8;
-  --jabsewa-accent-deep: #F0C33C;
-  --jabsewa-blue: #1B2CC1;
-  --jabsewa-blue-deep: #141FA6;
-  --jabsewa-black: #091540;
+  /* ========================================================================
+     JabSewa color system
+     - #1DCED8 (teal) = accent ONLY: fills with ink text, borders, focus,
+       ticks, texture dots. Never large surfaces, never body text.
+     - Ink / near-black  = primary text + dark surfaces
+     - White / off-white = main surfaces
+     - Neutral gray      = secondary text, borders, subtle backgrounds
+     ======================================================================== */
+  --jabsewa-primary: #1DCED8;        /* accent — fills, borders, focus, texture */
+  --jabsewa-primary-strong: #14A8B2; /* hover state for accent fills */
+  --jabsewa-primary-text: #0E7C86;   /* teal used as text/links on light bg (AA) */
+  --jabsewa-primary-soft: #E4F7F8;   /* tinted surface */
+  --jabsewa-primary-line: #A9E2E7;   /* border on tinted surface */
+
+  --jabsewa-ink: #0B1117;            /* primary text, dark badges, avatars */
+  --jabsewa-ink-2: #141C23;          /* elevated dark surface (CTA band) */
+
+  --jabsewa-text: #222B31;           /* body text */
+  --jabsewa-text-soft: #5C6B74;      /* secondary text */
+  --text-faint: #93A1AA;             /* de-emphasized text, placeholders */
+
   --jabsewa-white: #ffffff;
-  --jabsewa-soft: #F4F5FB;
-  --jabsewa-bg: #FAFAFE;
-  --jabsewa-text: #101A3C;
-  --jabsewa-text-soft: #5A6384;
-  --jabsewa-border: #E3E6F0;
-  --jabsewa-dark-blue: #091540;
-  --jabsewa-medium-blue: #1B2CC1;
-  --jabsewa-tertiary-blue: #141FA6;
-  --jabsewa-light-blue: #E9ECFB;
-  --jabsewa-dark-surface: #0C1A50;
-  --jabsewa-dark-border: #24306A;
-  --light-bg: #FAFAFE;
-  --border-color: #E3E6F0;
-  --text-dark: #101A3C;
-  --text-light: #5A6384;
-  --accent-dark: #091540;
-  --shadow-soft: 0 2px 8px rgba(9, 21, 64, 0.06);
+  --jabsewa-soft: #F4F6F7;           /* subtle gray surface */
+  --jabsewa-bg: #FAFBFB;             /* off-white page background */
+  --jabsewa-border: #E3E8EB;         /* standard border */
+  --jabsewa-line-soft: #EBEFF1;      /* hairline dividers */
+  --jabsewa-border-strong: #C6CFD4;  /* hover border */
+  --jabsewa-placeholder: #E9EEF0;    /* image placeholder blocks */
+
+  /* Legacy aliases — kept so existing rules resolve to the new palette */
+  --jabsewa-black: var(--jabsewa-ink);
+  --jabsewa-secondary: var(--jabsewa-ink-2);
+  --jabsewa-blue: var(--jabsewa-primary);
+  --jabsewa-blue-deep: var(--jabsewa-primary-strong);
+  --jabsewa-dark-blue: var(--jabsewa-ink-2);
+  --jabsewa-medium-blue: var(--jabsewa-primary);
+  --jabsewa-tertiary-blue: var(--jabsewa-primary-strong);
+  --jabsewa-light-blue: var(--jabsewa-primary-soft);
+  --jabsewa-dark-surface: var(--jabsewa-ink-2);
+  --jabsewa-dark-border: #232D35;
+  --jabsewa-accent: var(--jabsewa-primary);
+  --jabsewa-accent-soft: var(--jabsewa-primary-soft);
+  --jabsewa-accent-deep: var(--jabsewa-primary-strong);
+  --light-bg: var(--jabsewa-bg);
+  --border-color: var(--jabsewa-border);
+  --text-dark: var(--jabsewa-text);
+  --text-light: var(--jabsewa-text-soft);
+  --accent-dark: var(--jabsewa-ink);
+
+  --shadow-soft: 0 1px 2px rgba(11, 17, 23, 0.05);
   --font-sans: 'Plus Jakarta Sans', 'Manrope', 'Segoe UI', sans-serif;
   --font-display: 'Plus Jakarta Sans', Georgia, serif;
 }
@@ -61,7 +84,7 @@ h6 {
   font-family: var(--font-sans);
   letter-spacing: -0.025em;
   font-weight: 700;
-  color: var(--jabsewa-black);
+  color: var(--jabsewa-ink);
 }
 
 img {
@@ -81,8 +104,8 @@ button {
 }
 
 :focus-visible {
-  outline: 3px solid rgba(27, 44, 193, 0.4);
-  outline-offset: 3px;
+  outline: 2px solid var(--jabsewa-primary);
+  outline-offset: 2px;
 }
 
 a {
@@ -95,5 +118,5 @@ a {
 }
 
 ::selection {
-  background: rgba(27, 44, 193, 0.15);
+  background: rgba(29, 206, 216, 0.2);
 }

@@ -17,7 +17,7 @@ export default function HeroSection({ onNavigate, onSellerIntent }) {
   const popularTags = ['Kamera', 'PS5', 'Tenda', 'Proyektor']
 
   return (
-    <section className="hero-section">
+    <section className="hero-section texture-dots">
       <div className="hero-inner">
         <div className="hero-copy">
           <h1>
