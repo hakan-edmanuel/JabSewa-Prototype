@@ -60,6 +60,7 @@ export function addRental({ itemId, itemName, seller, pricePerDay, deposit, star
     itemId,
     itemName,
     seller,
+    
     pricePerDay,
     deposit,
     startDate,

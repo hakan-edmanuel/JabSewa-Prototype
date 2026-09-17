@@ -3,15 +3,112 @@ import Footer from '../components/Footer'
 import { useAuth } from '../auth/AuthContext'
 
 /*
- * Halaman profil — satu akun untuk dua sisi.
- * Satu panel dengan divider antar blok: akun, mode, dan toko.
+ * Halaman profil — satu akun, satu siklus.
+ * Akun → aktivitas penyewa (rentals/wishlist) → status ajuan seller.
+ * Tidak ada switch role: seller adalah LIFECYCLE (ajuan → review → approved),
+ * profil seller hanya muncul setelah ajuan disetujui.
  */
 export default function ProfilePage({ onNavigate, onSellerIntent }) {
-  const { user, hasSellerAccess, logout } = useAuth()
+  const { user, hasSellerAccess, sellerApplication, logout } = useAuth()
 
   const handleLogout = async () => {
     await logout()
     onNavigate('home')
+  }
+
+  const appStatus = sellerApplication?.status
+
+  /* --- Blok status seller sesuai lifecycle --- */
+  const renderSellerBlock = () => {
+    if (hasSellerAccess) {
+      const profile = user?.sellerProfile
+      return (
+        <div className="profile-block">
+          <h2 className="profile-block-title">Seller</h2>
+          <div className="profile-row">
+            <span className="profile-row-label">Profil seller</span>
+            <span className="profile-row-value">Aktif</span>
+          </div>
+          <div className="profile-row">
+            <span className="profile-row-label">Nama toko</span>
+            <span className="profile-row-value">{profile?.storeName}</span>
+          </div>
+          <div className="profile-row">
+            <span className="profile-row-label">Kota</span>
+            <span className="profile-row-value">{profile?.city || '—'}</span>
+          </div>
+          <div className="profile-seller-actions">
+            <button
+              type="button"
+              className="btn-small btn-primary"
+              onClick={() => onNavigate('seller')}
+            >
+              Buka Seller Dashboard
+            </button>
+          </div>
+        </div>
+      )
+    }
+
+    if (appStatus === 'under_review' || appStatus === 'submitted') {
+      return (
+        <div className="profile-block">
+          <h2 className="profile-block-title">Seller</h2>
+          <div className="seller-app-status-inline is-review">
+            <span className="seller-app-status-badge is-review">Sedang Ditinjau</span>
+            <p>
+              Ajuan tokomu <strong>{sellerApplication.storeName}</strong> sedang
+              ditinjau tim JabSewa. Kamu akan diberi tahu setelah ada keputusan.
+            </p>
+            <button
+              type="button"
+              className="btn-small btn-secondary"
+              onClick={() => onNavigate('seller-onboarding')}
+            >
+              Lihat Status Ajuan
+            </button>
+          </div>
+        </div>
+      )
+    }
+
+    if (appStatus === 'rejected') {
+      return (
+        <div className="profile-block">
+          <h2 className="profile-block-title">Seller</h2>
+          <div className="seller-app-status-inline is-rejected">
+            <span className="seller-app-status-badge is-rejected">Ajuan Ditolak</span>
+            <p>
+              {sellerApplication.rejectionReason || 'Ajuanmu belum disetujui.'}{' '}
+              Kamu bisa mengajukan ulang kapan saja.
+            </p>
+            <button
+              type="button"
+              className="btn-small btn-secondary"
+              onClick={() => onNavigate('seller-onboarding')}
+            >
+              Ajukan Ulang
+            </button>
+          </div>
+        </div>
+      )
+    }
+
+    // Belum ada ajuan → pintu masuk onboarding, bukan switch role
+    return (
+      <div className="profile-block">
+        <h2 className="profile-block-title">Seller</h2>
+        <p className="profile-block-desc">
+          Punya barang yang jarang dipakai? Ajukan dirimu jadi seller — satu akun,
+          tanpa registrasi baru.
+        </p>
+        <div className="profile-seller-actions">
+          <button type="button" className="btn-small btn-primary" onClick={onSellerIntent}>
+            Jadi Seller
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -23,7 +120,7 @@ export default function ProfilePage({ onNavigate, onSellerIntent }) {
           <div>
             <p className="buyer-kicker">Profil</p>
             <h1>{user?.name}</h1>
-            <p>Kelola akun dan mode JabSewa kamu.</p>
+            <p>Kelola akun dan aktivitas JabSewa kamu.</p>
           </div>
         </header>
 
@@ -38,65 +135,37 @@ export default function ProfilePage({ onNavigate, onSellerIntent }) {
               <span className="profile-row-label">Email</span>
               <span className="profile-row-value">{user?.email}</span>
             </div>
-            <div className="profile-row">
-              <span className="profile-row-label">Status seller</span>
-              <span className="profile-row-value">{hasSellerAccess ? 'Aktif' : 'Belum aktif'}</span>
+            <div className="profile-links">
+              <button type="button" className="profile-link-item" onClick={() => onNavigate('admin')}>
+                <span>Admin: Seller Applications</span>
+                <span className="profile-link-arrow" aria-hidden="true">→</span>
+              </button>
             </div>
           </div>
 
           <div className="profile-divider"></div>
 
           <div className="profile-block">
-            <h2 className="profile-block-title">Mode</h2>
-            <p className="profile-block-desc">
-              Satu akun untuk dua sisi. Pindah mode kapan saja tanpa akun baru.
-            </p>
-            <div className="profile-mode-switch" role="group" aria-label="Pilih mode">
-              <button
-                type="button"
-                className="nav-mode-btn is-active"
-                onClick={() => onNavigate('consumer')}
-              >
-                Mode Penyewa
+            <h2 className="profile-block-title">Penyewaan</h2>
+            <div className="profile-links">
+              <button type="button" className="profile-link-item" onClick={() => onNavigate('buyer')}>
+                <span>My Rentals</span>
+                <span className="profile-link-arrow" aria-hidden="true">→</span>
               </button>
-              {hasSellerAccess ? (
-                <button type="button" className="nav-mode-btn" onClick={() => onNavigate('seller')}>
-                  Mode Seller
-                </button>
-              ) : (
-                <button type="button" className="nav-mode-btn" onClick={onSellerIntent}>
-                  Aktifkan Mode Seller
-                </button>
-              )}
+              <button type="button" className="profile-link-item" onClick={() => onNavigate('buyer')}>
+                <span>Wishlist</span>
+                <span className="profile-link-arrow" aria-hidden="true">→</span>
+              </button>
+              <button type="button" className="profile-link-item" onClick={() => onNavigate('consumer')}>
+                <span>Cari Barang</span>
+                <span className="profile-link-arrow" aria-hidden="true">→</span>
+              </button>
             </div>
           </div>
 
-          {hasSellerAccess && (
-            <>
-              <div className="profile-divider"></div>
+          <div className="profile-divider"></div>
 
-              <div className="profile-block">
-                <h2 className="profile-block-title">Toko</h2>
-                <div className="profile-row">
-                  <span className="profile-row-label">Nama toko</span>
-                  <span className="profile-row-value">{user?.seller?.storeName}</span>
-                </div>
-                <div className="profile-row">
-                  <span className="profile-row-label">Lokasi pengambilan</span>
-                  <span className="profile-row-value">{user?.seller?.location}</span>
-                </div>
-                <div style={{ marginTop: 16 }}>
-                  <button
-                    type="button"
-                    className="btn-small btn-primary"
-                    onClick={() => onNavigate('seller')}
-                  >
-                    Buka Seller Dashboard
-                  </button>
-                </div>
-              </div>
-            </>
-          )}
+          {renderSellerBlock()}
 
           <div className="profile-divider"></div>
 

@@ -15,6 +15,7 @@ import AuthPage from './pages/AuthPage'
 import BuyerPage from './pages/BuyerPage'
 import SellerOnboardingPage from './pages/SellerOnboardingPage'
 import ProfilePage from './pages/ProfilePage'
+import AdminApplicationsPage from './pages/AdminApplicationsPage'
 import AgentChat from './AgentChat'
 import { useAuth } from './auth/AuthContext'
 
@@ -24,6 +25,7 @@ function getPageFromPath(pathname) {
   if (pathname === '/seller/onboarding') return 'seller-onboarding'
   if (pathname === '/buyer') return 'buyer'
   if (pathname === '/profile') return 'profile'
+  if (pathname === '/admin') return 'admin'
   if (pathname === '/agent') return 'agent'
   if (pathname === '/about') return 'about'
   if (pathname === '/cart') return 'cart'
@@ -53,10 +55,11 @@ function App() {
     window.scrollTo({ top: 0 })
   }
 
-  // Pintu masuk seller yang benar:
-  //   belum login → auth (dengan intent) → onboarding → dashboard
-  //   sudah login tapi bukan seller → onboarding
-  //   sudah seller → dashboard
+  // Pintu masuk seller yang benar (lifecycle, bukan switch role):
+  //   belum login            → auth (dengan intent) → onboarding
+  //   login, belum ada ajuan → onboarding (ajuan seller)
+  //   ajuan under_review/rejected → layar status ajuan
+  //   approved (sellerProfile ada) → dashboard seller
   const goSeller = () => {
     if (!user) {
       setAuthIntent({ page: 'seller' })
@@ -90,7 +93,7 @@ function App() {
       return
     }
     if (intent.page === 'seller') {
-      if (authenticatedUser?.seller?.onboarded) navigate('seller')
+      if (authenticatedUser?.sellerProfile) navigate('seller')
       else navigate('seller-onboarding')
     } else if (intent.page === 'buyer') {
       navigate('buyer')
@@ -147,7 +150,7 @@ function App() {
           : null
     : null
 
-  if ((page === 'seller' || page === 'seller-onboarding' || page === 'buyer' || page === 'profile') && !user) {
+  if ((page === 'seller' || page === 'seller-onboarding' || page === 'buyer' || page === 'profile' || page === 'admin') && !user) {
     effectivePage = 'auth'
   }
   // Seller dashboard membutuhkan akses seller — selain itu tampilkan onboarding.
@@ -183,6 +186,7 @@ function App() {
   if (effectivePage === 'seller-onboarding') return <SellerOnboardingPage onNavigate={navigate} />
   if (effectivePage === 'buyer') return <BuyerPage onNavigate={navigate} onSellerIntent={goSeller} />
   if (effectivePage === 'profile') return <ProfilePage onNavigate={navigate} onSellerIntent={goSeller} />
+  if (effectivePage === 'admin') return <AdminApplicationsPage onNavigate={navigate} />
   if (effectivePage === 'agent') return <AgentChat title="jabsewa Coding Agent" />
   if (effectivePage === 'about') return <AboutPage onNavigate={navigate} />
   if (effectivePage === 'cart') return <CartPage onNavigate={navigate} />

@@ -5854,3 +5854,807 @@
     padding: 28px 20px;
   }
 }
+
+/* ==========================================================================
+   SELLER APPLICATION SHARED UI — badge/status untuk applicant + admin
+   (sebelumnya direferensikan JSX tapi tidak pernah punya CSS)
+   ========================================================================== */
+
+/* Stepper wizard ajuan seller */
+.seller-app-stepper {
+  display: flex;
+  gap: 6px;
+  list-style: none;
+  margin: 22px 0 26px;
+  padding: 0;
+}
+
+.seller-app-step {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.seller-app-step-dot {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: inline-grid;
+  place-items: center;
+  font-size: 0.72rem;
+  font-weight: 800;
+  background: var(--jabsewa-soft);
+  color: var(--jabsewa-text-soft);
+  border: 1px solid var(--jabsewa-border);
+}
+
+.seller-app-step.is-active .seller-app-step-dot {
+  background: var(--jabsewa-ink);
+  border-color: var(--jabsewa-ink);
+  color: #ffffff;
+}
+
+.seller-app-step.is-done .seller-app-step-dot {
+  background: var(--jabsewa-primary-soft);
+  border-color: var(--jabsewa-primary-line);
+  color: var(--jabsewa-primary-text);
+}
+
+.seller-app-step-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--jabsewa-text-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.seller-app-step.is-active .seller-app-step-label {
+  color: var(--jabsewa-ink);
+}
+
+@media (max-width: 480px) {
+  .seller-app-step-label {
+    display: none; /* cukup nomor langkah di layar sangat kecil */
+  }
+}
+
+/* Teks perjanjian + checkbox */
+.seller-app-agreement-text {
+  background: var(--jabsewa-soft);
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+
+.seller-app-agreement-text p {
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--jabsewa-text-soft);
+}
+
+.seller-app-agreement-text p:first-child {
+  color: var(--jabsewa-ink);
+  margin-bottom: 6px;
+}
+
+.seller-app-agreement-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--jabsewa-text);
+  cursor: pointer;
+}
+
+.seller-app-agreement-check input {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  accent-color: var(--jabsewa-primary-text);
+}
+
+/* Baris review ringkas (label kiri — nilai kanan, hairline divider) */
+.seller-app-review {
+  border-top: 1px solid var(--jabsewa-line-soft);
+}
+
+.seller-app-review-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--jabsewa-line-soft);
+}
+
+.seller-app-review-row span {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--jabsewa-text-soft);
+  flex-shrink: 0;
+}
+
+.seller-app-review-row strong {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--jabsewa-text);
+  text-align: right;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.seller-app-note {
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--jabsewa-text-soft);
+  margin: 14px 0;
+}
+
+.seller-app-btn-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+/* Badge status ajuan — chip kecil, 3 semantik status */
+.seller-app-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.seller-app-status-badge.is-review {
+  background: var(--jabsewa-primary-soft);
+  border: 1px solid var(--jabsewa-primary-line);
+  color: var(--jabsewa-primary-text);
+}
+
+.seller-app-status-badge.is-approved {
+  background: #dcfce7;
+  border: 1px solid #bbf7d0;
+  color: #15803d;
+}
+
+.seller-app-status-badge.is-rejected {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+}
+
+/* Pulsa kecil pada badge "Sedang Ditinjau" (satu-satunya animasi, halus) */
+.seller-app-pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .seller-app-pulse {
+    animation: seller-app-pulse 2s ease-in-out infinite;
+  }
+}
+
+@keyframes seller-app-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* Blok alasan penolakan (applicant side) */
+.seller-app-reject-reason {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin: 16px 0;
+  text-align: left;
+}
+
+.seller-app-reject-reason p {
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: #7f1d1d;
+  margin-top: 4px;
+}
+
+/* Kartu status ajuan (applicant) */
+.seller-app-status {
+  text-align: left;
+}
+
+/* Blok simulasi reviewer (prototype) — sengaja terlihat seperti debug tools */
+.seller-app-mock {
+  margin-top: 20px;
+  border-top: 1px dashed var(--jabsewa-border-strong);
+  padding-top: 14px;
+}
+
+.seller-app-mock-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.seller-app-mock-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.seller-app-status-inline {
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 8px;
+  padding: 14px;
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: var(--jabsewa-text);
+}
+
+.seller-app-status-inline p {
+  margin: 10px 0 12px;
+}
+
+/* ==========================================================================
+   ADMIN — SELLER APPLICATIONS (mobile-first)
+   Desktop = ekspansi dari struktur mobile, bukan desain terpisah.
+   ========================================================================== */
+
+.page-admin-shell {
+  background: var(--jabsewa-bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-page {
+  flex: 1;
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 28px 0 56px;
+}
+
+/* --- Header editorial: kicker + judul + counter pending --- */
+.admin-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.admin-kicker {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--jabsewa-text-soft);
+  margin-bottom: 6px;
+}
+
+.admin-kicker::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 2px;
+  background: var(--jabsewa-primary);
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.admin-head h1 {
+  font-size: clamp(1.45rem, 4vw, 1.8rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.admin-sub {
+  font-size: 0.88rem;
+  color: var(--jabsewa-text-soft);
+  margin-top: 6px;
+  max-width: 480px;
+}
+
+/* Counter pending: angka besar + label, rata kanan */
+.admin-pending {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border: 1px solid var(--jabsewa-border);
+  border-left: 3px solid var(--jabsewa-primary);
+  background: var(--jabsewa-white);
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.admin-pending-num {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--jabsewa-ink);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-pending-label {
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--jabsewa-text-soft);
+  line-height: 1.35;
+}
+
+/* --- Filter: underline tabs, bukan toolbar --- */
+.admin-filters {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--jabsewa-border);
+  margin-bottom: 18px;
+  scrollbar-width: none;
+}
+
+.admin-filters::-webkit-scrollbar {
+  display: none;
+}
+
+.admin-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--jabsewa-text-soft);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.admin-filter:hover {
+  color: var(--jabsewa-ink);
+}
+
+.admin-filter.is-active {
+  color: var(--jabsewa-ink);
+  border-bottom-color: var(--jabsewa-primary);
+}
+
+.admin-filter-count {
+  min-width: 20px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--jabsewa-soft);
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--jabsewa-text-soft);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-filter.is-active .admin-filter-count {
+  background: var(--jabsewa-primary-soft);
+  color: var(--jabsewa-primary-text);
+}
+
+/* --- Konten: list dulu (sumber utama di mobile), detail menyusul --- */
+.admin-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* --- List ajuan: baris datar dengan hairline divider, bukan tumpukan kartu --- */
+.admin-list-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-list-items > li + li {
+  border-top: 1px solid var(--jabsewa-line-soft);
+}
+
+.admin-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 8px;
+  background: transparent;
+  border: none;
+  border-left: 2px solid transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.admin-row:hover {
+  background: var(--jabsewa-soft);
+}
+
+.admin-row.is-active {
+  background: var(--jabsewa-white);
+  border-left-color: var(--jabsewa-primary);
+}
+
+.admin-row-avatar {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  display: inline-grid;
+  place-items: center;
+  background: var(--jabsewa-ink);
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.admin-row-avatar-lg {
+  width: 44px;
+  height: 44px;
+  font-size: 1.1rem;
+}
+
+.admin-row-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.admin-row-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--jabsewa-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-row-store {
+  font-size: 0.8rem;
+  color: var(--jabsewa-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-row-date {
+  font-size: 0.72rem;
+  color: var(--text-faint);
+}
+
+.admin-row-side {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.admin-row-cta {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--jabsewa-primary-text);
+}
+
+.admin-row.is-active .admin-row-cta {
+  display: none; /* sedang dibuka — cta tidak perlu */
+}
+
+/* Empty state list */
+.admin-empty {
+  border: 1px dashed var(--jabsewa-border-strong);
+  border-radius: 8px;
+  padding: 28px 16px;
+  text-align: center;
+}
+
+.admin-empty p {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--jabsewa-text);
+}
+
+.admin-empty span {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.8rem;
+  color: var(--jabsewa-text-soft);
+}
+
+/* --- Detail: kartu tunggal, konten mengikuti list --- */
+.admin-card {
+  background: var(--jabsewa-white);
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 10px;
+  padding: 20px 16px;
+}
+
+.admin-detail-head {
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--jabsewa-line-soft);
+  margin-bottom: 16px;
+}
+
+.admin-detail-id {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.admin-detail-id h2 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.admin-detail-store {
+  font-size: 0.82rem;
+  color: var(--jabsewa-text-soft);
+  margin-top: 2px;
+}
+
+.admin-detail-badge {
+  margin-left: auto;
+}
+
+.admin-detail-ref {
+  width: 100%;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text-faint);
+}
+
+/* Section info dalam detail */
+.admin-field-group + .admin-field-group {
+  margin-top: 18px;
+}
+
+.admin-field-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--jabsewa-text-soft);
+  margin-bottom: 8px;
+}
+
+.admin-desc {
+  padding: 10px 0;
+}
+
+.admin-desc .profile-row-label {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.admin-desc p {
+  font-size: 0.86rem;
+  line-height: 1.6;
+  color: var(--jabsewa-text);
+  overflow-wrap: anywhere;
+}
+
+.admin-reject-row strong {
+  color: #b91c1c;
+}
+
+/* --- Panel keputusan --- */
+.admin-decision {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--jabsewa-border);
+}
+
+.admin-decision-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.admin-btn-approve {
+  flex: 1;
+  padding: 10px 12px;
+  font-size: 0.84rem;
+}
+
+.admin-decision .btn-danger {
+  flex: 1;
+  padding: 10px 12px;
+  font-size: 0.84rem;
+  background: #ffffff;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+}
+
+.admin-decision .btn-danger:hover {
+  background: #fef2f2;
+}
+
+.admin-saved-note,
+.admin-decision-note {
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--jabsewa-text-soft);
+}
+
+.admin-saved-note {
+  color: #15803d;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+/* Konfirmasi dua-langkah: approve ringkas, reject wajib alasan */
+.admin-confirm-block {
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 8px;
+  padding: 14px;
+  margin-top: 12px;
+}
+
+.admin-confirm-block.is-approve {
+  background: var(--jabsewa-primary-soft);
+  border-color: var(--jabsewa-primary-line);
+}
+
+.admin-confirm-block.is-reject {
+  background: var(--jabsewa-soft);
+}
+
+.admin-confirm-block.is-approve p {
+  font-size: 0.84rem;
+  line-height: 1.55;
+  color: var(--jabsewa-text);
+}
+
+.admin-confirm-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.admin-confirm-hint {
+  font-size: 0.72rem;
+  color: var(--text-faint);
+  margin-top: 8px;
+}
+
+/* Placeholder saat belum ada ajuan dipilih */
+.admin-detail-placeholder {
+  border: 1px dashed var(--jabsewa-border-strong);
+  border-radius: 10px;
+  padding: 40px 16px;
+  text-align: center;
+  color: var(--jabsewa-text-soft);
+  font-size: 0.86rem;
+}
+
+/* ==================== ADMIN ≥ 640px (large phone / tablet portrait) === */
+@media (min-width: 640px) {
+  .admin-page {
+    width: min(1120px, calc(100% - 40px));
+    padding-top: 36px;
+  }
+
+  .admin-card {
+    padding: 24px;
+  }
+
+  .admin-decision-actions .btn-small {
+    flex: 0 0 auto;
+    min-width: 150px;
+  }
+}
+
+/* ==================== ADMIN ≥ 980px (desktop, dua kolom) ============== */
+@media (min-width: 980px) {
+  .admin-content {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 24px;
+    align-items: start;
+  }
+
+  .admin-list {
+    position: sticky;
+    top: 90px;
+    max-height: calc(100vh - 130px);
+    overflow-y: auto;
+  }
+
+  .admin-detail {
+    position: sticky;
+    top: 90px;
+  }
+
+  .admin-card {
+    padding: 26px 28px;
+  }
+
+  /* Detail internal jadi dua kolom: info kiri, keputusan kanan */
+  .admin-detail-cols {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 260px;
+    gap: 28px;
+  }
+
+  .admin-decision {
+    margin-top: 0;
+    padding-top: 0;
+    padding-left: 24px;
+    border-top: none;
+    border-left: 1px solid var(--jabsewa-border);
+  }
+
+  .admin-detail-badge {
+    margin-left: 0;
+  }
+
+  .admin-detail-ref {
+    width: auto;
+    margin-left: auto;
+  }
+
+  .admin-pending {
+    padding: 14px 20px;
+  }
+
+  .admin-pending-num {
+    font-size: 1.75rem;
+  }
+}
+
+/* ==================== ADMIN ≤ 380px (very small phones) =============== */
+@media (max-width: 380px) {
+  .admin-page {
+    width: calc(100% - 24px);
+  }
+
+  .admin-head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-pending {
+    align-self: flex-start;
+  }
+
+  .admin-row-side .seller-app-status-badge {
+    max-width: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

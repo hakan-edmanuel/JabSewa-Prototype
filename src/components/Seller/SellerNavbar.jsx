@@ -37,7 +37,7 @@ export default function SellerNavbar({ onNavigate, currentPage = 'seller' }) {
               Mode Seller
             </button>
           </div>
-          <span className="seller-store-name">{user?.seller?.storeName || user?.name}</span>
+          <span className="seller-store-name">{user?.sellerProfile?.storeName || user?.name}</span>
           <UserMenu onLogout={() => onNavigate('home')} onNavigate={onNavigate} />
         </div>
       </div>

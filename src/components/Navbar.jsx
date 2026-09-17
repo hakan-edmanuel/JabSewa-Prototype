@@ -11,8 +11,12 @@ import logo from '../assets/logo-jabsewa.jpeg'
  * `simple` dipakai halaman non-landing (about, cart, buyer) — tanpa link Beranda.
  */
 export default function Navbar({ onNavigate, onSellerIntent, currentPage = 'home', simple = false }) {
-  const { user, hasSellerAccess, logout } = useAuth()
+  const { user, hasSellerAccess, sellerApplication, logout } = useAuth()
   const [mobileOpen, setMobileOpen] = useState(false)
+
+  // Lifecycle: belum ada ajuan → "Mulai Jadi Seller"; ajuan berjalan → status.
+  const hasPendingApplication =
+    Boolean(sellerApplication) && !hasSellerAccess
 
   const close = () => setMobileOpen(false)
   const go = (page, opts) => { close(); onNavigate(page, opts) }
@@ -62,6 +66,15 @@ export default function Navbar({ onNavigate, onSellerIntent, currentPage = 'home
               Dashboard
             </button>
           )}
+          {user && (
+            <button
+              type="button"
+              className={`nav-link ${currentPage === 'admin' ? 'is-active' : ''}`}
+              onClick={() => go('admin')}
+            >
+              Admin
+            </button>
+          )}
           {!user && (
             <button type="button" className="nav-link" onClick={handleSellerIntent}>
               Sewakan Barang
@@ -82,7 +95,7 @@ export default function Navbar({ onNavigate, onSellerIntent, currentPage = 'home
           )}
           {user && !hasSellerAccess && (
             <button type="button" className="nav-seller-cta" onClick={handleSellerIntent}>
-              Mulai Jadi Seller
+              {hasPendingApplication ? 'Status Ajuan Seller' : 'Mulai Jadi Seller'}
             </button>
           )}
           {hasSellerAccess && (
@@ -138,6 +151,15 @@ export default function Navbar({ onNavigate, onSellerIntent, currentPage = 'home
               Dashboard
             </button>
           )}
+          {user && (
+            <button
+              type="button"
+              className={`nav-link ${currentPage === 'admin' ? 'is-active' : ''}`}
+              onClick={() => go('admin')}
+            >
+              Admin
+            </button>
+          )}
           {!user && (
             <button type="button" className="nav-link" onClick={handleSellerIntent}>
               Sewakan Barang
@@ -145,7 +167,7 @@ export default function Navbar({ onNavigate, onSellerIntent, currentPage = 'home
           )}
           {user && !hasSellerAccess && (
             <button type="button" className="nav-link nav-link-accent" onClick={handleSellerIntent}>
-              Mulai Jadi Seller
+              {hasPendingApplication ? 'Status Ajuan Seller' : 'Mulai Jadi Seller'}
             </button>
           )}
           {hasSellerAccess && (
