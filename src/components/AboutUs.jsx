@@ -80,21 +80,21 @@ export default function AboutUs() {
           <h2 className="about-block-title">Founder JabSewa.id</h2>
           <p className="about-block-text">
             JabSewa mulai dari dua orang yang sering kebingungan cari barang
-            buat event sekampus — dan akhirnya bikin sendiri.
+            buat Untuk Acara — dan akhirnya bikin sendiri.
           </p>
           <div className="about-founders">
             <div className="about-founder-card">
-              <div className="about-founder-avatar">H</div>
+              <div className="about-founder-avatar">HS</div>
               <div className="about-founder-info">
                 <strong>Hakan Shabran Hutagaol</strong>
                 <span>Co-Founder</span>
               </div>
             </div>
             <div className="about-founder-card">
-              <div className="about-founder-avatar">A</div>
+              <div className="about-founder-avatar">AS</div>
               <div className="about-founder-info">
                 <strong>Ahnaf Samih Al-farisi</strong>
-                <span>Co-Founder</span>
+                <span>Inisiator</span>
               </div>
             </div>
           </div>
