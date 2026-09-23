@@ -1,305 +1,202 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useEffect, useState } from 'react'
-
 /*
  * ============================================================================
- * AUTH CONTEXT — JabSewa
+ * AUTH CONTEXT — JabSewa (MODE MOCK / OFFLINE)
  * ============================================================================
- * Ini adalah autentikasi SEMENTARA untuk pengembangan front-end.
- * Semua data disimpan di localStorage dan TIDAK aman — JANGAN dipakai
- * sebagai autentikasi sungguhan di production.
+ * Autentikasi 100% lokal: akun & sesi disimpan di LocalStorage.
  *
- * Saat backend tersedia, ganti implementasi fungsi di bawah dengan panggilan
- * API sungguhan tanpa mengubah konsumennya (komponen hanya memakai useAuth):
+ * Sumber akun  : src/lib/storage.js (koleksi `users`, ter-seed otomatis:
+ *                1 SUPERADMIN + TENANT + STORE_OWNER).
+ * Sesi aktif   : kunci `jabsewa_current_user` — bertahan antar refresh.
  *
+ * Kontrak ke komponen (TIDAK berubah dari versi sebelumnya):
+ *   user            → { id, name, email, role, sellerApplication, sellerProfile }
+ *   isAuthenticated → Boolean(user)
+ *   hasSellerAccess → Boolean(user.sellerProfile)
+ *   sellerApplication
+ *   isReady         → selalu true sesaat setelah mount (sesi lokal instan)
  *   register({ name, email, password })
- *     → POST /api/auth/register → { token, user }
  *   login({ email, password })
- *     → POST /api/auth/login    → { token, user }
  *   logout()
- *     → POST /api/auth/logout   (invalidasi token)
- *   submitSellerApplication(data)
- *     → POST /api/seller/applications  (buat ajuan seller, status under_review)
- *   decideSellerApplication({ approve, reason })
- *     → (MOCK) keputusan reviewer; nantinya datang dari backend/webhook
- *   listSellerApplications()
- *     → (MOCK admin) semua ajuan seller dari akun lokal
- *   decideAdmin(email, { approve, reason })
- *     → (MOCK admin) tulis keputusan ke akun pemilik ajuan
+ *   startSellerApplication(data) / submitSellerApplication(data)
+ *   switchRole(role) — DEV ONLY: ganti akun aktif sesuai role (bypass demo)
  *
- * Model data konsep (frontend-only, mock):
- *   user.sellerApplication → SELLER_APPLICATION (proses jadi seller)
- *   user.sellerProfile     → SELLER_PROFILE (identitas seller SETELAH disetujui)
- *
- * Bentuk `user` yang diharapkan konsumen:
- *   {
- *     name: string,
- *     email: string,
- *     sellerApplication: null | {
- *       status: 'draft' | 'submitted' | 'under_review' | 'approved' | 'rejected',
- *       storeName, description, contact, city, address,
- *       submittedAt, reviewedAt, rejectionReason
- *     },
- *     sellerProfile: null | { storeName, description, contact, city, address }
- *   }
- *
- * State `user` sebaiknya diisi dari sesi yang diverifikasi server
- * (token/JWT yang disimpan di httpOnly cookie, atau refresh token flow).
- *
- * Bentuk `user` yang diharapkan konsumen:
- *   {
- *     name: string,
- *     email: string,
- *     seller: null | { onboarded: true, storeName: string, location: string }
- *   }
+ * Review ajuan seller oleh superadmin TIDAK di sini — seluruh logika
+ * keputusan ada di lib/superadmin.js (area /sys-control-jab), satu sumber.
  * ============================================================================
  */
 
-const STORAGE_KEY = 'jabsewa:auth:v1'
-// Registri akun lokal (mock admin): semua akun yang pernah dibuat di device
-// ini. Dipakai Admin Applications untuk meninjau ajuan seller lintas akun.
-const ACCOUNTS_KEY = 'jabsewa:accounts:v1'
+import { createContext, useCallback, useContext, useMemo, useState } from 'react'
+import {
+  getUsers,
+  saveUser,
+  getCurrentUser,
+  setCurrentUser as persistSession,
+  clearCurrentUser,
+} from '../lib/storage'
+import { ROLE_TENANT } from '../lib/roles'
 
-function loadStoredUser() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    const parsed = raw ? JSON.parse(raw) : null
-    // Migrasi satu kali dari model lama (seller.onboarded boolean) ke model
-    // baru: ajuan approved + sellerProfile terpisah.
-    if (parsed?.seller?.onboarded && !parsed.sellerProfile) {
-      return {
-        ...parsed,
-        sellerApplication: {
-          status: 'approved',
-          storeName: parsed.seller.storeName,
-          city: parsed.seller.location,
-        },
-        sellerProfile: {
-          storeName: parsed.seller.storeName,
-          city: parsed.seller.location,
-        },
-      }
-    }
-    return parsed
-  } catch {
-    return null
-  }
+/* -------------------------------------------------------------------------- */
+/* Bentuk user kontrak frontend                                               */
+/* -------------------------------------------------------------------------- */
+
+/** Ambil user "lengkap" (termasuk overlay ajuan) dari koleksi users. */
+function hydrateUser(stored) {
+  if (!stored?.id && !stored?.email) return null
+  const fresh = getUsers().find(
+    (u) => (stored.id && u.id === stored.id) || (stored.email && u.email === stored.email),
+  )
+  return fresh || stored
 }
+
+/* -------------------------------------------------------------------------- */
 
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(loadStoredUser)
+  // Sesi dibaca sinkron dari LocalStorage saat provider pertama dirender —
+  // tidak perlu effect (pembacaan localStorage cepat & tanpa efek samping).
+  const [user, setUser] = useState(() => hydrateUser(getCurrentUser()))
+  const isReady = true
 
-  useEffect(() => {
-    try {
-      if (user) localStorage.setItem(STORAGE_KEY, JSON.stringify(user))
-      else localStorage.removeItem(STORAGE_KEY)
-    } catch {
-      // storage penuh / tidak tersedia — abaikan, sesi hanya bertahan di memori
-    }
-  }, [user])
+  /* --- Pastikan user selalu sinkron dengan koleksi users ------------------ */
+  const syncUser = useCallback((next) => {
+    setUser(next ? hydrateUser(next) : null)
+  }, [])
 
-  // Simpan setiap akun ke registri lokal (mock multi-akun sisi admin).
-  useEffect(() => {
-    if (!user?.email) return
-    try {
-      const raw = localStorage.getItem(ACCOUNTS_KEY)
-      const accounts = raw ? JSON.parse(raw) : []
-      const existing = Array.isArray(accounts) ? accounts : []
-      const next = existing.some((a) => a.email === user.email)
-        ? existing.map((a) => (a.email === user.email ? { ...a, ...user } : a))
-        : [...existing, { ...user }]
-      localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(next))
-    } catch {
-      // storage penuh / tidak tersedia — abaikan
-    }
-  }, [user])
+  /* --- Derived flags ------------------------------------------------------ */
+  const isAuthenticated = Boolean(user)
+  const hasSellerAccess = Boolean(user?.sellerProfile)
+  const sellerApplication = user?.sellerApplication || null
 
-  // MOCK: tanpa backend, akun apa pun diterima. Nama pengguna diambil dari
-  // input registrasi; untuk login diambil dari bagian depan email.
-  const register = async ({ name, email }) => {
-    // TODO(backend): ganti dengan POST /api/auth/register
-    const nextUser = {
-      name: name.trim(),
-      email: email.trim(),
-      sellerApplication: null,
-      sellerProfile: null,
-    }
-    setUser(nextUser)
-    return nextUser
-  }
+  /* --- Login / register / logout (mock, verifikasi terhadap users lokal) -- */
+  const login = useCallback(
+    async ({ email, password }) => {
+      const found = getUsers().find(
+        (u) => u.email?.toLowerCase() === String(email || '').trim().toLowerCase(),
+      )
+      if (!found) throw new Error('invalid login credentials')
+      if (found.password && found.password !== password) throw new Error('invalid login credentials')
+      if (found.status && found.status !== 'active') throw new Error('akun tidak aktif')
 
-  const login = async ({ email }) => {
-    // TODO(backend): ganti dengan POST /api/auth/login + validasi kredensial
-    const cleanEmail = email.trim()
-    const fallbackName = cleanEmail.split('@')[0].replace(/[._-]+/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
-    const nextUser = {
-      name: fallbackName || 'Penyewa',
-      email: cleanEmail,
-      sellerApplication: null,
-      sellerProfile: null,
-    }
-    setUser(nextUser)
-    return nextUser
-  }
+      persistSession({ id: found.id, email: found.email })
+      syncUser(found)
+      return found
+    },
+    [syncUser],
+  )
 
-  const logout = async () => {
-    // TODO(backend): ganti dengan POST /api/auth/logout
-    setUser(null)
-  }
-
-  // =====================================================================
-  // SELLER APPLICATION — ajuan jadi seller (BUKAN pengganti role).
-  // User biasa tidak mendapat kemampuan seller otomatis; sellerProfile
-  // hanya tercipta setelah ajuan disetujui.
-  // =====================================================================
-
-  const startSellerApplication = async (data = {}) => {
-    // TODO(backend): ganti dengan POST /api/seller/applications/draft
-    setUser((current) =>
-      current && !current.sellerApplication
-        ? { ...current, sellerApplication: { status: 'draft', ...data } }
-        : current,
-    )
-  }
-
-  const submitSellerApplication = async ({ storeName, description, contact, city, address }) => {
-    // TODO(backend): ganti dengan POST /api/seller/applications
-    setUser((current) =>
-      current
-        ? {
-            ...current,
-            sellerApplication: {
-              status: 'under_review', // 'submitted' bersifat sesaat lalu masuk review
-              storeName: storeName.trim(),
-              description: description.trim(),
-              contact: contact.trim(),
-              city,
-              address: address.trim(),
-              submittedAt: new Date().toISOString(),
-            },
-          }
-        : current,
-    )
-  }
-
-  // MOCK keputusan reviewer (dari akun yang sedang login) — di produksi ini datang dari backend.
-  const decideSellerApplication = async ({ approve, reason = '' }) => {
-    setUser((current) => {
-      if (!current?.sellerApplication) return current
-      const app = current.sellerApplication
-      if (approve) {
-        return {
-          ...current,
-          sellerApplication: { ...app, status: 'approved', reviewedAt: new Date().toISOString() },
-          sellerProfile: {
-            storeName: app.storeName,
-            description: app.description || '',
-            contact: app.contact || '',
-            city: app.city || '',
-            address: app.address || '',
-          },
-        }
+  const register = useCallback(
+    async ({ name, email, password }) => {
+      const cleanEmail = String(email || '').trim().toLowerCase()
+      if (getUsers().some((u) => u.email?.toLowerCase() === cleanEmail)) {
+        throw new Error('user already registered')
       }
-      return {
+      if (String(password || '').length < 6) throw new Error('password should be at least 6 characters')
+
+      const created = saveUser({
+        id: `u-${Date.now()}`,
+        name: (name || '').trim() || 'Penyewa',
+        email: cleanEmail,
+        password,
+        role: ROLE_TENANT,
+        status: 'active',
+        sellerApplication: null,
+        sellerProfile: null,
+      })
+      persistSession({ id: created.id, email: created.email })
+      syncUser(created)
+      return created
+    },
+    [syncUser],
+  )
+
+  const logout = useCallback(async () => {
+    clearCurrentUser()
+    setUser(null)
+  }, [])
+
+  /* --- Seller application (disimpan langsung ke user di koleksi) ---------- */
+  const mutateCurrentUser = useCallback(
+    (mutate) => {
+      setUser((current) => {
+        if (!current) return current
+        const next = mutate(current)
+        saveUser(next)
+        persistSession({ id: next.id, email: next.email })
+        return next
+      })
+    },
+    [],
+  )
+
+  const startSellerApplication = useCallback(
+    async (data = {}) => {
+      mutateCurrentUser((current) =>
+        current.sellerApplication ? current : { ...current, sellerApplication: { status: 'draft', ...data } },
+      )
+    },
+    [mutateCurrentUser],
+  )
+
+  const submitSellerApplication = useCallback(
+    async ({ storeName, description, contact, city, address }) => {
+      mutateCurrentUser((current) => ({
         ...current,
         sellerApplication: {
-          ...app,
-          status: 'rejected',
-          reviewedAt: new Date().toISOString(),
-          rejectionReason: reason,
+          status: 'under_review',
+          storeName: String(storeName || '').trim(),
+          description: String(description || '').trim(),
+          contact: String(contact || '').trim(),
+          city,
+          address: String(address || '').trim(),
+          submittedAt: new Date().toISOString(),
         },
-      }
-    })
-  }
+      }))
+    },
+    [mutateCurrentUser],
+  )
 
-  // =====================================================================
-  // ADMIN — daftar SEMUA ajuan seller dari akun lokal (mock multi-akun,
-  // bukan backend). decideAdmin menulis keputusan pada akun pemilik ajuan
-  // di registri + sesi aktif, memakai bentuk data yang sama dengan
-  // decideSellerApplication supaya konsumen (screen applicant) tidak berubah.
-  // =====================================================================
-  const listSellerApplications = () => {
-    try {
-      const raw = localStorage.getItem(ACCOUNTS_KEY)
-      const accounts = raw ? JSON.parse(raw) : []
-      if (!Array.isArray(accounts)) return []
-      return accounts
-        .filter((a) => a?.sellerApplication && a.sellerApplication.status !== 'draft')
-        .map((a) => ({
-          id: a.email,
-          applicant: { name: a.name, email: a.email },
-          sellerApplication: a.sellerApplication,
-        }))
-        .sort(
-          (a, b) =>
-            (b.sellerApplication.submittedAt || '').localeCompare(a.sellerApplication.submittedAt || ''),
-        )
-    } catch {
-      return []
-    }
-  }
+  /* --- DEV ONLY: switcher role cepat (TENANT <-> SUPERADMIN <-> OWNER) ---- */
+  const switchRole = useCallback(
+    (role) => {
+      const target = getUsers().find((u) => u.role === role)
+      if (!target) return false
+      persistSession({ id: target.id, email: target.email })
+      syncUser(target)
+      return true
+    },
+    [syncUser],
+  )
 
-  const decideAdmin = async (email, { approve, reason = '' }) => {
-    const reviewedAt = new Date().toISOString()
-    const apply = (acc) => {
-      if (!acc?.sellerApplication) return acc
-      const app = acc.sellerApplication
-      if (approve) {
-        return {
-          ...acc,
-          sellerApplication: { ...app, status: 'approved', reviewedAt },
-          sellerProfile: {
-            storeName: app.storeName,
-            description: app.description || '',
-            contact: app.contact || '',
-            city: app.city || '',
-            address: app.address || '',
-          },
-        }
-      }
-      return {
-        ...acc,
-        sellerApplication: {
-          ...app,
-          status: 'rejected',
-          reviewedAt,
-          rejectionReason: reason,
-        },
-      }
-    }
-
-    try {
-      const raw = localStorage.getItem(ACCOUNTS_KEY)
-      const accounts = raw ? JSON.parse(raw) : []
-      if (Array.isArray(accounts)) {
-        const next = accounts.map((a) => (a.email === email ? apply(a) : a))
-        localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(next))
-      }
-    } catch {
-      // storage penuh / tidak tersedia — abaikan
-    }
-
-    // Jika akun yang dikeputusi sedang login, cerminkan ke sesi aktif juga.
-    setUser((current) => (current?.email === email ? apply(current) : current))
-  }
-
-  const value = {
-    user,
-    isAuthenticated: Boolean(user),
-    // Akses seller HANYA dari sellerProfile hasil ajuan yang disetujui.
-    hasSellerAccess: Boolean(user?.sellerProfile),
-    sellerApplication: user?.sellerApplication || null,
-    register,
-    login,
-    logout,
-    startSellerApplication,
-    submitSellerApplication,
-    decideSellerApplication,
-    listSellerApplications,
-    decideAdmin,
-  }
+  const value = useMemo(
+    () => ({
+      user,
+      isAuthenticated,
+      hasSellerAccess,
+      sellerApplication,
+      isReady,
+      login,
+      register,
+      logout,
+      startSellerApplication,
+      submitSellerApplication,
+      switchRole,
+    }),
+    [
+      user,
+      isAuthenticated,
+      hasSellerAccess,
+      sellerApplication,
+      isReady,
+      login,
+      register,
+      logout,
+      startSellerApplication,
+      submitSellerApplication,
+      switchRole,
+    ],
+  )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

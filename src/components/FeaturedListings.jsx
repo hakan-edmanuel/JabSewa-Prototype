@@ -1,19 +1,27 @@
-import { ITEMS } from '../data/catalog'
-
-const formatPrice = (price) => `Rp${price.toLocaleString('id-ID')}`
-
-const CATEGORY_LABELS = {
-  photography: 'Fotografi & Video',
-  gadget: 'Gadget',
-  sports: 'Olahraga',
-  event: 'Event',
-}
+import { useEffect, useState } from 'react'
+import { fetchListings } from '../lib/listings'
+import { formatPrice } from '../lib/format'
+import { CATEGORY_LABELS } from '../lib/constants'
 
 /*
- * Barang terbaru dari katalog — satu sumber data (data/catalog.js),
+ * Barang terbaru dari LocalStorage store (via lib/listings) —
  * tampilan ringkas: gambar, nama, harga, lokasi.
  */
 export default function FeaturedListings({ onNavigate }) {
+  const [items, setItems] = useState([])
+
+  useEffect(() => {
+    let active = true
+    fetchListings().then((data) => {
+      if (active) setItems(data.slice(0, 6))
+    })
+    return () => {
+      active = false
+    }
+  }, [])
+
+  if (!items.length) return null
+
   return (
     <section className="featured-section" id="jelajahi">
       <div className="container">
@@ -28,7 +36,7 @@ export default function FeaturedListings({ onNavigate }) {
         </div>
 
         <div className="listing-grid">
-          {ITEMS.map((item) => (
+          {items.map((item) => (
             <article key={item.id} className="listing-card">
               <button
                 type="button"

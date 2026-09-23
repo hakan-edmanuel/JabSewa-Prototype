@@ -3,6 +3,7 @@ export default function SellerSidebar({ activeMenu, setActiveMenu }) {
     { id: 'dashboard', label: 'Dashboard' },
     { id: 'items', label: 'Barang Saya' },
     { id: 'orders', label: 'Pesanan' },
+    { id: 'store', label: 'Info Toko' },
   ]
 
   return (

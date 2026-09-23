@@ -2223,6 +2223,17 @@
   margin-top: 10px;
 }
 
+.rental-note.is-error {
+  color: #b91c1c;
+}
+
+/* Baris total di price-summary ditonjolkan (subtotal, deposit, total) */
+.price-summary span:nth-last-child(2),
+.price-summary strong:last-child {
+  border-top: 1px solid var(--jabsewa-line-soft);
+  padding-top: 6px;
+}
+
 /* ==================== SELLER WORKSPACE ==================== */
 .seller-page {
   min-height: 100vh;
@@ -3810,6 +3821,14 @@
   margin-bottom: 14px;
 }
 
+.auth-demo-note {
+  margin-top: 14px;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--text-faint);
+  text-align: center;
+}
+
 /* ==================== BUYER DASHBOARD (MODE PENYEWA) ==================== */
 .page-buyer-shell {
   background: var(--jabsewa-bg);
@@ -4813,7 +4832,10 @@
     padding: 18px;
   }
 
-  .seller-navbar-actions {
+  /* Seller navbar: sembunyikan mode switch & nama toko saja — UserMenu
+     (profil/keluar) TETAP tampil agar logout tetap bisa di mobile. */
+  .seller-navbar-actions .nav-mode-switch,
+  .seller-navbar-actions .seller-store-name {
     display: none;
   }
 
@@ -5853,6 +5875,78 @@
   .seller-cta-box {
     padding: 28px 20px;
   }
+}
+
+/* ==========================================================================
+   SELLER CENTER — info toko, aksi pesanan, wishlist buyer
+   ========================================================================== */
+
+/* Info Toko */
+.store-facts {
+  margin-top: 8px;
+}
+
+.store-description,
+.store-address {
+  margin: 16px 0;
+}
+
+.store-description h2,
+.store-address h2 {
+  font-size: 0.95rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.store-description p,
+.store-address p {
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--jabsewa-text-soft);
+}
+
+/* Aksi tolak pesanan (seller) — inline, bukan modal */
+.order-reject-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.order-reject-box .search-box-small {
+  flex: 1 1 180px;
+  min-width: 0;
+}
+
+.order-period-note {
+  font-size: 0.78rem;
+  color: var(--jabsewa-text-soft);
+}
+
+.order-cancel-note {
+  font-size: 0.8rem;
+  color: #b91c1c;
+}
+
+/* Wishlist buyer: baris aksi di bawah harga */
+.buyer-wish-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+/* Catatan penolakan di kartu rental buyer */
+.buyer-rental-reject {
+  margin-top: 10px;
+  font-size: 0.8rem;
+  color: #b91c1c;
+}
+
+.buyer-rental-actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
 }
 
 /* ==========================================================================

@@ -1,17 +1,15 @@
+import { useState } from 'react'
+import { CATEGORIES } from '../../lib/constants'
+
+const MAX_PRICE = 500000
+
 export default function ConsumerFilters({ onCategoryChange, onPriceChange, currentCategory }) {
-  // Harus sinkron dengan nilai `category` di data/catalog.js.
-  const categories = [
-    { id: 'photography', name: 'Fotografi' },
-    { id: 'gadget', name: 'Gadget' },
-    { id: 'sports', name: 'Olahraga' },
-    { id: 'event', name: 'Event' },
-  ]
+  const [maxPrice, setMaxPrice] = useState(MAX_PRICE)
 
   const handlePriceChange = (e) => {
-    onPriceChange({
-      min: 0,
-      max: parseInt(e.target.value),
-    })
+    const value = parseInt(e.target.value, 10)
+    setMaxPrice(value)
+    onPriceChange({ min: 0, max: value })
   }
 
   return (
@@ -20,7 +18,7 @@ export default function ConsumerFilters({ onCategoryChange, onPriceChange, curre
         <div className="filter-section">
           <h3 className="filter-title">Kategori</h3>
           <div className="filter-options">
-            {categories.map((cat) => (
+            {CATEGORIES.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => onCategoryChange(currentCategory === cat.id ? null : cat.id)}
@@ -38,15 +36,15 @@ export default function ConsumerFilters({ onCategoryChange, onPriceChange, curre
             <input
               type="range"
               min="0"
-              max="500000"
+              max={MAX_PRICE}
               step="50000"
-              defaultValue="500000"
+              value={maxPrice}
               onChange={handlePriceChange}
               className="price-slider"
             />
             <div className="price-display">
               <span className="price-min">Rp 0</span>
-              <span className="price-max">Rp 500.000</span>
+              <span className="price-max">Rp {maxPrice.toLocaleString('id-ID')}</span>
             </div>
           </div>
         </div>

@@ -2,8 +2,8 @@ import { useState } from 'react'
 import SimpleNavbar from '../components/SimpleNavbar'
 import Footer from '../components/Footer'
 import { useAuth } from '../auth/AuthContext'
-
-const CITIES = ['Jakarta Selatan', 'Jakarta Pusat', 'Jakarta Utara', 'Bandung', 'Bogor', 'Depok', 'Tangerang', 'Bekasi']
+import { formatDate } from '../lib/format'
+import { CITIES } from '../lib/constants'
 
 const WIZARD_STEPS = ['Info Seller', 'Perjanjian', 'Review & Kirim']
 
@@ -341,8 +341,7 @@ function ApplicationStatusScreen({ application, onNavigate, onReapply }) {
                 <strong>{value}</strong>
               </div>
             ))}
-          </div>
-          <button className="auth-switch-link" onClick={() => onNavigate('buyer')}>
+          </div>            <button className="auth-switch-link" onClick={() => onNavigate('buyer')}>
             Kembali ke dashboard penyewa
           </button>
         </div>
@@ -350,13 +349,4 @@ function ApplicationStatusScreen({ application, onNavigate, onReapply }) {
       <Footer onNavigate={onNavigate} />
     </div>
   )
-}
-
-function formatDate(iso) {
-  if (!iso) return 'Baru saja'
-  try {
-    return new Date(iso).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
-  } catch {
-    return 'Baru saja'
-  }
 }

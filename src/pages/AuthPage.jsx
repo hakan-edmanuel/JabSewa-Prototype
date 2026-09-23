@@ -6,23 +6,50 @@ import logo from '../assets/logo-jabsewa.jpeg'
  * Halaman login/daftar. Mode ditentukan dari route (/login vs /register).
  * Setelah berhasil, onAuthenticated(user) meneruskan ke tujuan semula
  * (barang yang ingin disewa, onboarding seller, atau buyer dashboard).
+ *
+ * Auth mock lokal (LocalStorage):
+ * - Akun diverifikasi terhadap koleksi `users` (seed: superadmin/tenant/owner).
+ * - Email belum terdaftar / password salah diterjemahkan ke pesan Indonesia.
  */
+
+const ERROR_TRANSLATIONS = [
+  { match: /invalid login credentials/i, message: 'Email atau password salah.' },
+  { match: /user already registered/i, message: 'Email sudah terdaftar. Coba masuk saja.' },
+  { match: /password should be at least/i, message: 'Password minimal 6 karakter.' },
+]
+
+function translateError(message) {
+  if (!message) return 'Gagal masuk. Coba lagi.'
+  const found = ERROR_TRANSLATIONS.find((rule) => rule.match.test(message))
+  return found ? found.message : message
+}
+
 export default function AuthPage({ onNavigate, mode, onAuthenticated, intent }) {
   const { login, register } = useAuth()
   const isLogin = mode === 'login'
   const [error, setError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+    setIsSubmitting(true)
     const data = new FormData(e.currentTarget)
+    const email = data.get('email')
+    const password = data.get('password')
     try {
-      const user = isLogin
-        ? await login({ email: data.get('email'), password: data.get('password') })
-        : await register({ name: data.get('name'), email: data.get('email'), password: data.get('password') })
-      onAuthenticated(user)
+      if (isLogin) {
+        const user = await login({ email, password })
+        onAuthenticated(user)
+      } else {
+        const name = data.get('name')
+        const user = await register({ name, email, password })
+        onAuthenticated(user)
+      }
     } catch (err) {
-      setError(err?.message || 'Gagal masuk. Coba lagi.')
+      setError(translateError(err?.message))
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -33,9 +60,9 @@ export default function AuthPage({ onNavigate, mode, onAuthenticated, intent }) 
         ? 'Kamu akan diarahkan ke dashboard setelah masuk.'
         : intent?.page === 'profile'
           ? 'Kamu akan diarahkan ke profil setelah masuk.'
-        : intent?.page === 'consumer'
-          ? 'Kamu akan kembali ke barang yang ingin disewa setelah masuk.'
-          : null
+          : intent?.page === 'consumer'
+            ? 'Kamu akan kembali ke barang yang ingin disewa setelah masuk.'
+            : null
 
   return (
     <div className="page-shell page-auth-shell">
@@ -73,10 +100,10 @@ export default function AuthPage({ onNavigate, mode, onAuthenticated, intent }) 
             </div>
             <div className="auth-field">
               <label className="auth-label" htmlFor="auth-password">Password</label>
-              <input id="auth-password" name="password" type="password" required placeholder="Minimal 8 karakter" className="auth-input" minLength={8} />
+              <input id="auth-password" name="password" type="password" required placeholder="Minimal 6 karakter" className="auth-input" minLength={6} />
             </div>
-            <button type="submit" className="auth-submit-btn">
-              {isLogin ? 'Masuk' : 'Daftar'}
+            <button type="submit" className="auth-submit-btn" disabled={isSubmitting}>
+              {isSubmitting ? 'Memproses…' : isLogin ? 'Masuk' : 'Daftar'}
             </button>
           </form>
 
@@ -93,6 +120,10 @@ export default function AuthPage({ onNavigate, mode, onAuthenticated, intent }) 
 
           <p className="auth-note">
             Dengan melanjutkan, kamu menyetujui Syarat Layanan dan Kebijakan Privasi JabSewa.
+          </p>
+
+          <p className="auth-demo-note">
+            Akun demo — penyewa: tenant@jabsewa.id / tenant123 · toko: owner@jabsewa.id / owner123
           </p>
         </div>
       </main>

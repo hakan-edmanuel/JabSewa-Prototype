@@ -1,5 +1,23 @@
+/*
+ * ============================================================================
+ * ROUTER — JabSewa
+ * ============================================================================
+ * Pemisahan route (FITUR 2):
+ *   /                      → landing publik
+ *   /consumer /buyer ...   → UI user (Tenant & Store Owner)
+ *   /sys-control-jab/*     → SUPERADMIN (subtree terisolasi; non-admin
+ *                            melihat 404 — bukan 403 — agar route tidak
+ *                            bisa di-enumerate)
+ *
+ * ATURAN ISOLASI: folder src/superadmin tidak boleh diimpor komponen user,
+ * dan komponen user tidak boleh mengimpor apa pun dari src/superadmin.
+ * Guard: UI (SuperadminGuard, 404 palsu) berbasis role `jabsewa_current_user`
+ * (LocalStorage — mode mock/offline, tanpa RLS Postgres).
+ * ============================================================================
+ */
 import { useEffect, useState } from 'react'
 import './App.css'
+import './styles/dev-switcher.css'
 import Navbar from './components/Navbar'
 import HeroSection from './components/HeroSection'
 import CategorySection from './components/CategorySection'
@@ -10,13 +28,13 @@ import Footer from './components/Footer'
 import ConsumerPage from './pages/ConsumerPage'
 import SellerPage from './pages/SellerPage'
 import AboutPage from './pages/AboutPage'
-import CartPage from './pages/CartPage'
 import AuthPage from './pages/AuthPage'
 import BuyerPage from './pages/BuyerPage'
 import SellerOnboardingPage from './pages/SellerOnboardingPage'
 import ProfilePage from './pages/ProfilePage'
-import AdminApplicationsPage from './pages/AdminApplicationsPage'
-import AgentChat from './AgentChat'
+import NotFoundPage from './pages/NotFoundPage'
+import SysControlApp from './superadmin/SysControlApp'
+import DevRoleSwitcher from './components/DevRoleSwitcher'
 import { useAuth } from './auth/AuthContext'
 
 function getPageFromPath(pathname) {
@@ -25,16 +43,15 @@ function getPageFromPath(pathname) {
   if (pathname === '/seller/onboarding') return 'seller-onboarding'
   if (pathname === '/buyer') return 'buyer'
   if (pathname === '/profile') return 'profile'
-  if (pathname === '/admin') return 'admin'
-  if (pathname === '/agent') return 'agent'
+  if (pathname === '/sys-control-jab' || pathname.startsWith('/sys-control-jab/')) return 'sys-control'
   if (pathname === '/about') return 'about'
-  if (pathname === '/cart') return 'cart'
   if (pathname === '/login' || pathname === '/register') return 'auth'
-  return 'home'
+  if (pathname === '/') return 'home'
+  return 'not-found'
 }
 
 function App() {
-  const { user, hasSellerAccess } = useAuth()
+  const { user, hasSellerAccess, isReady } = useAuth()
   const [page, setPage] = useState(() => getPageFromPath(window.location.pathname))
   // Tujuan setelah login/daftar: { page: 'seller' | 'buyer' | 'consumer', itemId? }
   const [authIntent, setAuthIntent] = useState(null)
@@ -135,7 +152,25 @@ function App() {
     return () => observer.disconnect()
   }, [page])
 
-  // --- Route guard ---
+  // Tunggu sesi lokal (LocalStorage) selesai dibaca sebelum route guard
+  // dievaluasi, supaya refresh halaman tidak “flash” ke halaman login.
+  // (Diletakkan SETELAH semua hooks — jangan dinaikkan ke atas.)
+  if (!isReady) {
+    return (
+      <div className="page-shell" style={{ display: 'grid', placeItems: 'center', minHeight: '100vh' }}>
+        <p>Memuat…</p>
+      </div>
+    )
+  }
+
+  // --- Route area superadmin (terisolasi; guard sendiri di SuperadminGuard) ---
+  // Role diverifikasi terhadap koleksi `users` di LocalStorage via
+  // lib/superadmin.requireSuperAdmin (default-deny).
+  if (page === 'sys-control') {
+    return <SysControlApp onExit={() => navigate('home')} />
+  }
+
+  // --- Route guard user (TENANT / STORE_OWNER) ---
   let effectivePage = page
   const authMode = window.location.pathname.includes('/login') ? 'login' : 'register'
 
@@ -150,7 +185,7 @@ function App() {
           : null
     : null
 
-  if ((page === 'seller' || page === 'seller-onboarding' || page === 'buyer' || page === 'profile' || page === 'admin') && !user) {
+  if ((page === 'seller' || page === 'seller-onboarding' || page === 'buyer' || page === 'profile') && !user) {
     effectivePage = 'auth'
   }
   // Seller dashboard membutuhkan akses seller — selain itu tampilkan onboarding.
@@ -164,32 +199,36 @@ function App() {
 
   if (effectivePage === 'auth') {
     return (
-      <AuthPage
-        mode={authMode}
-        onNavigate={navigate}
-        onAuthenticated={handleAuthenticated}
-        intent={authIntent || (guardTarget ? { page: guardTarget } : null)}
-      />
+      <Shell>
+        <AuthPage
+          mode={authMode}
+          onNavigate={navigate}
+          onAuthenticated={handleAuthenticated}
+          intent={authIntent || (guardTarget ? { page: guardTarget } : null)}
+        />
+      </Shell>
     )
   }
   if (effectivePage === 'consumer') {
     return (
-      <ConsumerPage
-        key={consumerItemId ?? 'consumer'}
-        onNavigate={navigate}
-        onRequireAuth={goRent}
-        initialItemId={consumerItemId}
-      />
+      <Shell>
+        <ConsumerPage
+          key={consumerItemId ?? 'consumer'}
+          onNavigate={navigate}
+          onRequireAuth={goRent}
+          initialItemId={consumerItemId}
+        />
+      </Shell>
     )
   }
-  if (effectivePage === 'seller') return <SellerPage onNavigate={navigate} />
-  if (effectivePage === 'seller-onboarding') return <SellerOnboardingPage onNavigate={navigate} />
-  if (effectivePage === 'buyer') return <BuyerPage onNavigate={navigate} onSellerIntent={goSeller} />
-  if (effectivePage === 'profile') return <ProfilePage onNavigate={navigate} onSellerIntent={goSeller} />
-  if (effectivePage === 'admin') return <AdminApplicationsPage onNavigate={navigate} />
-  if (effectivePage === 'agent') return <AgentChat title="jabsewa Coding Agent" />
-  if (effectivePage === 'about') return <AboutPage onNavigate={navigate} />
-  if (effectivePage === 'cart') return <CartPage onNavigate={navigate} />
+  if (effectivePage === 'seller') return <Shell><SellerPage onNavigate={navigate} /></Shell>
+  if (effectivePage === 'seller-onboarding')
+    return <Shell><SellerOnboardingPage onNavigate={navigate} /></Shell>
+  if (effectivePage === 'buyer') return <Shell><BuyerPage onNavigate={navigate} onSellerIntent={goSeller} /></Shell>
+  if (effectivePage === 'profile') return <Shell><ProfilePage onNavigate={navigate} onSellerIntent={goSeller} /></Shell>
+  if (effectivePage === 'about') return <Shell><AboutPage onNavigate={navigate} /></Shell>
+
+  if (effectivePage === 'not-found') return <NotFoundPage />
 
   return (
     <div className="page-shell">
@@ -208,7 +247,21 @@ function App() {
       </main>
 
       <Footer onNavigate={navigate} />
+      <DevRoleSwitcher />
     </div>
+  )
+}
+
+/**
+ * Pembungkus ringan untuk halaman user: menambahkan DevRoleSwitcher
+ * (panel demo ganti role) tanpa mengubah komponen halamannya.
+ */
+function Shell({ children }) {
+  return (
+    <>
+      {children}
+      <DevRoleSwitcher />
+    </>
   )
 }
 

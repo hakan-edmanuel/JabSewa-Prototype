@@ -136,8 +136,8 @@ export default function ProfilePage({ onNavigate, onSellerIntent }) {
               <span className="profile-row-value">{user?.email}</span>
             </div>
             <div className="profile-links">
-              <button type="button" className="profile-link-item" onClick={() => onNavigate('admin')}>
-                <span>Admin: Seller Applications</span>
+              <button type="button" className="profile-link-item" onClick={() => onNavigate('consumer')}>
+                <span>Cari Barang</span>
                 <span className="profile-link-arrow" aria-hidden="true">→</span>
               </button>
             </div>
@@ -154,10 +154,6 @@ export default function ProfilePage({ onNavigate, onSellerIntent }) {
               </button>
               <button type="button" className="profile-link-item" onClick={() => onNavigate('buyer')}>
                 <span>Wishlist</span>
-                <span className="profile-link-arrow" aria-hidden="true">→</span>
-              </button>
-              <button type="button" className="profile-link-item" onClick={() => onNavigate('consumer')}>
-                <span>Cari Barang</span>
                 <span className="profile-link-arrow" aria-hidden="true">→</span>
               </button>
             </div>

@@ -66,15 +66,6 @@ export default function Navbar({ onNavigate, onSellerIntent, currentPage = 'home
               Dashboard
             </button>
           )}
-          {user && (
-            <button
-              type="button"
-              className={`nav-link ${currentPage === 'admin' ? 'is-active' : ''}`}
-              onClick={() => go('admin')}
-            >
-              Admin
-            </button>
-          )}
           {!user && (
             <button type="button" className="nav-link" onClick={handleSellerIntent}>
               Sewakan Barang
@@ -149,15 +140,6 @@ export default function Navbar({ onNavigate, onSellerIntent, currentPage = 'home
               onClick={() => go('buyer')}
             >
               Dashboard
-            </button>
-          )}
-          {user && (
-            <button
-              type="button"
-              className={`nav-link ${currentPage === 'admin' ? 'is-active' : ''}`}
-              onClick={() => go('admin')}
-            >
-              Admin
             </button>
           )}
           {!user && (

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '../auth/AuthContext'
+import { initialOf } from '../lib/format'
 
 /*
  * Chip profil + dropdown kecil (profil, keluar).
@@ -9,7 +10,7 @@ export default function UserMenu({ onLogout, onNavigate }) {
   const { user, logout } = useAuth()
   const [open, setOpen] = useState(false)
 
-  const initial = (user?.name || user?.email || '?').charAt(0).toUpperCase()
+  const initial = initialOf(user?.name || user?.email)
 
   const handleLogout = async () => {
     setOpen(false)

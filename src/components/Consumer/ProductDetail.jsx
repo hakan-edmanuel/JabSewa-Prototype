@@ -1,36 +1,50 @@
 import { useMemo, useState } from 'react'
 import { useAuth } from '../../auth/AuthContext'
 import { addRental } from '../../lib/userData'
-
-const formatPrice = (price) => `Rp ${price.toLocaleString('id-ID')}`
-
-const CATEGORY_LABELS = {
-  photography: 'Fotografi & Video',
-  gadget: 'Gadget',
-  sports: 'Olahraga',
-  event: 'Event',
-}
+import { formatPrice } from '../../lib/format'
+import { CATEGORY_LABELS } from '../../lib/constants'
 
 /*
- * Detail barang + panel sewa.
+ * Detail barang + panel sewa (mode penyewa).
  *   belum login → tombol "Sewa sekarang" meminta masuk dulu (onRequireAuth),
  *                 setelah login user dikembalikan ke barang ini.
- *   sudah login → permintaan sewa tersimpan (addRental) dan muncul di
- *                 Buyer Dashboard sebagai pesanan "Menunggu konfirmasi".
+ *   sudah login → permintaan sewa tersimpan via lapisan data (addRental)
+ *                 dengan status `pending`, muncul di Buyer Dashboard.
+ *
+ * Kontrak rental yang dikirim: listing_id, store_id, start_date, end_date,
+ * total_days, price_per_day, deposit, subtotal, total (dihitung di data layer).
+ * Tidak ada simulasi pembayaran / konfirmasi otomatis — status awal selalu
+ * "Menunggu Konfirmasi" sampai seller benar-benar memutuskan.
  */
 export default function ProductDetail({ item, onBack, onNavigate, onRequireAuth }) {
   const { user } = useAuth()
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [requestSent, setRequestSent] = useState(false)
-  const totalDays = useMemo(
-    () =>
-      startDate && endDate
-        ? Math.max(0, Math.ceil((new Date(endDate) - new Date(startDate)) / 86400000))
-        : 0,
-    [endDate, startDate],
-  )
+  const [dateError, setDateError] = useState('')
+
+  const today = new Date().toISOString().slice(0, 10)
+
+  const totalDays = useMemo(() => {
+    if (!startDate || !endDate) return 0
+    const diff = Math.ceil((new Date(endDate) - new Date(startDate)) / 86400000)
+    return diff > 0 ? diff : 0
+  }, [endDate, startDate])
+
+  const subtotal = totalDays * item.price
   const canRent = item.available && totalDays > 0 && !requestSent
+
+  const handleStartDate = (value) => {
+    setStartDate(value)
+    setRequestSent(false)
+    // Tanggal selesai sebelum mulai → reset, jangan diam-diam invalid.
+    if (endDate && value && endDate < value) {
+      setEndDate('')
+      setDateError('Tanggal selesai sudah diatur ulang.')
+    } else {
+      setDateError('')
+    }
+  }
 
   const handleRent = () => {
     if (!user) {
@@ -38,15 +52,13 @@ export default function ProductDetail({ item, onBack, onNavigate, onRequireAuth 
       return
     }
     addRental({
-      itemId: item.id,
-      itemName: item.name,
-      seller: item.seller,
-      pricePerDay: item.price,
-      deposit: item.deposit,
+      listingId: item.id,
+      storeId: item.store_id,
       startDate,
       endDate,
       totalDays,
-      total: totalDays * item.price,
+      pricePerDay: item.price,
+      deposit: item.deposit,
     })
     setRequestSent(true)
   }
@@ -93,18 +105,32 @@ export default function ProductDetail({ item, onBack, onNavigate, onRequireAuth 
           <aside className="rental-panel">
             <div className="date-grid">
               <label>Mulai
-                <input type="date" value={startDate} onChange={(event) => { setStartDate(event.target.value); setRequestSent(false) }} />
+                <input
+                  type="date"
+                  min={today}
+                  value={startDate}
+                  onChange={(event) => handleStartDate(event.target.value)}
+                />
               </label>
               <label>Selesai
-                <input type="date" min={startDate} value={endDate} onChange={(event) => { setEndDate(event.target.value); setRequestSent(false) }} />
+                <input
+                  type="date"
+                  min={startDate || today}
+                  value={endDate}
+                  onChange={(event) => { setEndDate(event.target.value); setRequestSent(false); setDateError('') }}
+                />
               </label>
             </div>
 
+            {dateError && <p className="rental-note is-error">{dateError}</p>}
+
             <div className="price-summary">
               <span>{totalDays > 0 ? `${totalDays} hari sewa` : 'Pilih tanggal sewa'}</span>
-              <strong>{formatPrice(totalDays * item.price)}</strong>
+              <strong>{formatPrice(subtotal)}</strong>
               <span>Deposit keamanan</span>
               <strong>{formatPrice(item.deposit)}</strong>
+              <span>Total</span>
+              <strong>{formatPrice(subtotal + item.deposit)}</strong>
             </div>
 
             <button

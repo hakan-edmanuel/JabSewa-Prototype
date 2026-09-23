@@ -1,0 +1,182 @@
+/*
+ * ============================================================================
+ * HYBRID SEARCH UI (FITUR 1)
+ * ============================================================================
+ * Style untuk tab Semua/Barang/Toko, kartu toko, dan chip filter toko.
+ * Diimpor oleh ConsumerBrowser.jsx — tidak disentuh area superadmin.
+ * Warna memakai token JabSewa (src/index.css) agar konsisten dengan
+ * design system — bukan palet slate terpisah.
+ * ============================================================================
+ */
+
+.search-tabs {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 10px;
+  background: var(--jabsewa-white);
+}
+
+.search-tab {
+  padding: 8px 18px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--jabsewa-text-soft);
+  background: transparent;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.search-tab:hover {
+  color: var(--jabsewa-ink);
+}
+
+.search-tab.is-active {
+  background: var(--jabsewa-ink);
+  color: #fff;
+}
+
+.related-stores {
+  margin: 18px 0 26px;
+}
+
+.related-stores-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 12px;
+  color: var(--jabsewa-ink);
+}
+
+.related-stores-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.store-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 12px;
+  background: var(--jabsewa-white);
+}
+
+.store-card:hover {
+  border-color: var(--jabsewa-primary);
+}
+
+.store-card-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.store-avatar {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--jabsewa-ink);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.store-card-title h3 {
+  margin: 0;
+  font-size: 0.98rem;
+  color: var(--jabsewa-ink);
+}
+
+.store-card-city {
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  color: var(--jabsewa-text-soft);
+}
+
+.store-verified {
+  margin-left: auto;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #15803d;
+  background: #dcfce7;
+  border: 1px solid #bbf7d0;
+  padding: 3px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.store-card-foot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.85rem;
+  color: var(--jabsewa-text-soft);
+}
+
+.store-rating {
+  font-weight: 700;
+  color: #b45309;
+}
+
+.store-count {
+  color: var(--jabsewa-text-soft);
+}
+
+.store-visit-btn {
+  margin-left: auto;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid var(--jabsewa-ink);
+  background: transparent;
+  color: var(--jabsewa-ink);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.store-visit-btn:hover {
+  background: var(--jabsewa-ink);
+  color: #fff;
+}
+
+.store-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 16px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  color: var(--jabsewa-ink);
+  background: var(--jabsewa-soft);
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 999px;
+}
+
+.store-filter-chip button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--jabsewa-text-soft);
+}
+
+@media (max-width: 640px) {
+  .browser-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .related-stores-grid {
+    grid-template-columns: 1fr;
+  }
+}
