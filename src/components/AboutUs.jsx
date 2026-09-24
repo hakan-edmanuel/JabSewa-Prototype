@@ -2,7 +2,6 @@ export default function AboutUs() {
   return (
     <section className="about-section" id="about">
       <div className="about-page-card">
-
         {/* Intro */}
         <div className="about-intro">
           <div>
@@ -47,14 +46,20 @@ export default function AboutUs() {
               <span className="accent-mark" aria-hidden="true"></span>
               <div>
                 <strong>Transparan sejak awal</strong>
-                <p>Harga, deposit, dan aturan sewa tertulis jelas di setiap listing.</p>
+                <p>
+                  Harga, deposit, dan aturan sewa tertulis jelas di setiap
+                  listing.
+                </p>
               </div>
             </div>
             <div className="about-belief-item">
               <span className="accent-mark" aria-hidden="true"></span>
               <div>
                 <strong>Barang wajib layak pakai</strong>
-                <p>Setiap barang dicek sebelum disewakan. Nggak ada barang seadanya.</p>
+                <p>
+                  Setiap barang dicek sebelum disewakan. Nggak ada barang
+                  seadanya.
+                </p>
               </div>
             </div>
             <div className="about-belief-item">
@@ -87,20 +92,20 @@ export default function AboutUs() {
               <div className="about-founder-avatar">HS</div>
               <div className="about-founder-info">
                 <strong>Hakan Shabran Hutagaol</strong>
-                <span>Co-Founder</span>
+                <span>Co-Founder & Technical Product Lead</span>
               </div>
             </div>
             <div className="about-founder-card">
               <div className="about-founder-avatar">AS</div>
               <div className="about-founder-info">
                 <strong>Ahnaf Samih Al-farisi</strong>
-                <span>Inisiator</span>
+                <span>Initiator & Product Collaborator</span>
               </div>
             </div>
           </div>
           <p className="about-founder-note">
-            "Kami bikin JabSewa karena butuh. Kalau kalian juga butuh —
-            sewa aja."
+            "Kami bikin JabSewa karena butuh. Kalau kalian juga butuh — sewa
+            aja."
           </p>
         </div>
 
@@ -109,7 +114,6 @@ export default function AboutUs() {
           <p>Barang untuk nyoba atau event. Sewa aja.</p>
           <span>— Tim JabSewa.id</span>
         </div>
-
       </div>
     </section>
   );
