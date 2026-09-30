@@ -1,7 +1,5 @@
 /*
  * ============================================================================
- * SYS-CONTROL APP (root) — JabSewa (FITUR 2, MODE MOCK / OFFLINE)
- * ============================================================================
  * Root area superadmin: router internal berbasis path (konsisten dengan
  * pola router App.jsx) + handler logout.
  *
@@ -17,11 +15,13 @@ import SuperadminLayout from './SuperadminLayout'
 import SysDashboard from './pages/SysDashboard'
 import SysApplications from './pages/SysApplications'
 import SysAudit from './pages/SysAudit'
+import SysOrders from './pages/SysOrders'
 import { superadminLogout } from '../lib/superadmin'
 
 /** Petakan path /sys-control-jab/* → key halaman internal (lokal file ini). */
 function getSysPageFromPath(pathname) {
   if (pathname === '/sys-control-jab/applications') return 'applications'
+  if (pathname === '/sys-control-jab/orders') return 'orders'
   if (pathname === '/sys-control-jab/audit') return 'audit'
   return 'dashboard' // /sys-control-jab dan /sys-control-jab/ lainnya
 }
@@ -40,8 +40,7 @@ function SysControlRouter({ onExit }) {
   // lalu keluar dari area (tanpa pushState).
   const navigate = (nextPage) => {
     if (nextPage === 'logout') {
-      superadminLogout()
-      onExit()
+      Promise.resolve(superadminLogout()).then(onExit)
       return
     }
     const path = nextPage === 'dashboard' ? '/sys-control-jab' : `/sys-control-jab/${nextPage}`
@@ -52,6 +51,7 @@ function SysControlRouter({ onExit }) {
 
   let content = <SysDashboard onNavigate={navigate} />
   if (page === 'applications') content = <SysApplications />
+  if (page === 'orders') content = <SysOrders />
   if (page === 'audit') content = <SysAudit />
 
   return (

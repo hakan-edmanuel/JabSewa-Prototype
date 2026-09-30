@@ -1,43 +1,107 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useAuth } from '../../auth/AuthContext'
-import { addRental } from '../../lib/userData'
+import { addRental, quoteRental, translateRentalError } from '../../lib/userData'
 import { formatPrice } from '../../lib/format'
-import { CATEGORY_LABELS } from '../../lib/constants'
+import { CATEGORY_LABELS, RENTAL_UNIT_LABELS } from '../../lib/constants'
 
 /*
- * Detail barang + panel sewa (mode penyewa).
- *   belum login → tombol "Sewa sekarang" meminta masuk dulu (onRequireAuth),
- *                 setelah login user dikembalikan ke barang ini.
- *   sudah login → permintaan sewa tersimpan via lapisan data (addRental)
- *                 dengan status `pending`, muncul di Buyer Dashboard.
+ * Detail barang + panel sewa (mode penyewa) — ERD v2.
+ *   belum login → tombol "Sewa sekarang" meminta masuk dulu (onRequireAuth).
+ *   sudah login → permintaan sewa dikirim via RPC create_rental (server-side
+ *                 validation & pricing) dengan status `pending`, muncul di
+ *                 Buyer Dashboard.
  *
- * Kontrak rental yang dikirim: listing_id, store_id, start_date, end_date,
- * total_days, price_per_day, deposit, subtotal, total (dihitung di data layer).
- * Tidak ada simulasi pembayaran / konfirmasi otomatis — status awal selalu
- * "Menunggu Konfirmasi" sampai seller benar-benar memutuskan.
+ * Prinsip (sesuai kontrak backend):
+ *   - Harga/deposit/durasi/total yang ditampilkan berasal dari SERVER
+ *     (quote_rental) — bukan perhitungan client.
+ *   - Quantity dikirim ke server (1..stok); ketersediaan & harga tetap
+ *     divalidasi/dihitung server (insufficient_stock).
+ *   - MVP single-item per pemesanan dari detail barang (cart multi-item
+ *     menyusul di halaman toko); server menerima multi-item dan menolak
+ *     lintas toko.
+ *   - Cegah double-submit: guard inFlight + submitting (kontrak tanpa
+ *     idempotency-key).
  */
 export default function ProductDetail({ item, onBack, onNavigate, onRequireAuth }) {
   const { user } = useAuth()
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
-  const [requestSent, setRequestSent] = useState(false)
+  const [quantity, setQuantity] = useState(1)
   const [dateError, setDateError] = useState('')
+  const [submitError, setSubmitError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [result, setResult] = useState(null) // { id, total }
+  const inFlight = useRef(false)
 
-  const today = new Date().toISOString().slice(0, 10)
+  const unitLabel = RENTAL_UNIT_LABELS[item.rental_unit] || 'hari'
 
-  const totalDays = useMemo(() => {
-    if (!startDate || !endDate) return 0
-    const diff = Math.ceil((new Date(endDate) - new Date(startDate)) / 86400000)
-    return diff > 0 ? diff : 0
-  }, [endDate, startDate])
+  const today = useMemo(() => {
+    const now = new Date()
+    const tz = now.getTimezoneOffset() * 60000
+    return new Date(now - tz).toISOString().slice(0, 10)
+  }, [])
 
-  const subtotal = totalDays * item.price
-  const canRent = item.available && totalDays > 0 && !requestSent
+  /* --- Kutipan harga server-side --- */
+  const [quote, setQuote] = useState(null)
+  const [quoteState, setQuoteState] = useState('idle') // idle|loading|error
+  const quoteSeq = useRef(0)
+
+  useEffect(() => {
+    if (!startDate || !endDate) {
+      Promise.resolve().then(() => {
+        setQuote(null)
+        setQuoteState('idle')
+      })
+      return undefined
+    }
+    const seq = ++quoteSeq.current
+    Promise.resolve().then(() => setQuoteState('loading'))
+    quoteRental({
+      startDate,
+      endDate,
+      items: [{ listing_id: item.id, quantity }],
+    })
+      .then((res) => {
+        if (quoteSeq.current !== seq) return
+        setQuote(res)
+        setQuoteState(res?.ok ? 'ready' : 'error')
+      })
+      .catch(() => {
+        if (quoteSeq.current !== seq) return
+        setQuote(null)
+        setQuoteState('error')
+      })
+    return undefined
+  }, [item.id, startDate, endDate, quantity])
+
+  /* --- Validasi tanggal (pesan Indonesia) --- */
+  const validate = () => {
+    if (!startDate) return 'Pilih tanggal mulai sewa.'
+    if (!endDate) return 'Pilih tanggal selesai sewa.'
+    if (endDate < startDate) return 'Tanggal selesai tidak boleh sebelum tanggal mulai.'
+    if (startDate < today) return 'Tanggal mulai tidak boleh di masa lalu.'
+    return ''
+  }
+
+  const totalDays = quote?.ok ? quote.total_days : null
+  const subtotal = quote?.ok ? quote.subtotal : null
+  const deposit = quote?.ok ? quote.deposit_total : null
+  const total = quote?.ok ? quote.total : null
+  const quoteProblem = quote && !quote.ok ? quote.error : null
+
+  const canRent =
+    Boolean(user) &&
+    item.available !== false &&
+    Boolean(startDate && endDate) &&
+    !dateError &&
+    quote?.ok === true &&
+    !submitting &&
+    !result
 
   const handleStartDate = (value) => {
     setStartDate(value)
-    setRequestSent(false)
-    // Tanggal selesai sebelum mulai → reset, jangan diam-diam invalid.
+    setResult(null)
+    setSubmitError('')
     if (endDate && value && endDate < value) {
       setEndDate('')
       setDateError('Tanggal selesai sudah diatur ulang.')
@@ -46,21 +110,44 @@ export default function ProductDetail({ item, onBack, onNavigate, onRequireAuth 
     }
   }
 
-  const handleRent = () => {
+  const handleEndDate = (value) => {
+    setEndDate(value)
+    setResult(null)
+    setSubmitError('')
+    if (startDate && value && value < startDate) {
+      setDateError('Tanggal selesai tidak boleh sebelum tanggal mulai.')
+    } else {
+      setDateError('')
+    }
+  }
+
+  const handleRent = async () => {
     if (!user) {
       onRequireAuth(item)
       return
     }
-    addRental({
-      listingId: item.id,
-      storeId: item.store_id,
-      startDate,
-      endDate,
-      totalDays,
-      pricePerDay: item.price,
-      deposit: item.deposit,
-    })
-    setRequestSent(true)
+    if (inFlight.current) return // cegah double-submit (tanpa idempotency-key)
+    const problem = validate()
+    if (problem) {
+      setDateError(problem)
+      return
+    }
+    inFlight.current = true
+    setSubmitting(true)
+    setSubmitError('')
+    try {
+      const rental = await addRental({
+        startDate,
+        endDate,
+        items: [{ listing_id: item.id, quantity }],
+      })
+      setResult({ id: rental.id, total: rental.total })
+    } catch (err) {
+      setSubmitError(translateRentalError(err?.message))
+    } finally {
+      inFlight.current = false
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -73,16 +160,20 @@ export default function ProductDetail({ item, onBack, onNavigate, onRequireAuth 
         </section>
 
         <section className="product-information">
-          <p className="listing-category">{CATEGORY_LABELS[item.category] || item.category}</p>
+          <p className="listing-category">
+            {item.category_name || CATEGORY_LABELS[item.category] || item.category || '—'}
+          </p>
           <h1>{item.name}</h1>
           <p className="detail-availability">
             <span className={`availability-dot ${item.available ? 'is-available' : 'is-rented'}`} />
-            {item.available ? 'Tersedia' : 'Sedang disewa'} · {item.location}
+            {item.available
+              ? `Tersedia · stok ${item.stock} · ${item.location}`
+              : `Tidak tersedia · ${item.location}`}
           </p>
 
           <div className="detail-price-row">
             <strong>{formatPrice(item.price)}</strong>
-            <span>/ hari</span>
+            <span>/{unitLabel}</span>
           </div>
 
           <p className="detail-description">{item.description}</p>
@@ -100,6 +191,12 @@ export default function ProductDetail({ item, onBack, onNavigate, onRequireAuth 
               <dt>Deposit</dt>
               <dd>{formatPrice(item.deposit)}</dd>
             </div>
+            {item.min_rental_duration != null && (
+              <div className="detail-fact">
+                <dt>Durasi minimum</dt>
+                <dd>{item.min_rental_duration} {unitLabel}</dd>
+              </div>
+            )}
           </dl>
 
           <aside className="rental-panel">
@@ -117,45 +214,88 @@ export default function ProductDetail({ item, onBack, onNavigate, onRequireAuth 
                   type="date"
                   min={startDate || today}
                   value={endDate}
-                  onChange={(event) => { setEndDate(event.target.value); setRequestSent(false); setDateError('') }}
+                  onChange={(event) => handleEndDate(event.target.value)}
                 />
               </label>
             </div>
 
             {dateError && <p className="rental-note is-error">{dateError}</p>}
 
+            <label className="rental-quantity">
+              Jumlah
+              <select
+                value={quantity}
+                onChange={(event) => {
+                  setResult(null)
+                  setQuantity(Number(event.target.value) || 1)
+                }}
+                disabled={item.available === false || (item.stock ?? 1) <= 1}
+              >
+                {Array.from({ length: Math.max(1, Math.min(item.stock ?? 1, 10)) }, (_, i) => i + 1).map((n) => (
+                  <option key={n} value={n}>
+                    {n} unit
+                  </option>
+                ))}
+              </select>
+            </label>
+
             <div className="price-summary">
-              <span>{totalDays > 0 ? `${totalDays} hari sewa` : 'Pilih tanggal sewa'}</span>
-              <strong>{formatPrice(subtotal)}</strong>
+              <span>
+                {quoteState === 'loading' && 'Menghitung…'}
+                {quoteState === 'error' && 'Gagal menghitung biaya.'}
+                {quoteState === 'idle' && 'Pilih tanggal sewa'}
+                {quote?.ok && `${totalDays} hari sewa (tanggal selesai termasuk)`}
+              </span>
+              <strong>{subtotal == null ? '—' : formatPrice(subtotal)}</strong>
               <span>Deposit keamanan</span>
-              <strong>{formatPrice(item.deposit)}</strong>
+              <strong>{deposit == null ? '—' : formatPrice(deposit)}</strong>
               <span>Total</span>
-              <strong>{formatPrice(subtotal + item.deposit)}</strong>
+              <strong>{total == null ? '—' : formatPrice(total)}</strong>
             </div>
+
+            {quoteProblem && (
+              <p className="rental-note is-error">
+                {quoteProblem === 'start_date_in_past' && 'Tanggal mulai tidak boleh di masa lalu.'}
+                {quoteProblem === 'invalid_date_range' && 'Rentang tanggal tidak valid.'}
+                {quoteProblem === 'listing_unavailable' && 'Barang sedang tidak tersedia.'}
+                {quoteProblem === 'store_inactive' && 'Toko sedang tidak aktif.'}
+                {quoteProblem === 'insufficient_stock' && 'Stok tidak cukup untuk jumlah/rentang tanggal itu.'}
+                {quoteProblem === 'min_duration' && `Durasi sewa di bawah minimum (${item.min_rental_duration} ${unitLabel}).`}
+                {!['start_date_in_past', 'invalid_date_range', 'listing_unavailable', 'store_inactive', 'insufficient_stock', 'min_duration'].includes(quoteProblem) &&
+                  'Tanggal tidak dapat dikutip. Coba rentang lain.'}
+              </p>
+            )}
 
             <button
               className="primary-button"
               disabled={!canRent}
               onClick={handleRent}
             >
-              {requestSent
-                ? 'Permintaan terkirim'
-                : item.available
-                  ? user
-                    ? 'Sewa sekarang'
-                    : 'Masuk untuk sewa'
-                  : 'Sedang tidak tersedia'}
+              {submitting
+                ? 'Mengirim…'
+                : result
+                  ? 'Permintaan terkirim'
+                  : item.available === false
+                    ? 'Sedang tidak tersedia'
+                    : user
+                      ? 'Sewa sekarang'
+                      : 'Masuk untuk sewa'}
             </button>
 
-            {requestSent && (
+            {submitError && <p className="rental-note is-error">{submitError}</p>}
+
+            {result && (
               <div className="request-success">
-                <p>Permintaan sewa dikirim ke {item.seller}. Tunggu konfirmasi pemilik.</p>
+                <p>
+                  Permintaan sewa dikirim ke {item.seller}. Total {formatPrice(result.total)}.
+                  Selanjutnya kirim bukti pembayaran dari dashboard penyewa.
+                </p>
                 <button className="btn-small btn-primary" onClick={() => onNavigate('buyer')}>
                   Lihat pesanan saya
                 </button>
               </div>
             )}
-            {!user && !requestSent && (
+            {!user && !result && (
               <p className="rental-note">Kamu perlu masuk dulu sebelum mengirim permintaan sewa.</p>
             )}
           </aside>
@@ -165,7 +305,12 @@ export default function ProductDetail({ item, onBack, onNavigate, onRequireAuth 
       <div className="product-detail-sections">
         <section className="product-info-block">
           <h2>Aturan sewa</h2>
-          <p>Identitas diperlukan saat pengambilan. Kembalikan barang sesuai waktu dan kondisi semula; deposit dikembalikan penuh setelah barang dicek ulang.</p>
+          <p>
+            Identitas diperlukan saat pengambilan. Kembalikan barang sesuai waktu dan kondisi
+            semula; deposit dikembalikan penuh setelah barang dicek ulang. Periode sewa dihitung
+            dengan tanggal selesai termasuk (sewa 1–3 Okt = 3 hari). Keterlambatan dapat dikenakan
+            denda sesuai ketentuan toko.
+          </p>
         </section>
       </div>
     </main>

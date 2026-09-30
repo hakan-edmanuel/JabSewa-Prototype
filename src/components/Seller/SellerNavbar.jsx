@@ -4,7 +4,7 @@ import logo from '../../assets/logo-jabsewa.jpeg'
 
 /*
  * Navbar seller center. Menampilkan mode aktif (Seller), tombol pindah
- * ke mode Penyewa, nama toko, dan menu profil (keluar).
+ * ke mode Penyewa, nama sesi, dan menu profil (keluar).
  */
 export default function SellerNavbar({ onNavigate, currentPage = 'seller' }) {
   const { user } = useAuth()
@@ -37,7 +37,7 @@ export default function SellerNavbar({ onNavigate, currentPage = 'seller' }) {
               Mode Seller
             </button>
           </div>
-          <span className="seller-store-name">{user?.sellerProfile?.storeName || user?.name}</span>
+          <span className="seller-store-name">{user?.name}</span>
           <UserMenu onLogout={() => onNavigate('home')} onNavigate={onNavigate} />
         </div>
       </div>

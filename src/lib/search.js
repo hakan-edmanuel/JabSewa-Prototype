@@ -1,95 +1,26 @@
 /*
  * ============================================================================
- * HYBRID SEARCH DATA LAYER — JabSewa (MODE MOCK / OFFLINE)
+ * HYBRID SEARCH DATA LAYER — JabSewa (SUPABASE, ERD v2)
  * ============================================================================
- * FITUR 1: Pencarian hybrid (barang + toko) dalam satu query — 100% lokal.
- *
- * Implementasi: filtering + scoring di atas array JavaScript dari
- * LocalStorage (src/lib/storage.js). Tidak ada jaringan, tidak ada RPC.
- *
- * Fungsi utama:
- *   hybridSearch({ query, category, type, page, limit })  — API publik
- *   hybridSearchLocal(keyword, category, type)            — sesuai spesifikasi
- *
- * Skor kecocokan teks (konsep sama dengan versi DB):
- *   exact > prefix > word-boundary > substring > fuzzy (Levenshtein + bigram)
- *
- * Bentuk hasil (kontrak, tidak berubah dari versi sebelumnya):
- *   SearchResult {
- *     query: string
- *     stores: StoreHit[]   // { id, store_name, rating, total_items, is_verified, ... }
- *     items:  ItemHit[]    // { id, title, price_per_day, rating, store_name, ... }
- *     totals: { stores: number, items: number }
- *   }
+ * Skor pencarian tetap di client; SUMBER DATA katalog dari lib/listings
+ * (Supabase, RLS-scoped). Kontrak hasil tidak berubah:
+ *   SearchResult { query, stores: StoreHit[], items: ItemHit[], totals }
+ * Perubahan v2: harga item = price (bigint), id = uuid string.
  * ============================================================================
  */
 
-import { getItems, getStores } from './storage'
-
-/* -------------------------------------------------------------------------- */
-/* Bentuk data (dokumentasi kontrak via JSDoc)                                */
-/* -------------------------------------------------------------------------- */
-
-/**
- * @typedef {Object} StoreHit
- * @property {string|number} id
- * @property {string} store_name
- * @property {string=} username
- * @property {number} rating
- * @property {number} total_items
- * @property {boolean} is_verified
- * @property {string=} city
- * @property {number=} score
- */
-
-/**
- * @typedef {Object} ItemHit
- * @property {string|number} id
- * @property {string} title
- * @property {string=} description
- * @property {string=} category
- * @property {number} price_per_day
- * @property {string=} image_url
- * @property {string=} location
- * @property {boolean=} available
- * @property {number} rating
- * @property {number=} successful_transactions
- * @property {string=} store_name
- * @property {number=} score
- */
-
-/**
- * @typedef {Object} SearchResult
- * @property {string} query
- * @property {StoreHit[]} stores
- * @property {ItemHit[]} items
- * @property {{ stores: number, items: number }} totals
- */
-
-/** @typedef {'all'|'items'|'stores'} SearchType */
+import { fetchListings, fetchStores } from './listings'
 
 export const SEARCH_PAGE_SIZE = 20
-// Batas kartu toko di tab "Semua" — sama dengan versi RPC sebelumnya.
 const STORE_CAP_ALL = 6
 
-/* -------------------------------------------------------------------------- */
-/* Util fuzzy                                                                 */
-/* -------------------------------------------------------------------------- */
-
-/**
- * Skor kemiripan 0..1 dua string: gabungan Levenshtein ratio & n-gram.
- * Cukup akurat untuk typo ringan ("kameera" → "kamera").
- * @param {string} a
- * @param {string} b
- * @returns {number}
- */
+/** Skor kemiripan 0..1: Levenshtein ratio + bigram Dice. */
 export function similarity(a, b) {
   const s = (a || '').toLowerCase().trim()
   const t = (b || '').toLowerCase().trim()
   if (!s || !t) return 0
   if (s === t) return 1
 
-  // Levenshtein ratio
   const m = s.length
   const n = t.length
   let prev = new Array(n + 1)
@@ -107,7 +38,6 @@ export function similarity(a, b) {
   }
   const lev = 1 - prev[n] / Math.max(m, n)
 
-  // Bigram (Dice coefficient) — menangkap kemiripan kata panjang.
   const bigrams = (str) => {
     const set = new Set()
     for (let i = 0; i < str.length - 1; i += 1) set.add(str.slice(i, i + 2))
@@ -124,18 +54,11 @@ export function similarity(a, b) {
   return Math.max(0, Math.min(1, lev * 0.6 + dice * 0.4))
 }
 
-/** Query ter-escape untuk regex word-boundary. */
 function escapeRegex(str) {
   return str.replace(/[[\]{}()*+?\\^$.|]/g, '\\$&')
 }
 
-/**
- * Skor kecocokan query terhadap satu teks — konsep sama dengan versi DB:
- * exact > prefix > word-boundary > substring > fuzzy.
- * @param {string} text
- * @param {string} query  — sudah lowercased
- * @returns {number}
- */
+/** Skor teks: exact > prefix > word-boundary > substring > fuzzy. */
 function textMatchScore(text, query) {
   if (!query) return 0
   const t = (text || '').toLowerCase()
@@ -153,62 +76,56 @@ function textMatchScore(text, query) {
   return score
 }
 
-/* -------------------------------------------------------------------------- */
-/* Pencarian lokal (satu-satunya mode — array filtering & scoring)            */
-/* -------------------------------------------------------------------------- */
+async function loadCatalog() {
+  const [items, stores] = await Promise.all([fetchListings(), fetchStores()])
+  return { items, stores }
+}
 
-/** Skor item = text match (judul > deskripsi > tag > kategori) + rating + popularitas. */
-function toItemHit(item, store, query) {
-  const nameScore = textMatchScore(item.title, query)
+function toItemHit(item, storesById, query) {
+  const store = storesById.get(item.store_id)
+  const nameScore = textMatchScore(item.name, query)
   const descScore = textMatchScore(item.description || '', query) * 0.3
-  const tagScore = (item.tags || []).reduce((max, tag) => Math.max(max, textMatchScore(tag, query)), 0) * 0.7
   const catScore = textMatchScore(item.category || '', query) * 0.5
-  const rating = typeof item.rating === 'number' ? item.rating : 0
-  const transactions = Number(item.total_transactions ?? 0)
-  const score =
-    Math.max(nameScore, descScore + tagScore + catScore) +
-    (rating / 5) * 20 +
-    Math.min(transactions, 100) / 100 * 20
+  const score = Math.max(nameScore, descScore + catScore)
   return {
     id: item.id,
-    title: item.title,
+    title: item.name,
     description: item.description || '',
     category: item.category || '',
-    price_per_day: item.price_per_day ?? 0,
+    price_per_day: item.price ?? 0,
     deposit: item.deposit ?? 0,
-    image_url: item.image_url || '',
+    image_url: item.image || '',
     location: item.location || store?.city || '',
     available: item.available !== false,
-    rating,
-    successful_transactions: transactions,
+    rental_unit: item.rental_unit || 'day',
     store_id: item.store_id ?? null,
-    store_name: store?.name || 'Mitra JabSewa',
+    store_name: item.seller || 'Toko JabSewa',
     score: Math.round(score * 100) / 100,
   }
 }
 
 /**
- * Pencarian hybrid lokal — FILTERING & SCORING atas array items + stores.
- * @param {string} keyword   — kata kunci pencarian ('' berarti semua)
- * @param {string|null} category — filter kategori (id katalog) atau null
- * @param {SearchType} type  — 'all' | 'items' | 'stores'
- * @param {number} [page]
- * @param {number} [limit]
- * @returns {SearchResult}
+ * Pencarian hybrid — sumber data Supabase (RLS-scoped), scoring di client.
  */
-export function hybridSearchLocal(keyword, category = null, type = 'all', page = 1, limit = SEARCH_PAGE_SIZE) {
-  const q = (keyword || '').trim().toLowerCase()
+export async function hybridSearch({
+  query = '',
+  category = null,
+  type = 'all',
+  page = 1,
+  limit = SEARCH_PAGE_SIZE,
+}) {
+  const q = (query || '').trim().toLowerCase()
   const safeType = ['all', 'items', 'stores'].includes(type) ? type : 'all'
   const safePage = Math.max(1, Number(page) || 1)
   const safeLimit = Math.min(Math.max(1, Number(limit) || SEARCH_PAGE_SIZE), 50)
 
-  const stores = getStores()
+  const { items, stores } = await loadCatalog()
   const storesById = new Map(stores.map((s) => [s.id, s]))
 
   /** @type {ItemHit[]} */
-  const items = (getItems() || [])
+  const hits = items
     .filter((item) => !category || item.category === category)
-    .map((item) => toItemHit(item, storesById.get(item.store_id), q))
+    .map((item) => toItemHit(item, storesById, q))
     .filter((hit) => {
       if (!q) return true
       const hay = `${hit.title} ${hit.description} ${hit.category} ${hit.store_name}`.toLowerCase()
@@ -216,23 +133,18 @@ export function hybridSearchLocal(keyword, category = null, type = 'all', page =
     })
     .sort((a, b) => (b.score || 0) - (a.score || 0))
 
-  // Toko dinilai dari nama + deskripsi + kota, dan diperkaya jumlah barangnya.
   /** @type {StoreHit[]} */
-  const allStores = stores
+  const storeHits = stores
     .map((store) => {
-      const storeItems = items.filter((it) => it.store_id === store.id)
-      const nameScore = textMatchScore(store.name, q)
+      const storeItems = hits.filter((it) => it.store_id === store.id)
+      const nameScore = textMatchScore(store.store_name, q)
       const descScore = textMatchScore(store.description || '', q) * 0.4
       const cityScore = textMatchScore(store.city || '', q) * 0.5
-      const score =
-        Math.max(nameScore, descScore + cityScore) +
-        (Number(store.rating) || 0) / 5 * 20 +
-        (storeItems.length ? 10 : 0)
+      const score = Math.max(nameScore, descScore + cityScore) + (storeItems.length ? 10 : 0)
       return {
         id: store.id,
-        store_name: store.name,
-        username: store.owner_name || '',
-        rating: Number(store.rating) || 0,
+        store_name: store.store_name,
+        rating: 0, // kolom rating tidak ada di ERD v2 — agregat review menyusul
         total_items: storeItems.length,
         is_verified: Boolean(store.is_verified),
         city: store.city || '',
@@ -247,38 +159,15 @@ export function hybridSearchLocal(keyword, category = null, type = 'all', page =
 
   const offset = (safePage - 1) * safeLimit
   return {
-    query: keyword || '',
+    query: query || '',
     stores: wantStores
       ? safeType === 'stores'
-        ? allStores.slice(offset, offset + safeLimit)
-        : allStores.slice(0, STORE_CAP_ALL)
+        ? storeHits.slice(offset, offset + safeLimit)
+        : storeHits.slice(0, STORE_CAP_ALL)
       : [],
-    items: wantItems ? items.slice(offset, offset + safeLimit) : [],
-    totals: { stores: allStores.length, items: items.length },
+    items: wantItems ? hits.slice(offset, offset + safeLimit) : [],
+    totals: { stores: storeHits.length, items: hits.length },
   }
 }
 
-/* -------------------------------------------------------------------------- */
-/* API publik                                                                 */
-/* -------------------------------------------------------------------------- */
-
-/**
- * Pencarian hybrid utama — kontrak sama dengan versi Supabase/RPC sebelumnya.
- * Setara GET /api/search?q=&category=&type=&page=&limit= (kini lokal penuh).
- * @param {Object} opts
- * @param {string} [opts.query]
- * @param {string|null} [opts.category]
- * @param {SearchType} [opts.type]
- * @param {number} [opts.page]
- * @param {number} [opts.limit]
- * @returns {Promise<SearchResult>}
- */
-export async function hybridSearch({
-  query = '',
-  category = null,
-  type = 'all',
-  page = 1,
-  limit = SEARCH_PAGE_SIZE,
-}) {
-  return hybridSearchLocal(query, category, type, page, limit)
-}
+export const hybridSearchLocal = hybridSearch

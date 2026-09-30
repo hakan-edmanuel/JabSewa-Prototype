@@ -1,52 +1,64 @@
 /* eslint-disable react-refresh/only-export-components */
 /*
  * ============================================================================
- * AUTH CONTEXT — JabSewa (MODE MOCK / OFFLINE)
+ * AUTH CONTEXT — JabSewa (SUPABASE AUTH, ERD v2)
  * ============================================================================
- * Autentikasi 100% lokal: akun & sesi disimpan di LocalStorage.
- *
- * Sumber akun  : src/lib/storage.js (koleksi `users`, ter-seed otomatis:
- *                1 SUPERADMIN + TENANT + STORE_OWNER).
- * Sesi aktif   : kunci `jabsewa_current_user` — bertahan antar refresh.
- *
- * Kontrak ke komponen (TIDAK berubah dari versi sebelumnya):
- *   user            → { id, name, email, role, sellerApplication, sellerProfile }
+ * Kontrak ke komponen:
+ *   user            → { id, name, email, role ('consumer'|'admin'), status, isSeller }
  *   isAuthenticated → Boolean(user)
- *   hasSellerAccess → Boolean(user.sellerProfile)
- *   sellerApplication
- *   isReady         → selalu true sesaat setelah mount (sesi lokal instan)
- *   register({ name, email, password })
- *   login({ email, password })
- *   logout()
- *   startSellerApplication(data) / submitSellerApplication(data)
- *   switchRole(role) — DEV ONLY: ganti akun aktif sesuai role (bypass demo)
- *
- * Review ajuan seller oleh superadmin TIDAK di sini — seluruh logika
- * keputusan ada di lib/superadmin.js (area /sys-control-jab), satu sumber.
+ *   hasSellerAccess → Boolean(user.isSeller) — cache server; otorisasi asli di DB
+ *   storeApplication → ajuan toko terbaru (dari store_applications)
+ *   isReady / register / login / logout
+ *   submitStoreApplication(data) / startStoreApplication(data)
+ *   switchRole(role) — DEV ONLY no-op
  * ============================================================================
  */
 
-import { createContext, useCallback, useContext, useMemo, useState } from 'react'
-import {
-  getUsers,
-  saveUser,
-  getCurrentUser,
-  setCurrentUser as persistSession,
-  clearCurrentUser,
-} from '../lib/storage'
-import { ROLE_TENANT } from '../lib/roles'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { getClient, isSupabaseConfigured } from '../lib/supabaseClient'
+import { ROLE_CONSUMER } from '../lib/roles'
+import { translateServerError } from '../lib/constants'
 
 /* -------------------------------------------------------------------------- */
-/* Bentuk user kontrak frontend                                               */
-/* -------------------------------------------------------------------------- */
 
-/** Ambil user "lengkap" (termasuk overlay ajuan) dari koleksi users. */
-function hydrateUser(stored) {
-  if (!stored?.id && !stored?.email) return null
-  const fresh = getUsers().find(
-    (u) => (stored.id && u.id === stored.id) || (stored.email && u.email === stored.email),
-  )
-  return fresh || stored
+function mapProfile(row) {
+  if (!row) return null
+  return {
+    id: row.id,
+    email: row.email,
+    name: row.full_name || (row.email ? row.email.split('@')[0] : 'Penyewa'),
+    role: row.role || ROLE_CONSUMER,
+    status: row.status || 'active',
+    isSeller: Boolean(row.is_seller),
+  }
+}
+
+async function fetchProfile(userId) {
+  const { data, error } = await getClient()
+    .from('users')
+    .select('id, email, full_name, role, status, is_seller')
+    .eq('id', userId)
+    .maybeSingle()
+  if (error) throw error
+  return mapProfile(data)
+}
+
+/** Ajuan toko terbaru milik sesi (dari tabel store_applications). */
+async function fetchLatestApplication() {
+  const { data, error } = await getClient().rpc('get_my_applications')
+  if (error) return null
+  const row = (data || [])[0]
+  if (!row) return null
+  return {
+    id: row.id,
+    status: row.status,
+    storeName: row.store_name,
+    description: row.description,
+    address: row.address,
+    submittedAt: row.created_at,
+    reviewedAt: row.reviewed_at,
+    rejectionReason: row.rejection_reason,
+  }
 }
 
 /* -------------------------------------------------------------------------- */
@@ -54,119 +66,134 @@ function hydrateUser(stored) {
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
-  // Sesi dibaca sinkron dari LocalStorage saat provider pertama dirender —
-  // tidak perlu effect (pembacaan localStorage cepat & tanpa efek samping).
-  const [user, setUser] = useState(() => hydrateUser(getCurrentUser()))
-  const isReady = true
+  const [user, setUser] = useState(null)
+  const [storeApplication, setStoreApplication] = useState(null)
+  const [isReady, setIsReady] = useState(() => !isSupabaseConfigured)
 
-  /* --- Pastikan user selalu sinkron dengan koleksi users ------------------ */
-  const syncUser = useCallback((next) => {
-    setUser(next ? hydrateUser(next) : null)
+  const refreshApplication = useCallback(async () => {
+    const app = await fetchLatestApplication()
+    setStoreApplication(app)
+    return app
   }, [])
 
-  /* --- Derived flags ------------------------------------------------------ */
-  const isAuthenticated = Boolean(user)
-  const hasSellerAccess = Boolean(user?.sellerProfile)
-  const sellerApplication = user?.sellerApplication || null
+  useEffect(() => {
+    if (!isSupabaseConfigured) {
+      return undefined
+    }
+    let active = true
 
-  /* --- Login / register / logout (mock, verifikasi terhadap users lokal) -- */
-  const login = useCallback(
-    async ({ email, password }) => {
-      const found = getUsers().find(
-        (u) => u.email?.toLowerCase() === String(email || '').trim().toLowerCase(),
-      )
-      if (!found) throw new Error('invalid login credentials')
-      if (found.password && found.password !== password) throw new Error('invalid login credentials')
-      if (found.status && found.status !== 'active') throw new Error('akun tidak aktif')
-
-      persistSession({ id: found.id, email: found.email })
-      syncUser(found)
-      return found
-    },
-    [syncUser],
-  )
-
-  const register = useCallback(
-    async ({ name, email, password }) => {
-      const cleanEmail = String(email || '').trim().toLowerCase()
-      if (getUsers().some((u) => u.email?.toLowerCase() === cleanEmail)) {
-        throw new Error('user already registered')
-      }
-      if (String(password || '').length < 6) throw new Error('password should be at least 6 characters')
-
-      const created = saveUser({
-        id: `u-${Date.now()}`,
-        name: (name || '').trim() || 'Penyewa',
-        email: cleanEmail,
-        password,
-        role: ROLE_TENANT,
-        status: 'active',
-        sellerApplication: null,
-        sellerProfile: null,
+    getClient()
+      .auth.getSession()
+      .then(async ({ data: { session } }) => {
+        if (!active) return
+        if (session?.user) {
+          try {
+            const profile = await fetchProfile(session.user.id)
+            if (active) setUser(profile)
+            await refreshApplication().catch(() => {})
+          } catch {
+            if (active) setUser(null)
+          }
+        }
+        if (active) setIsReady(true)
       })
-      persistSession({ id: created.id, email: created.email })
-      syncUser(created)
-      return created
-    },
-    [syncUser],
-  )
+
+    const { data: sub } = getClient().auth.onAuthStateChange((_event, session) => {
+      if (!active) return
+      if (!session?.user) {
+        setUser(null)
+        setStoreApplication(null)
+        return
+      }
+      fetchProfile(session.user.id)
+        .then((profile) => {
+          if (active) setUser(profile)
+        })
+        .catch(() => {
+          if (active) setUser(null)
+        })
+      refreshApplication().catch(() => {})
+    })
+
+    return () => {
+      active = false
+      sub?.subscription?.unsubscribe?.()
+    }
+  }, [refreshApplication])
+
+  const isAuthenticated = Boolean(user)
+  const hasSellerAccess = Boolean(user?.isSeller)
+
+  const login = useCallback(async ({ email, password }) => {
+    const { data, error } = await getClient().auth.signInWithPassword({
+      email: String(email || '').trim(),
+      password: String(password || ''),
+    })
+    if (error) throw error
+    const profile = await fetchProfile(data.user.id)
+    setUser(profile)
+    refreshApplication().catch(() => {})
+    return profile
+  }, [refreshApplication])
+
+  const register = useCallback(async ({ name, email, password }) => {
+    if (String(password || '').length < 6) {
+      throw new Error('password should be at least 6 characters')
+    }
+    const { data, error } = await getClient().auth.signUp({
+      email: String(email || '').trim(),
+      password: String(password || ''),
+      options: {
+        data: { full_name: String(name || '').trim() || 'Penyewa' },
+      },
+    })
+    if (error) throw error
+    if (!data.user) throw new Error('register failed')
+    // Trigger handle_new_user membuat baris public.users — tunggu singkat (best-effort).
+    await new Promise((resolve) => setTimeout(resolve, 400))
+    const profile = await fetchProfile(data.user.id).catch(() => null)
+    setUser(profile)
+    return profile
+  }, [])
 
   const logout = useCallback(async () => {
-    clearCurrentUser()
+    if (isSupabaseConfigured) {
+      await getClient().auth.signOut()
+    }
     setUser(null)
+    setStoreApplication(null)
   }, [])
 
-  /* --- Seller application (disimpan langsung ke user di koleksi) ---------- */
-  const mutateCurrentUser = useCallback(
-    (mutate) => {
-      setUser((current) => {
-        if (!current) return current
-        const next = mutate(current)
-        saveUser(next)
-        persistSession({ id: next.id, email: next.email })
-        return next
+  /* --- Store application (tulis via RPC server-side) ---------------------- */
+  const submitStoreApplication = useCallback(
+    async ({ storeName, description, address }) => {
+      const { data, error } = await getClient().rpc('submit_store_application', {
+        p_store_name: String(storeName || '').trim(),
+        p_description: String(description || '').trim(),
+        p_address: String(address || '').trim(),
       })
+      if (error) throw error
+      const row = data?.[0]
+      if (!row?.ok) throw new Error(translateServerError(row?.error || 'forbidden'))
+      const app = await refreshApplication()
+      return app
     },
-    [],
+    [refreshApplication],
   )
 
-  const startSellerApplication = useCallback(
-    async (data = {}) => {
-      mutateCurrentUser((current) =>
-        current.sellerApplication ? current : { ...current, sellerApplication: { status: 'draft', ...data } },
-      )
-    },
-    [mutateCurrentUser],
+  const startStoreApplication = useCallback(
+    (data = {}) => submitStoreApplication(data),
+    [submitStoreApplication],
   )
 
-  const submitSellerApplication = useCallback(
-    async ({ storeName, description, contact, city, address }) => {
-      mutateCurrentUser((current) => ({
-        ...current,
-        sellerApplication: {
-          status: 'under_review',
-          storeName: String(storeName || '').trim(),
-          description: String(description || '').trim(),
-          contact: String(contact || '').trim(),
-          city,
-          address: String(address || '').trim(),
-          submittedAt: new Date().toISOString(),
-        },
-      }))
-    },
-    [mutateCurrentUser],
-  )
-
-  /* --- DEV ONLY: switcher role cepat (TENANT <-> SUPERADMIN <-> OWNER) ---- */
+  /* --- DEV ONLY ------------------------------------------------------------ */
   const switchRole = useCallback(
     (role) => {
-      const target = getUsers().find((u) => u.role === role)
-      if (!target) return false
-      persistSession({ id: target.id, email: target.email })
-      syncUser(target)
-      return true
+      if (!import.meta.env.DEV) return false
+      console.warn('[JabSewa] switchRole hanya dev — role server-side tidak diubah:', role)
+      return false
     },
-    [syncUser],
+    [],
   )
 
   const value = useMemo(
@@ -174,26 +201,42 @@ export function AuthProvider({ children }) {
       user,
       isAuthenticated,
       hasSellerAccess,
-      sellerApplication,
+      storeApplication,
+      // Alias kompatibilitas komponen yang masih membaca `sellerApplication`:
+      sellerApplication: storeApplication
+        ? {
+            status: storeApplication.status,
+            storeName: storeApplication.storeName,
+            description: storeApplication.description,
+            address: storeApplication.address,
+            submittedAt: storeApplication.submittedAt,
+            rejectionReason: storeApplication.rejectionReason,
+          }
+        : null,
       isReady,
       login,
       register,
       logout,
-      startSellerApplication,
-      submitSellerApplication,
+      submitStoreApplication,
+      startStoreApplication,
+      // Alias lama:
+      startSellerApplication: startStoreApplication,
+      submitSellerApplication: submitStoreApplication,
+      refreshStoreApplication: refreshApplication,
       switchRole,
     }),
     [
       user,
       isAuthenticated,
       hasSellerAccess,
-      sellerApplication,
+      storeApplication,
       isReady,
       login,
       register,
       logout,
-      startSellerApplication,
-      submitSellerApplication,
+      submitStoreApplication,
+      startStoreApplication,
+      refreshApplication,
       switchRole,
     ],
   )

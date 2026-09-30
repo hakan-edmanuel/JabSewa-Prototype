@@ -1,28 +1,31 @@
 import { useEffect, useMemo, useState } from "react";
 import {
+  fetchCategories,
   fetchListingsByStore,
   removeListing,
   saveListing,
   updateListingAvailability,
 } from "../../lib/listings";
+import { translateRentalError } from "../../lib/userData";
 import { formatPrice } from "../../lib/format";
-import { CATEGORIES, CATEGORY_LABELS } from "../../lib/constants";
+import { CATEGORY_LABELS, RENTAL_UNITS, RENTAL_UNIT_LABELS } from "../../lib/constants";
 
 const DEFAULT_IMG =
   "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80";
 
 /*
- * Barang Saya (seller): daftar barang milik TOKO seller aktif.
- * Tambah/edit/nonaktifkan/hapus menulis ke koleksi `items` di LocalStorage
- * store (src/lib/storage.js) — sumber yang sama dengan marketplace, jadi
- * barang yang dibuat seller langsung muncul di halaman penyewa.
- *
- * CATATAN (frontend-only): unggah foto nyata & stok per tanggal menunggu
- * backend (Supabase Storage / validasi ketersediaan).
+ * Barang Saya (seller) — ERD v2.
+ * Data dari direct SELECT listings (RLS-scoped: hanya listing toko milik
+ * sesi yang terlihat). Tambah/edit via RPC save_listing (validasi server;
+ * harga/stok tidak dipercaya dari client). Kategori dari tabel categories.
+ * Gambar: URL (MVP) — multi-gambar diurutkan; upload Storage menyusul.
  */
 export default function SellerItems({ store }) {
-  const [items, setItems] = useState(null); // null = masih memuat
+  const [items, setItems] = useState(null);
+  const [categories, setCategories] = useState([]);
   const [loadError, setLoadError] = useState("");
+  const [formError, setFormError] = useState("");
+  const [actionError, setActionError] = useState("");
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("Semua Status");
   const [showForm, setShowForm] = useState(false);
@@ -30,8 +33,21 @@ export default function SellerItems({ store }) {
 
   useEffect(() => {
     let active = true;
-    if (!store) return undefined;
-    fetchListingsByStore(store.id)
+    fetchCategories()
+      .then((cats) => {
+        if (active) setCategories(cats);
+      })
+      .catch(() => {
+        if (active) setCategories([]);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    fetchListingsByStore(store?.id ?? null)
       .then((data) => {
         if (active) {
           setItems(data);
@@ -50,6 +66,7 @@ export default function SellerItems({ store }) {
   }, [store]);
 
   const isLoading = items === null;
+  const effectiveCategories = categories.length ? categories : [];
 
   const visibleItems = useMemo(
     () =>
@@ -63,40 +80,67 @@ export default function SellerItems({ store }) {
     [items, query, status],
   );
 
-  const handleSaveListing = (event) => {
+  const handleSaveListing = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    saveListing({
-      id: editing?.id,
-      store_id: store?.id ?? null,
-      name: String(data.get("name") || "").trim(),
-      description: String(data.get("description") || "").trim(),
-      category: data.get("category"),
-      price_per_day: Number(data.get("price") || 0),
-      deposit: Number(data.get("deposit") || 0),
-      available: data.get("status") === "Aktif",
-      image_url: editing?.image || DEFAULT_IMG,
-    });
-    fetchListingsByStore(store.id).then((next) => setItems(next));
-    setEditing(null);
-    setShowForm(false);
+    setFormError("");
+    const imageUrls = String(data.get("images") || "")
+      .split(/[\n,]/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+    try {
+      await saveListing({
+        id: editing?.id ?? null,
+        store_id: store?.id ?? null,
+        category_id: data.get("category"),
+        name: String(data.get("name") || "").trim(),
+        description: String(data.get("description") || "").trim(),
+        price: Number(data.get("price") || 0),
+        deposit: Number(data.get("deposit") || 0),
+        stock: Number(data.get("stock") || 1),
+        rental_unit: data.get("rental_unit") || "day",
+        min_rental_duration: data.get("min_duration")
+          ? Number(data.get("min_duration"))
+          : null,
+        available: data.get("status") === "Aktif",
+        images: imageUrls.length ? imageUrls : editing?.images || [DEFAULT_IMG],
+      });
+      const next = await fetchListingsByStore(store?.id ?? null);
+      setItems(next);
+      setEditing(null);
+      setShowForm(false);
+    } catch (err) {
+      setFormError(translateRentalError(err?.message));
+    }
   };
 
-  const toggleAvailability = (item) => {
-    updateListingAvailability(item.id, !item.available);
-    setItems((current) =>
-      current.map((listing) =>
-        listing.id === item.id
-          ? { ...listing, available: !listing.available }
-          : listing,
-      ),
-    );
+  const toggleAvailability = async (item) => {
+    setActionError("");
+    try {
+      await updateListingAvailability(item.id, !item.available);
+      setItems((current) =>
+        current.map((listing) =>
+          listing.id === item.id
+            ? { ...listing, available: !listing.available }
+            : listing,
+        ),
+      );
+    } catch (err) {
+      setActionError(translateRentalError(err?.message));
+    }
   };
 
-  const removeItem = (item) => {
-    removeListing(item.id);
-    setItems((current) => current.filter((listing) => listing.id !== item.id));
+  const removeItem = async (item) => {
+    setActionError("");
+    try {
+      await removeListing(item.id);
+      setItems((current) => current.filter((listing) => listing.id !== item.id));
+    } catch (err) {
+      setActionError(translateRentalError(err?.message));
+    }
   };
+
+  const unitLabel = (u) => RENTAL_UNIT_LABELS[u] || u;
 
   return (
     <div className="seller-items">
@@ -129,10 +173,9 @@ export default function SellerItems({ store }) {
             </button>
           </div>
 
-          <form
-            className="structured-listing-form"
-            onSubmit={handleSaveListing}
-          >
+          {formError && <p className="rental-note is-error">{formError}</p>}
+
+          <form className="structured-listing-form" onSubmit={handleSaveListing}>
             <section className="form-section">
               <h3 className="form-section-title">Informasi Dasar</h3>
               <div className="form-group-grid">
@@ -149,9 +192,12 @@ export default function SellerItems({ store }) {
                   Kategori <span className="required-star">*</span>
                   <select
                     name="category"
-                    defaultValue={editing?.category || CATEGORIES[0].id}
+                    defaultValue={editing?.category_id || effectiveCategories[0]?.id || ""}
+                    required
                   >
-                    {CATEGORIES.map((cat) => (
+                    {(effectiveCategories.length ? effectiveCategories : [
+                      { id: editing?.category_id || "", name: editing?.category_name || "— pilih —" },
+                    ]).map((cat) => (
                       <option key={cat.id} value={cat.id}>
                         {cat.name}
                       </option>
@@ -176,7 +222,7 @@ export default function SellerItems({ store }) {
               <h3 className="form-section-title">Detail Sewa</h3>
               <div className="form-group-grid">
                 <label>
-                  Harga Sewa (per hari) <span className="required-star">*</span>
+                  Harga Sewa <span className="required-star">*</span>
                   <div className="input-prefix">
                     <span className="prefix">Rp</span>
                     <input
@@ -202,6 +248,39 @@ export default function SellerItems({ store }) {
                   </div>
                 </label>
                 <label>
+                  Stok (unit) <span className="required-star">*</span>
+                  <input
+                    required
+                    name="stock"
+                    type="number"
+                    min="0"
+                    defaultValue={editing?.stock ?? 1}
+                  />
+                </label>
+                <label>
+                  Satuan Sewa
+                  <select
+                    name="rental_unit"
+                    defaultValue={editing?.rental_unit || "day"}
+                  >
+                    {RENTAL_UNITS.map((u) => (
+                      <option key={u.id} value={u.id}>
+                        per {u.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  Durasi Minimum (opsional)
+                  <input
+                    name="min_duration"
+                    type="number"
+                    min="1"
+                    placeholder="cth: 2"
+                    defaultValue={editing?.min_rental_duration || ""}
+                  />
+                </label>
+                <label>
                   Status
                   <select
                     name="status"
@@ -224,23 +303,19 @@ export default function SellerItems({ store }) {
 
             <section className="form-section">
               <h3 className="form-section-title">Foto Barang</h3>
-              <div className="simple-image-upload">
-                <div className="upload-placeholder">
-                  <span className="upload-icon">📷</span>
-                  <span className="upload-text">
-                    {editing
-                      ? "Foto saat ini dipakai — unggah nyata menunggu backend"
-                      : "Klik untuk tambah foto (menunggu backend)"}
-                  </span>
-                </div>
-              </div>
+              <label className="form-wide">
+                URL gambar (satu per baris — gambar pertama jadi thumbnail)
+                <textarea
+                  name="images"
+                  rows="3"
+                  placeholder={DEFAULT_IMG}
+                  defaultValue={(editing?.images || []).join("\n")}
+                />
+              </label>
             </section>
 
             <div className="form-actions-footer">
-              <button
-                type="submit"
-                className="btn-primary-solid form-submit-btn"
-              >
+              <button type="submit" className="btn-primary-solid form-submit-btn">
                 Simpan Barang
               </button>
             </div>
@@ -269,6 +344,8 @@ export default function SellerItems({ store }) {
             </select>
           </div>
 
+          {actionError && <p className="rental-note is-error">{actionError}</p>}
+
           {isLoading ? (
             <p className="dashboard-empty-note">Memuat barang…</p>
           ) : loadError ? (
@@ -281,30 +358,27 @@ export default function SellerItems({ store }) {
                   className={`item-card-solid ${item.available ? "" : "is-inactive"}`}
                 >
                   <div className="item-image-box">
-                    <img src={item.image} alt={item.name} />
+                    <img src={item.image || DEFAULT_IMG} alt={item.name} />
                     <span
                       className={`item-status-chip status-${item.available ? "aktif" : "nonaktif"}`}
                     >
-                      <span
-                        className="status-dot-small"
-                        aria-hidden="true"
-                      ></span>
+                      <span className="status-dot-small" aria-hidden="true"></span>
                       {item.available ? "Tersedia" : "Nonaktif"}
                     </span>
                   </div>
                   <div className="item-details-box">
                     <p className="item-category-label">
-                      {CATEGORY_LABELS[item.category] || item.category}
+                      {item.category_name || CATEGORY_LABELS[item.category] || item.category}
                     </p>
                     <h3 className="item-title-solid">{item.name}</h3>
                     <div className="item-price-row">
                       <strong className="item-price-solid">
                         {formatPrice(item.price)}
                       </strong>
-                      <span className="item-price-unit">/hari</span>
+                      <span className="item-price-unit">/{unitLabel(item.rental_unit)}</span>
                     </div>
                     <p className="item-rented-note">
-                      Deposit {formatPrice(item.deposit)}
+                      Deposit {formatPrice(item.deposit)} · Stok {item.stock}
                     </p>
                   </div>
                   <div className="item-actions-row">

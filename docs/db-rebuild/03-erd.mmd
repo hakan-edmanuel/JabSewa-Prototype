@@ -1,0 +1,182 @@
+%% JabSewa — Final ERD (Phase 3). 13 tabel ERD + wishlists.
+%% Keputusan: D1 role consumer/admin · D2 uang integer IDR · D3 uuid semua
+%% D4 deposit ditambahkan · D6 action/entity_type = CHECK registry.
+erDiagram
+    AUTH_USERS ||--|| USERS : "id (trigger profile)"
+
+    USERS ||--o{ STORE_APPLICATIONS : "user_id"
+    USERS ||--o{ STORE_APPLICATIONS : "reviewed_by (nullable)"
+    USERS ||--o{ STORES : "owner_id"
+    USERS ||--o{ RENTAL_TRANSACTIONS : "buyer_id"
+    USERS ||--o{ RENTAL_TRANSACTIONS : "cancelled_by (nullable)"
+    USERS ||--o{ DISPUTES : "opened_by"
+    USERS ||--o{ DISPUTES : "resolved_by (nullable)"
+    USERS ||--o{ REVIEWS : "buyer_id"
+    USERS ||--o{ WISHLISTS : "user_id"
+    USERS ||--o{ AUDIT_LOGS : "actor_id"
+
+    STORES ||--o{ LISTINGS : "store_id"
+    CATEGORIES ||--o{ LISTINGS : "category_id"
+    STORES ||--o{ RENTAL_TRANSACTIONS : "store_id"
+    STORES ||--o{ REVIEWS : "store_id"
+    LISTINGS ||--o{ LISTING_IMAGES : "listing_id"
+    LISTINGS ||--o{ TRANSACTION_ITEMS : "listing_id"
+    LISTINGS ||--o{ WISHLISTS : "listing_id"
+
+    RENTAL_TRANSACTIONS ||--o{ TRANSACTION_ITEMS : "transaction_id"
+    RENTAL_TRANSACTIONS ||--o{ PAYMENTS : "transaction_id"
+    RENTAL_TRANSACTIONS ||--o| LATE_FEES : "transaction_id (unique)"
+    RENTAL_TRANSACTIONS ||--o{ DISPUTES : "transaction_id"
+    RENTAL_TRANSACTIONS ||--o| REVIEWS : "transaction_id (unique)"
+
+    USERS {
+        uuid id PK "FK auth.users CASCADE"
+        varchar_255 email UK "dari auth.users (trigger)"
+        user_role role "consumer|admin (D1)"
+        varchar_100 full_name
+        varchar_20 phone "nullable"
+        text avatar_url "nullable"
+        boolean is_seller "cache (D1)"
+        user_status status "active|inactive|suspended"
+        timestamptz created_at
+        timestamptz updated_at
+    }
+    STORE_APPLICATIONS {
+        uuid id PK
+        uuid user_id FK "applicant"
+        varchar_100 store_name
+        text description
+        text address
+        text logo_url "nullable"
+        application_status status "pending|approved|rejected"
+        uuid reviewed_by FK "nullable"
+        timestamptz reviewed_at "nullable"
+        text rejection_reason "nullable"
+        timestamptz created_at
+        timestamptz updated_at
+    }
+    STORES {
+        uuid id PK
+        uuid owner_id FK "RESTRICT"
+        varchar_100 name
+        text description
+        text address
+        text logo_url "nullable"
+        store_status status "active|inactive|suspended"
+        rental_unit rental_unit "default listing baru"
+        integer min_rental_duration "nullable"
+        timestamptz created_at
+        timestamptz updated_at
+    }
+    CATEGORIES {
+        uuid id PK
+        varchar_100 name
+        varchar_100 slug UK
+        timestamptz created_at
+    }
+    LISTINGS {
+        uuid id PK "D3: uuid"
+        uuid store_id FK "CASCADE"
+        uuid category_id FK "RESTRICT"
+        varchar_100 name
+        text description
+        bigint price "IDR per rental_unit (D2)"
+        bigint deposit "default 0 (D4)"
+        integer stock ">= 0"
+        rental_unit rental_unit
+        integer min_rental_duration "nullable"
+        listing_status status "active|inactive|out_of_stock|suspended"
+        timestamptz created_at
+        timestamptz updated_at
+    }
+    LISTING_IMAGES {
+        uuid id PK
+        uuid listing_id FK "CASCADE"
+        text image_url
+        integer sort_order ">= 1"
+        timestamptz created_at
+    }
+    RENTAL_TRANSACTIONS {
+        uuid id PK
+        uuid buyer_id FK "RESTRICT"
+        uuid store_id FK "RESTRICT"
+        transaction_status status "8 nilai ERD"
+        date start_date
+        date end_date "inclusive"
+        bigint subtotal "server-computed"
+        bigint deposit_total "D4"
+        bigint total "= subtotal + deposit_total"
+        bigint late_fee_total "sum unpaid+paid"
+        timestamptz actual_return_date "nullable"
+        uuid cancelled_by FK "nullable"
+        timestamptz cancelled_at "nullable"
+        text cancel_reason "nullable"
+        timestamptz created_at
+        timestamptz updated_at
+    }
+    TRANSACTION_ITEMS {
+        uuid id PK
+        uuid transaction_id FK "CASCADE"
+        uuid listing_id FK "RESTRICT"
+        integer quantity "> 0"
+        bigint price "snapshot"
+        bigint deposit "snapshot (D4)"
+        bigint subtotal "server-computed"
+        timestamptz created_at
+    }
+    PAYMENTS {
+        uuid id PK
+        uuid transaction_id FK "RESTRICT"
+        bigint amount "> 0"
+        payment_status status "pending|paid|failed|refunded"
+        payment_method payment_method "bank_transfer|e_wallet|credit_card|qris"
+        varchar_100 external_reference "nullable"
+        text payment_proof_url "nullable"
+        timestamptz paid_at "nullable; wajib saat paid"
+        timestamptz created_at
+    }
+    LATE_FEES {
+        uuid id PK
+        uuid transaction_id FK "UNIQUE (MVP)"
+        integer days_late ">= 0"
+        bigint daily_rate "snapshot keputusan"
+        bigint total "= days_late * daily_rate"
+        late_fee_status status "unpaid|paid|waived"
+        timestamptz created_at
+    }
+    DISPUTES {
+        uuid id PK
+        uuid transaction_id FK "RESTRICT"
+        uuid opened_by FK
+        text reason
+        text description
+        dispute_status status "open|investigating|resolved|rejected"
+        uuid resolved_by FK "nullable"
+        text resolution "nullable"
+        timestamptz resolved_at "nullable"
+        timestamptz created_at
+    }
+    REVIEWS {
+        uuid id PK
+        uuid transaction_id FK "UNIQUE"
+        uuid buyer_id FK
+        uuid store_id FK
+        integer rating "1..5"
+        text comment
+        timestamptz created_at
+    }
+    WISHLISTS {
+        uuid id PK
+        uuid user_id FK "CASCADE"
+        uuid listing_id FK "CASCADE"
+        timestamptz created_at
+    }
+    AUDIT_LOGS {
+        uuid id PK
+        uuid actor_id FK "RESTRICT"
+        text action "CHECK registry (28 nilai)"
+        text entity_type "CHECK registry (11 nilai)"
+        uuid entity_id
+        jsonb metadata "default '{}'"
+        timestamptz created_at
+    }

@@ -1,82 +1,53 @@
 import { useState } from 'react'
 import { useAuth } from '../auth/AuthContext'
-import { resetDemoData } from '../lib/storage'
-import { ROLE_TENANT, ROLE_STORE_OWNER, ROLE_SUPERADMIN } from '../lib/roles'
+import { ROLE_CONSUMER, ROLE_ADMIN } from '../lib/roles'
 
 /*
  * ============================================================================
- * DEV ROLE SWITCHER — JabSewa (MODE MOCK / OFFLINE)
+ * DEV ROLE SWITCHER — JabSewa (DEV ONLY)
  * ============================================================================
- * Panel kecil khusus demo/testing untuk berganti role aktif dengan satu klik:
- *   TENANT <-> STORE_OWNER <-> SUPERADMIN
+ * Panel kecil khusus development: info sesi + logout cepat. HANYA dirender
+ * pada build development (import.meta.env.DEV) — production build tidak
+ * pernah memuat panel ini (pengaman juga ada di App.jsx Shell).
  *
- * Cara pakai:
- *   - Melayang di pojok kanan bawah.
- *   - Selalu tampil di mode mock (tidak ada lagi role server-side).
- *   - "Reset Data Demo" mengembalikan seluruh LocalStorage ke seed awal.
- *
- * PENTING: JANGAN dipakai di produksi nyata — hanya alat demo frontend.
+ * ERD v2 (D1): role DB hanya consumer | admin. "Seller" bukan role — status
+ * turunan dari kepemilikan store aktif (users.is_seller cache server).
+ * Role server-side TIDAK pernah diubah dari frontend — hanya via SQL manual
+ * oleh operator (bootstrap admin) atau RPC admin_set_user_role.
  * ============================================================================
  */
 
 const ROLE_META = {
-  [ROLE_TENANT]: { label: 'Tenant', emoji: '🧑' },
-  [ROLE_STORE_OWNER]: { label: 'Store Owner', emoji: '🏪' },
-  [ROLE_SUPERADMIN]: { label: 'Superadmin', emoji: '🛡️' },
+  [ROLE_CONSUMER]: { label: 'Consumer', emoji: '🧑' },
+  [ROLE_ADMIN]: { label: 'Admin', emoji: '🛡️' },
 }
 
 export default function DevRoleSwitcher() {
-  const { user, switchRole, logout } = useAuth()
+  const { user, logout } = useAuth()
   const [open, setOpen] = useState(false)
-  const [confirmReset, setConfirmReset] = useState(false)
 
-  const handleSwitch = (role) => {
-    if (role !== user?.role) switchRole(role)
-    setConfirmReset(false)
-  }
+  // Pengaman tambahan: sembunyikan juga saat runtime produksi.
+  if (!import.meta.env.DEV) return null
 
   return (
     <div className="dev-switcher">
       {open && (
         <div className="dev-switcher-panel">
-          <p className="dev-switcher-title">Dev Mode — Ganti Role</p>
+          <p className="dev-switcher-title">Dev Mode — Info Sesi</p>
           <p className="dev-switcher-user">
             Aktif: <strong>{user?.name || 'Guest'}</strong> ({user?.role || '—'})
+            {user?.isSeller ? ' · seller (store aktif)' : ''}
           </p>
           <div className="dev-switcher-actions">
             {Object.entries(ROLE_META).map(([role, meta]) => (
-              <button
+              <span
                 key={role}
-                type="button"
                 className={`dev-switcher-btn ${user?.role === role ? 'is-active' : ''}`}
-                onClick={() => handleSwitch(role)}
               >
                 {meta.emoji} {meta.label}
-              </button>
+              </span>
             ))}
           </div>
-          <div className="dev-switcher-divider" />
-          {confirmReset ? (
-            <div className="dev-switcher-actions">
-              <button
-                type="button"
-                className="dev-switcher-btn is-danger"
-                onClick={() => {
-                  resetDemoData()
-                  window.location.href = '/'
-                }}
-              >
-                ⚠️ Ya, reset semua
-              </button>
-              <button type="button" className="dev-switcher-btn" onClick={() => setConfirmReset(false)}>
-                Batal
-              </button>
-            </div>
-          ) : (
-            <button type="button" className="dev-switcher-btn is-warning" onClick={() => setConfirmReset(true)}>
-              ♻️ Reset Data Demo
-            </button>
-          )}
           <div className="dev-switcher-divider" />
           <button
             type="button"
@@ -89,7 +60,8 @@ export default function DevRoleSwitcher() {
             🚪 Keluar (logout)
           </button>
           <p className="dev-switcher-hint">
-            Akun demo: admin@jabsewa.id / admin123 · owner@jabsewa.id / owner123 · tenant@jabsewa.id / tenant123
+            Panel ini hanya muncul di build development. Role & akses seller
+            diverifikasi server-side via Supabase Auth + RLS.
           </p>
         </div>
       )}
@@ -100,7 +72,7 @@ export default function DevRoleSwitcher() {
         aria-expanded={open}
         title="Dev role switcher"
       >
-        {open ? '✕' : '🛠️'} {ROLE_META[user?.role]?.label || 'Guest'}
+        {open ? '✕' : '🛠️'} {user?.role === ROLE_ADMIN ? 'Admin' : user?.role === ROLE_CONSUMER ? 'Consumer' : 'Guest'}
       </button>
     </div>
   )

@@ -1,18 +1,19 @@
 /*
  * ============================================================================
- * SYS APPLICATIONS — JabSewa (FITUR 2)
+ * SYS APPLICATIONS — JabSewa (ERD v2)
  * ============================================================================
- * Review ajuan seller untuk superadmin. Data dari lapisan service superadmin
- * (LocalStorage store — kontrak data sama, jadi penukaran ke backend nyata
- * nanti tidak menyentuh komponen).
+ * Review ajuan toko untuk admin. Data dari RPC list_store_applications
+ * (server-side guard is_admin() di dalam RPC).
  *
- * Setiap keputusan (setujui/tolak) wajib membubuhkan admin_audit_logs via
- * logAdminAction — aksi tanpa jejak audit ditolak oleh alur UI.
+ * Keputusan lewat RPC decide_store_application — RPC menulis audit_logs
+ * server-side (application_approve / application_reject), memvalidasi
+ * self-review, dan membuat store saat approve. Tidak ada penulisan audit
+ * dari frontend (tidak bisa dilewati/dipalsukan).
  * ============================================================================
  */
 
 import { useEffect, useState } from 'react'
-import { listSellerApplications, decideAdmin, logAdminAction, AUDIT_ACTIONS } from '../../lib/superadmin'
+import { listSellerApplications, decideAdmin } from '../../lib/superadmin'
 import { formatDate, initialOf } from '../../lib/format'
 
 const FILTERS = [
@@ -42,21 +43,32 @@ export default function SysApplications() {
   const [saving, setSaving] = useState(false)
 
   const load = () => {
-    listSellerApplications().then((data) => {
-      setApps(data)
-      setLoading(false)
-    })
+    listSellerApplications()
+      .then((data) => {
+        setApps(data)
+        setLoading(false)
+      })
+      .catch(() => {
+        // Guard superadmin sudah memfilter non-admin; kegagalan jaringan/RLS
+        // ditampilkan sebagai daftar kosong + tetap bisa dicoba lagi.
+        setApps([])
+        setLoading(false)
+      })
   }
 
   useEffect(load, [])
 
   const counts = { all: apps.length, under_review: 0, approved: 0, rejected: 0 }
   apps.forEach((a) => {
-    const s = a.sellerApplication?.status
-    if (s in counts) counts[s] += 1
+    const s = a.storeApplication?.status
+    if (s === 'pending') counts.under_review += 1
+    else if (s === 'approved') counts.approved += 1
+    else if (s === 'rejected') counts.rejected += 1
   })
 
-  const visible = filter === 'all' ? apps : apps.filter((a) => a.sellerApplication?.status === filter)
+  const statusKey = (status) => (status === 'pending' ? 'under_review' : status)
+  const visible =
+    filter === 'all' ? apps : apps.filter((a) => statusKey(a.storeApplication?.status) === filter)
   const selected = apps.find((a) => a.id === selectedId) || null
 
   const openDetail = (id) => {
@@ -66,25 +78,12 @@ export default function SysApplications() {
     if (window.innerWidth < 980) window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  /** Keputusan tersimpan + audit log ditulis sebelum UI diperbarui. */
+  /** Keputusan tersimpan; audit ditulis server-side oleh RPC. */
   const confirmDecision = async () => {
     if (!selected || !decision) return
     setSaving(true)
     try {
       await decideAdmin(selected.id, { approve: decision === 'approve', reason })
-      await logAdminAction(
-        decision === 'approve' ? AUDIT_ACTIONS.APPROVE_STORE_APPLICATION : AUDIT_ACTIONS.REJECT_STORE_APPLICATION,
-        {
-          targetType: 'store_application',
-          targetId: selected.id,
-          payload: {
-            storeName: selected.sellerApplication?.storeName || '',
-            decision: decision === 'approve' ? 'approved' : 'rejected',
-            reason: decision === 'reject' ? reason : '',
-            at: new Date().toISOString(),
-          },
-        },
-      )
       setDecision(null)
       setReason('')
       load()
@@ -137,7 +136,7 @@ export default function SysApplications() {
           ) : (
             <ul className="sys-list-items">
               {visible.map((app) => {
-                const meta = statusMeta(app.sellerApplication?.status)
+                const meta = statusMeta(app.storeApplication?.status)
                 const isActive = app.id === selectedId
                 return (
                   <li key={app.id}>
@@ -152,8 +151,8 @@ export default function SysApplications() {
                       </span>
                       <span className="sys-row-main">
                         <span className="sys-row-name">{app.applicant?.name}</span>
-                        <span className="sys-row-store">{app.sellerApplication?.storeName}</span>
-                        <span className="sys-row-date">Dikirim {formatDate(app.sellerApplication?.submittedAt)}</span>
+                        <span className="sys-row-store">{app.storeApplication?.storeName}</span>
+                        <span className="sys-row-date">Dikirim {formatDate(app.storeApplication?.submittedAt)}</span>
                       </span>
                       <span className="sys-row-side">
                         <span className={`sys-status-badge ${meta.className}`}>{meta.label}</span>
@@ -172,28 +171,28 @@ export default function SysApplications() {
               <header className="sys-detail-head">
                 <div>
                   <h2>{selected.applicant?.name}</h2>
-                  <p className="sys-detail-store">{selected.sellerApplication?.storeName}</p>
+                  <p className="sys-detail-store">{selected.storeApplication?.storeName}</p>
                   <p className="sys-detail-email">{selected.applicant?.email}</p>
                 </div>
-                <span className={`sys-status-badge ${statusMeta(selected.sellerApplication?.status).className}`}>
-                  {statusMeta(selected.sellerApplication?.status).label}
+                <span className={`sys-status-badge ${statusMeta(selected.storeApplication?.status).className}`}>
+                  {statusMeta(selected.storeApplication?.status).label}
                 </span>
               </header>
 
               <dl className="sys-kv">
                 <div className="sys-kv-row">
                   <dt>Kota</dt>
-                  <dd>{selected.sellerApplication?.city || '—'}</dd>
+                  <dd>{selected.storeApplication?.city || '—'}</dd>
                 </div>
                 <div className="sys-kv-row">
                   <dt>Kontak</dt>
-                  <dd>{selected.sellerApplication?.contact || '—'}</dd>
+                  <dd>{selected.storeApplication?.contact || '—'}</dd>
                 </div>
                 <div className="sys-kv-row">
                   <dt>Dikirim</dt>
-                  <dd>{formatDate(selected.sellerApplication?.submittedAt)}</dd>
+                  <dd>{formatDate(selected.storeApplication?.submittedAt)}</dd>
                 </div>
-                {selected.sellerApplication?.description && (
+                {selected.storeApplication?.description && (
                   <div className="sys-kv-row">
                     <dt>Deskripsi</dt>
                     <dd>{selected.sellerApplication.description}</dd>
@@ -215,7 +214,7 @@ export default function SysApplications() {
               {decision === 'approve' && (
                 <div className="sys-confirm is-approve">
                   <p>
-                    Setujui <strong>{selected.sellerApplication?.storeName}</strong>? Toko bisa langsung aktif.
+                    Setujui <strong>{selected.storeApplication?.storeName}</strong>? Toko bisa langsung aktif.
                   </p>
                   <div className="sys-confirm-actions">
                     <button type="button" className="sys-btn-ghost" onClick={() => setDecision(null)}>

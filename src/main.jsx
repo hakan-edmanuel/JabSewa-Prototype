@@ -8,14 +8,15 @@ import { SpeedInsights } from '@vercel/speed-insights/react'
 
 /*
  * ============================================================================
- * ENTRY POINT — JabSewa (MODE MOCK / OFFLINE)
+ * ENTRY POINT — JabSewa
  * ============================================================================
  * Urutan pemasangan:
  *   1. ErrorBoundary  — menangkap crash render agar tidak layar putih.
- *   2. AuthProvider   — context sesi LocalStorage untuk seluruh app.
+ *   2. AuthProvider   — context sesi Supabase Auth untuk seluruh app.
  *
- * Tidak ada lagi guard env Supabase: seluruh data & auth berjalan lokal
- * (LocalStorage) — `npm run dev` langsung jalan tanpa internet.
+ * Data & auth bersumber dari Supabase (sumber kebenaran). Tanpa env
+ * VITE_SUPABASE_*, service melempar error konfigurasi yang jelas — TIDAK ada
+ * fallback demo/localStorage (lihat lib/listings.js, 07-frontend-integration §3).
  * ============================================================================
  */
 

@@ -4,15 +4,15 @@
  * ============================================================================
  * Pemisahan route (FITUR 2):
  *   /                      → landing publik
- *   /consumer /buyer ...   → UI user (Tenant & Store Owner)
- *   /sys-control-jab/*     → SUPERADMIN (subtree terisolasi; non-admin
+ *   /consumer /buyer ...   → UI user (consumer)
+ *   /sys-control-jab/*     → ADMIN (subtree terisolasi; non-admin
  *                            melihat 404 — bukan 403 — agar route tidak
  *                            bisa di-enumerate)
  *
  * ATURAN ISOLASI: folder src/superadmin tidak boleh diimpor komponen user,
  * dan komponen user tidak boleh mengimpor apa pun dari src/superadmin.
- * Guard: UI (SuperadminGuard, 404 palsu) berbasis role `jabsewa_current_user`
- * (LocalStorage — mode mock/offline, tanpa RLS Postgres).
+ * Guard: UI (SuperadminGuard, 404 palsu) berbasis role yang diverifikasi
+ * SERVER-SIDE (Supabase Auth + RLS — bukan LocalStorage).
  * ============================================================================
  */
 import { useEffect, useState } from 'react'
@@ -75,8 +75,8 @@ function App() {
   // Pintu masuk seller yang benar (lifecycle, bukan switch role):
   //   belum login            → auth (dengan intent) → onboarding
   //   login, belum ada ajuan → onboarding (ajuan seller)
-  //   ajuan under_review/rejected → layar status ajuan
-  //   approved (sellerProfile ada) → dashboard seller
+  //   ajuan pending/rejected → layar status ajuan
+  //   approved (store aktif — hasSellerAccess dari cache is_seller) → dashboard seller
   const goSeller = () => {
     if (!user) {
       setAuthIntent({ page: 'seller' })
@@ -110,7 +110,7 @@ function App() {
       return
     }
     if (intent.page === 'seller') {
-      if (authenticatedUser?.sellerProfile) navigate('seller')
+      if (authenticatedUser?.isSeller) navigate('seller')
       else navigate('seller-onboarding')
     } else if (intent.page === 'buyer') {
       navigate('buyer')
@@ -155,6 +155,8 @@ function App() {
   // Tunggu sesi lokal (LocalStorage) selesai dibaca sebelum route guard
   // dievaluasi, supaya refresh halaman tidak “flash” ke halaman login.
   // (Diletakkan SETELAH semua hooks — jangan dinaikkan ke atas.)
+  // Tunggu pemeriksaan sesi Supabase selesai sebelum route guard dievaluasi
+  // supaya refresh halaman tidak "flash" ke halaman login.
   if (!isReady) {
     return (
       <div className="page-shell" style={{ display: 'grid', placeItems: 'center', minHeight: '100vh' }}>
@@ -164,13 +166,13 @@ function App() {
   }
 
   // --- Route area superadmin (terisolasi; guard sendiri di SuperadminGuard) ---
-  // Role diverifikasi terhadap koleksi `users` di LocalStorage via
-  // lib/superadmin.requireSuperAdmin (default-deny).
+  // Role diverifikasi SERVER-SIDE via Supabase Auth + RLS (lib/superadmin.js),
+  // bukan LocalStorage.
   if (page === 'sys-control') {
     return <SysControlApp onExit={() => navigate('home')} />
   }
 
-  // --- Route guard user (TENANT / STORE_OWNER) ---
+  // --- Route guard user (consumer) ---
   let effectivePage = page
   const authMode = window.location.pathname.includes('/login') ? 'login' : 'register'
 

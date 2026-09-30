@@ -4,7 +4,7 @@ import { useAuth } from '../../auth/AuthContext'
 import { getWishlist, toggleWishlist as persistWishlist } from '../../lib/userData'
 import { hybridSearch } from '../../lib/search'
 import { formatPrice } from '../../lib/format'
-import { CATEGORY_LABELS } from '../../lib/constants'
+import { CATEGORY_LABELS, RENTAL_UNIT_LABELS } from '../../lib/constants'
 
 /*
  * ============================================================================
@@ -13,10 +13,32 @@ import { CATEGORY_LABELS } from '../../lib/constants'
  * - Tab: Semua | Barang | Toko (setara type=all|items|stores).
  * - Tab "Semua": "Toko Terkait" di paling atas (maks 6, jika ada match),
  *   diikuti grid barang — sesuai spesifikasi payload hybridSearch().
- * - Sumber data: lib/search (hybridSearch — lokal dulu, nanti RPC Supabase).
- * - Wishlist kini PER-USER (kunci user.id), bukan global satu perangkat.
+ * - Sumber data: lib/search (hybridSearch — Supabase, RLS-scoped).
+ * - Wishlist PER-USER, persist di server (rpc get_wishlist / toggle_wishlist);
+ *   guest melihat hati lokal (tidak tersimpan) dan diminta masuk saat toggle.
  * ============================================================================
  */
+
+const GUEST_WISHLIST_KEY = 'jabsewa:wishlist:guest'
+
+/** Wishlist tamu (belum login) — hanya ingatan lokal per perangkat (uuid string). */
+function readGuestWishlist() {
+  try {
+    const raw = window.localStorage.getItem(GUEST_WISHLIST_KEY)
+  const parsed = raw ? JSON.parse(raw) : []
+    return Array.isArray(parsed) ? parsed.map(String) : []
+  } catch {
+    return []
+  }
+}
+
+function writeGuestWishlist(ids) {
+  try {
+    window.localStorage.setItem(GUEST_WISHLIST_KEY, JSON.stringify(ids))
+  } catch {
+    // storage penuh / tidak tersedia — abaikan
+  }
+}
 
 const TABS = [
   { key: 'all', label: 'Semua' },
@@ -85,7 +107,7 @@ function ItemCard({ item, wishlist, onToggleWishlist, onSelect }) {
         <div className="browser-item-footer">
           <p className="browser-item-price">
             {formatPrice(item.price_per_day)}
-            <small>/hari</small>
+            <small>/{RENTAL_UNIT_LABELS[item.rental_unit] || 'hari'}</small>
           </p>
           <button className="btn-add-cart" disabled={item.available === false} onClick={() => onSelect(item)}>
             {item.available === false ? 'Kosong' : 'Lihat Detail'}
@@ -101,14 +123,34 @@ export default function ConsumerBrowser({ category, search, priceRange, onSelect
   const [tab, setTab] = useState('all')
   // Filter toko aktif (dari tombol "Lihat Toko") — null berarti semua toko.
   const [storeFilter, setStoreFilter] = useState(null)
-  // Wishlist dibaca saat render per user; toggle menulis lalu memicu re-render
-  // via counter (pola baca-sinkron, tanpa setState di dalam effect).
-  const [wishTick, setWishTick] = useState(0)
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- wishTick memicu pembacaan ulang setelah toggle
-  const wishlist = useMemo(() => getWishlist(user?.id), [user?.id, wishTick])
+  // Wishlist server-side (user login) atau lokal (guest) — dimuat async.
+  const [wishlist, setWishlist] = useState([])
+  const [wishBusyId, setWishBusyId] = useState(null)
   const [results, setResults] = useState({ stores: [], items: [], totals: { stores: 0, items: 0 } })
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState('')
+
+  // Muat wishlist: login → rpc get_wishlist (server-scoped); guest → lokal.
+  useEffect(() => {
+    let active = true
+    if (user?.id) {
+      getWishlist()
+        .then((ids) => {
+          if (active) setWishlist(ids)
+        })
+        .catch(() => {
+          if (active) setWishlist([])
+        })
+    } else {
+      // microtask: hindari setState sinkron di body effect (aturan lint proyek)
+      Promise.resolve().then(() => {
+        if (active) setWishlist(readGuestWishlist())
+      })
+    }
+    return () => {
+      active = false
+    }
+  }, [user?.id])
 
   // Harga & kategori tetap difilter di sisi client (filter UI berada di
   // ConsumerFilters, di luar scope endpoint pencarian).
@@ -143,8 +185,28 @@ export default function ConsumerBrowser({ category, search, priceRange, onSelect
   }, [search, category, tab])
 
   const toggleWishlist = (id) => {
-    persistWishlist(user?.id, id)
-    setWishTick((tick) => tick + 1)
+    if (!user?.id) {
+      // Guest: simpan lokal saja (tidak lintas perangkat), tanpa server.
+      setWishlist((current) => {
+        const next = current.includes(String(id))
+          ? current.filter((x) => x !== String(id))
+          : [...current, String(id)]
+        writeGuestWishlist(next)
+        return next
+      })
+      return
+    }
+    if (wishBusyId != null) return // cegah toggle ganda saat in-flight
+    setWishBusyId(id)
+    persistWishlist(user.id, id)
+      .then((nextIds) => setWishlist(nextIds))
+      .catch(() => {
+        // Gagal toggle → muat ulang dari server agar state konsisten.
+        getWishlist()
+          .then(setWishlist)
+          .catch(() => {})
+      })
+      .finally(() => setWishBusyId(null))
   }
 
   const handleSelect = (item) => {

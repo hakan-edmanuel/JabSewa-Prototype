@@ -1,11 +1,11 @@
 /*
  * ============================================================================
- * SYS AUDIT — JabSewa (MODE MOCK / OFFLINE)
+ * SYS AUDIT — JabSewa (ERD v2)
  * ============================================================================
- * Tampilan audit_logs: aksi, target, aktor, waktu, IP perangkat.
+ * Tampilan audit_logs: aksi, target, aktor, waktu, metadata ringkas.
  *
- * Sumber data: koleksi `audit_logs` di LocalStorage (src/lib/storage.js)
- * via lib/superadmin.listAuditLogs — tidak ada lagi RPC Supabase.
+ * Sumber data: RPC list_audit_logs (admin-only di dalam RPC; RLS audit_logs
+ * juga admin-only). Metadata jsonb diringkas menjadi pasangan key:value.
  * ============================================================================
  */
 
@@ -19,15 +19,31 @@ export default function SysAudit() {
 
   useEffect(() => {
     let active = true
-    listAuditLogs(100).then((data) => {
-      if (!active) return
-      setRows(Array.isArray(data) ? data : [])
-      setLoading(false)
-    })
+    listAuditLogs(100)
+      .then((data) => {
+        if (!active) return
+        setRows(Array.isArray(data) ? data : [])
+        setLoading(false)
+      })
+      .catch(() => {
+        if (active) {
+          setRows([])
+          setLoading(false)
+        }
+      })
     return () => {
       active = false
     }
   }, [])
+
+  /** Ringkas metadata jsonb → "key: value · key: value". */
+  const metaSummary = (metadata) => {
+    if (!metadata || typeof metadata !== 'object') return '—'
+    const parts = Object.entries(metadata)
+      .slice(0, 3)
+      .map(([k, v]) => `${k}: ${typeof v === 'object' && v !== null ? JSON.stringify(v) : String(v)}`)
+    return parts.length ? parts.join(' · ') : '—'
+  }
 
   return (
     <div className="sys-page">
@@ -35,7 +51,7 @@ export default function SysAudit() {
         <div>
           <h1>Audit Log</h1>
           <p className="sys-page-sub">
-            Jejak setiap aksi superadmin — tersimpan lokal di perangkat ini (LocalStorage).
+            Jejak setiap aksi sensitif — ditulis server-side oleh RPC (Supabase audit_logs).
           </p>
         </div>
       </header>
@@ -48,7 +64,7 @@ export default function SysAudit() {
               <th>Aksi</th>
               <th>Oleh</th>
               <th>Target</th>
-              <th>IP</th>
+              <th>Detail</th>
             </tr>
           </thead>
           <tbody>
@@ -69,9 +85,9 @@ export default function SysAudit() {
                   </td>
                   <td>{r.actor_email || '—'}</td>
                   <td>
-                    {r.target_type ? `${r.target_type}:${r.target_id}` : '—'}
+                    {r.target_type ? `${r.target_type}:${String(r.target_id).slice(0, 8)}…` : '—'}
                   </td>
-                  <td>{r.ip_address || '—'}</td>
+                  <td className="sys-audit-meta">{metaSummary(r.metadata)}</td>
                 </tr>
               ))
             )}

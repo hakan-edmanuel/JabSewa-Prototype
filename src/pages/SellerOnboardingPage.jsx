@@ -11,18 +11,21 @@ const WIZARD_STEPS = ['Info Seller', 'Perjanjian', 'Review & Kirim']
  * ============================================================================
  * SELLER ONBOARDING — alur ajuan jadi seller (lifecycle, bukan switch role).
  * ============================================================================
- * SELLER APPLICATION = proses/permintaan menjadi seller.
- * SELLER PROFILE     = identitas seller yang HANYA tercipta setelah ajuan
- *                      disetujui (lihat AuthContext.decideSellerApplication).
+ * ERD v2: ajuan tersimpan di tabel store_applications via RPC
+ *         submit_store_application(p_store_name, p_description, p_address).
+ * STORE   = tercipta HANYA setelah admin menyetujui ajuan
+ *         (RPC decide_store_application membuat baris stores aktif).
+ *
+ * Kontrak kolom ajuan (03-database-design.md §4.3):
+ *   store_name, description, address (+ logo_url). Kontak applicant = email
+ *   akun (users.email) — tidak dikumpulkan terpisah; kota digabung ke address
+ *   (format "Kota, Alamat") agar tampil di kartu toko.
  *
  * Alur:
- *   belum ada ajuan / draft → wizard 3 langkah (Info → Perjanjian → Review)
- *   under_review            → layar status "Sedang Ditinjau"
- *   rejected                → layar status dengan alasan + tombol ajukan ulang
- *   approved                → kartu "Disetujui" dengan pintu ke seller dashboard
- *
- * Keputusan review kini dilakukan admin di halaman Admin Applications
- * (/admin) — bukan lagi simulasi di layar applicant.
+ *   belum ada ajuan / ditolak  → wizard 3 langkah (Info → Perjanjian → Review)
+ *   pending                    → layar status "Sedang Ditinjau"
+ *   rejected                   → layar status dengan alasan + tombol ajukan ulang
+ *   approved (store aktif)     → kartu "Disetujui" dengan pintu ke seller dashboard
  * ============================================================================
  */
 
@@ -47,9 +50,8 @@ export default function SellerOnboardingPage({ onNavigate }) {
   const [form, setForm] = useState(() => ({
     storeName: sellerApplication?.storeName || '',
     description: sellerApplication?.description || '',
-    contact: sellerApplication?.contact || user?.email || '',
-    city: sellerApplication?.city || '',
-    address: sellerApplication?.address || '',
+    city: (sellerApplication?.address || '').split(',')[0]?.trim() || '',
+    address: (sellerApplication?.address || '').split(',').slice(1).join(',').trim(),
     agreement: false,
   }))
   const [submitting, setSubmitting] = useState(false)
@@ -67,19 +69,24 @@ export default function SellerOnboardingPage({ onNavigate }) {
     )
   }
 
-  const step1Valid = form.storeName.trim() && form.description.trim() && form.contact.trim() && form.city && form.address.trim()
+  const step1Valid = form.storeName.trim() && form.description.trim() && form.city && form.address.trim()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setSubmitting(true)
-    await submitSellerApplication({
-      storeName: form.storeName,
-      description: form.description,
-      contact: form.contact,
-      city: form.city,
-      address: form.address,
-    })
-    setSubmitting(false)
+    try {
+      await submitSellerApplication({
+        storeName: form.storeName,
+        description: form.description,
+        address: [form.city, form.address].filter(Boolean).join(', '),
+      })
+    } catch (err) {
+      // Biarkan layar status menampilkan state terakhir; pesan error via alert
+      // ringkas agar wizard tidak pindah step saat gagal kirim.
+      window.alert(err?.message || 'Gagal mengirim ajuan. Coba lagi.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -138,18 +145,6 @@ export default function SellerOnboardingPage({ onNavigate }) {
                   className="auth-input"
                   value={form.description}
                   onChange={(e) => setField('description', e.target.value)}
-                />
-              </div>
-              <div className="auth-field">
-                <label className="auth-label" htmlFor="seller-contact">Kontak (WA / telepon)</label>
-                <input
-                  id="seller-contact"
-                  type="text"
-                  required
-                  placeholder="cth: 0812xxxxxxx"
-                  className="auth-input"
-                  value={form.contact}
-                  onChange={(e) => setField('contact', e.target.value)}
                 />
               </div>
               <div className="auth-field">
@@ -224,7 +219,6 @@ export default function SellerOnboardingPage({ onNavigate }) {
                 {[
                   ['Nama toko', form.storeName],
                   ['Deskripsi', form.description],
-                  ['Kontak', form.contact],
                   ['Kota', form.city],
                   ['Alamat', form.address],
                   ['Perjanjian', 'Disetujui'],

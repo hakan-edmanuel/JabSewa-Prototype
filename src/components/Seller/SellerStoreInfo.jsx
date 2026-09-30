@@ -1,7 +1,7 @@
 /*
- * Info Toko (seller): ringkasan identitas toko dari koleksi `stores`.
- * Sengaja read-only — pengubahan profil toko adalah fitur backend
- * (UPDATE stores …) jadi tidak disimulasikan di sini.
+ * Info Toko (seller) — ERD v2: data dari RPC get_my_stores (kolom ERD).
+ * Read-only di MVP; pengubahan profil toko tersedia via RPC update_my_store
+ * (UI edit menyusul).
  */
 export default function SellerStoreInfo({ store }) {
   if (!store) {
@@ -27,7 +27,9 @@ export default function SellerStoreInfo({ store }) {
           <h1 className="seller-page-title">Info Toko</h1>
           <p className="seller-page-desc">Data toko yang tampil di marketplace.</p>
         </div>
-        {store.is_verified && <span className="store-verified">✓ Terverifikasi</span>}
+        {store.status === 'active' && (
+          <span className="store-verified">Toko Aktif</span>
+        )}
       </div>
 
       <div className="dashboard-section">
@@ -38,11 +40,11 @@ export default function SellerStoreInfo({ store }) {
           </div>
           <div className="detail-fact">
             <dt>Pemilik</dt>
-            <dd>{store.owner_name || '—'}</dd>
+            <dd>Kamu</dd>
           </div>
           <div className="detail-fact">
-            <dt>Kota</dt>
-            <dd>{store.city || '—'}</dd>
+            <dt>Satuan sewa default</dt>
+            <dd>per {store.rental_unit === 'week' ? 'minggu' : store.rental_unit === 'month' ? 'bulan' : 'hari'}</dd>
           </div>
         </dl>
 
@@ -58,21 +60,20 @@ export default function SellerStoreInfo({ store }) {
 
         <dl className="detail-facts store-facts">
           <div className="detail-fact">
-            <dt>Rating</dt>
-            <dd>{store.rating ? `★ ${Number(store.rating).toFixed(1)}` : 'Belum ada'}</dd>
-          </div>
-          <div className="detail-fact">
-            <dt>Total transaksi</dt>
-            <dd>{store.total_transactions ?? 0}</dd>
-          </div>
-          <div className="detail-fact">
             <dt>Status</dt>
-            <dd>{store.status === 'active' ? 'Aktif' : 'Nonaktif'}</dd>
+            <dd>
+              {store.status === 'active'
+                ? 'Aktif'
+                : store.status === 'suspended'
+                  ? 'Ditangguhkan admin'
+                  : 'Nonaktif'}
+            </dd>
           </div>
         </dl>
 
         <p className="dashboard-empty-note">
-          Perubahan profil toko (nama, alamat, deskripsi) akan tersedia setelah backend terpasang.
+          Perubahan profil toko (nama, alamat, deskripsi) tersedia via layanan
+          update_my_store — UI edit menyusul.
         </p>
       </div>
     </div>

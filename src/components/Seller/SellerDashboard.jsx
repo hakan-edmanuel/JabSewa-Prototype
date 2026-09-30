@@ -2,25 +2,54 @@ import { useEffect, useState } from 'react'
 import { getRentalsByStore } from '../../lib/userData'
 import { fetchListingsByStore } from '../../lib/listings'
 import { formatPrice } from '../../lib/format'
-import { RENTAL_STATUS_META } from '../../lib/constants'
+import { TRANSACTION_STATUS_META } from '../../lib/constants'
 
 /*
- * Dashboard seller: ringkasan permintaan sewa yang masuk ke TOKO MILIK
- * seller aktif + status katalog toko tersebut. Semua data dari lapisan
- * data (lib/userData, lib/listings) — tidak ada lagi data demo internal.
+ * Dashboard seller — Supabase-backed.
+ * Ringkasan permintaan sewa yang masuk ke TOKO milik seller login
+ * (direct SELECT rental_transactions, RLS-scoped via policy rentals_select)
+ * + status katalog toko tersebut (listings, RLS-scoped).
+ * Semua data dari lapisan data Supabase — tanpa fallback demo.
  */
 export default function SellerDashboard({ store, onMenuChange }) {
   const [storeItems, setStoreItems] = useState(null) // null = masih memuat
-  // Permintaan sewa masuk dibaca saat render (baca localStorage sinkron);
-  // refresh antar-tab cukup dengan remount dari navigasi sidebar.
-  const incoming = store ? getRentalsByStore(store.id) : []
+  const [itemsError, setItemsError] = useState('')
+  const [incoming, setIncoming] = useState([])
+  const [incomingState, setIncomingState] = useState('loading') // loading|ready|error
 
   useEffect(() => {
     let active = true
-    if (!store) return undefined
-    fetchListingsByStore(store.id).then((data) => {
-      if (active) setStoreItems(data)
-    })
+    getRentalsByStore(store?.id ?? null)
+      .then((data) => {
+        if (active) {
+          setIncoming(data)
+          setIncomingState('ready')
+        }
+      })
+      .catch(() => {
+        if (active) setIncomingState('error')
+      })
+    return () => {
+      active = false
+    }
+  }, [store?.id])
+
+  useEffect(() => {
+    let active = true
+    if (!store) {
+      const t = setTimeout(() => setStoreItems([]), 0)
+      return () => {
+        clearTimeout(t)
+        active = false
+      }
+    }
+    fetchListingsByStore()
+      .then((data) => {
+        if (active) setStoreItems(data)
+      })
+      .catch(() => {
+        if (active) setItemsError('Gagal memuat katalog toko.')
+      })
     return () => {
       active = false
     }
@@ -32,13 +61,17 @@ export default function SellerDashboard({ store, onMenuChange }) {
     <div className="seller-dashboard">
       <div className="dashboard-header">
         <h1>Dashboard Seller</h1>
-        <p>{store ? `Ringkasan toko ${store.name}.` : 'Kelola barang dan permintaan sewa dari satu tempat.'}</p>
+        <p>
+          {store
+            ? `Ringkasan toko ${store.name}.`
+            : 'Kelola barang dan permintaan sewa dari satu tempat.'}
+        </p>
       </div>
 
       {!store && (
         <div className="dashboard-section">
           <p className="dashboard-empty-note">
-            Toko belum terhubung ke akun ini. Data demo ditampilkan dari katalog umum.
+            Toko belum terhubung ke akun ini. Hubungi admin bila data toko belum muncul.
           </p>
         </div>
       )}
@@ -49,7 +82,11 @@ export default function SellerDashboard({ store, onMenuChange }) {
           <button className="link-more" onClick={() => onMenuChange('orders')}>Lihat semua →</button>
         </div>
 
-        {incoming.length ? (
+        {incomingState === 'loading' ? (
+          <p className="dashboard-empty-note">Memuat permintaan sewa…</p>
+        ) : incomingState === 'error' ? (
+          <p className="dashboard-empty-note">Gagal memuat permintaan sewa. Coba muat ulang halaman.</p>
+        ) : incoming.length ? (
           <div className="orders-table">
             <table>
               <thead>
@@ -62,15 +99,15 @@ export default function SellerDashboard({ store, onMenuChange }) {
               </thead>
               <tbody>
                 {incoming.slice(0, 5).map((rental) => {
-                  const meta = RENTAL_STATUS_META[rental.status] || { label: rental.status, className: 'status-pending' }
+                  const meta = TRANSACTION_STATUS_META[rental.status] || { label: rental.status, className: 'status-pending' }
                   return (
                     <tr key={rental.id}>
                       <td className="item-name">
-                        {rental.item_name}
+                        {rental.items.map((i) => i.name).join(', ') || 'Transaksi sewa'}
                         <span className="order-sub">{formatPrice(rental.total)}</span>
                       </td>
                       <td>{rental.start_date} → {rental.end_date}</td>
-                      <td>{rental.total_days} hari</td>
+                      <td>{rental.total_days} hari · {rental.items.length} item</td>
                       <td>
                         <span className={`status-badge ${meta.className}`}>{meta.label}</span>
                       </td>
@@ -95,6 +132,8 @@ export default function SellerDashboard({ store, onMenuChange }) {
 
         {isLoading ? (
           <p className="dashboard-empty-note">Memuat katalog…</p>
+        ) : itemsError ? (
+          <p className="dashboard-empty-note">{itemsError}</p>
         ) : storeItems.length ? (
           <ul className="dashboard-item-list">
             {storeItems.map((item) => (

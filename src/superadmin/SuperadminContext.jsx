@@ -1,19 +1,20 @@
 /* eslint-disable react-refresh/only-export-components */
 /*
  * ============================================================================
- * SUPERADMIN CONTEXT — JabSewa (FITUR 2)
+ * SUPERADMIN (ADMIN) CONTEXT — JabSewa (ERD v2)
  * ============================================================================
  * Context KHUSUS area /sys-control-jab. File ini hanya boleh diimpor dari
- * folder src/superadmin — terlarang diimpor komponen user/tenant biasa.
+ * folder src/superadmin — terlarang diimpor komponen user biasa.
  *
  * Tugas:
- *   - Menjalankan guard requireSuperAdmin() sekali saat guard pertama
- *     terpasang, lalu mengekspos status sesi superadmin ke subtree UI.
- *   - Menyediakan helper logAction() yang selalu membubuhkan identitas
- *     admin (dari guard) ke admin_audit_logs.
+ *   - Menjalankan guard requireSuperAdmin() (verifikasi role `admin`
+ *     SERVER-SIDE terhadap public.users) sekali saat guard pertama
+ *     terpasang, lalu mengekspos status sesi admin ke subtree UI.
  *
- * Terpisah penuh dari AuthContext (context user/tenant) — tidak berbagi
- * state, tidak berbagi provider, tidak ada percabangan role di UI user.
+ * ERD v2: jejak audit TIDAK ditulis dari frontend. Semua RPC admin
+ * (decide_store_application, admin_set_store_status, dst.) menulis
+ * audit_logs sendiri secara server-side via log_audit() SECDEF —
+ * atomik dalam transaksi yang sama, tidak bisa dilewati/dipalsukan.
  * ============================================================================
  */
 
@@ -21,8 +22,6 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import {
   requireSuperAdmin,
   resetSuperadminCache,
-  logAdminAction,
-  ROLE_SUPERADMIN,
 } from '../lib/superadmin'
 
 const SuperadminContext = createContext(null)
@@ -32,7 +31,6 @@ const SuperadminContext = createContext(null)
  * @property {{ email: string, role: string } | null} superadmin
  * @property {boolean} checking       — guard sedang memverifikasi
  * @property {'pending'|'allowed'|'denied'} status
- * @property {(action: string, opts?: { targetType?: string, targetId?: string|number, payload?: Object }) => Promise<boolean>} logAction
  */
 
 export function SuperadminProvider({ children }) {
@@ -48,8 +46,6 @@ export function SuperadminProvider({ children }) {
       if (!active) return
       if (result.allowed && result.reason === 'ok') {
         setSuperadmin(result.superadmin)
-        // Audit: keberhasilan masuk area sys-control dicatat.
-        logAdminAction('login_sys_control', { targetType: 'session', targetId: result.superadmin?.email || '' })
       } else {
         setSuperadmin(null)
       }
@@ -66,7 +62,6 @@ export function SuperadminProvider({ children }) {
       superadmin,
       checking,
       status: checking ? 'pending' : superadmin ? 'allowed' : 'denied',
-      logAction: logAdminAction,
     }),
     [superadmin, checking],
   )
@@ -86,5 +81,3 @@ export function useSuperadmin() {
   }
   return ctx
 }
-
-export { ROLE_SUPERADMIN }

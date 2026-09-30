@@ -1,101 +1,205 @@
 /*
  * ============================================================================
- * LISTINGS DATA LAYER — JabSewa (MODE MOCK / OFFLINE)
+ * LISTINGS DATA LAYER — JabSewa (SUPABASE, ERD v2)
  * ============================================================================
- * Sumber data barang dari LocalStorage (src/lib/storage.js) — tanpa Supabase.
+ * Supabase adalah SUMBER KEBENARAN katalog. Kontrak bentuk item frontend:
  *
- * Mapping bentuk store → bentuk item "kontrak" frontend (dipakai wishlist,
- * pesanan sewa, ProductDetail, dan Seller — jangan diubah):
- *   id          → id
- *   title       → name
+ *   id          → id            (uuid string — D3)
+ *   name        → name
  *   description → description
- *   category    → category
- *   price_per_day → price
+ *   category_id → category (uuid dari tabel categories)
+ *   price       → price (bigint IDR per rental_unit — D2)
  *   deposit     → deposit
- *   image_url   → image
- *   location    → location
- *   available   → available
- *   stores.name → seller (join lewat store_id)
+ *   image       → gambar listing_images sort_order terkecil (fallback '')
+ *   images      → seluruh URL gambar (urut sort_order)
+ *   rental_unit → rental_unit ('day'|'week'|'month')
+ *   min_rental_duration → durasi minimum (unit rental_unit)
+ *   stock       → stock
+ *   seller      → stores.name
+ *   store_id    → store_id (uuid)
+ *   location    → stores.address (ringkas)
+ *   available   → status === 'active' && stock > 0 (display-only)
  *
- * Semua fungsi async agar pemanggil (komponen) tidak perlu berubah.
- * Ganti isi modul ini dengan query Supabase nanti — kontrak tetap.
+ * TANPA fallback LocalStorage: bila env Supabase tidak diset, fungsi melempar
+ * error konfigurasi yang jelas (aturan master prompt §11). Mode demo (bila
+ * dibutuhkan) harus entry point eksplisit terpisah — bukan fallback diam-diam.
  * ============================================================================
  */
 
-import { deleteItem, getItems, getStores, upsertItem } from "./storage";
+import { getClient, isSupabaseConfigured } from "./supabaseClient";
 
-function mapItem(item, storesById) {
-  const store = storesById.get(item.store_id);
+function requireConfigured() {
+  if (!isSupabaseConfigured) {
+    throw new Error(
+      "Supabase belum dikonfigurasi: isi VITE_SUPABASE_URL dan VITE_SUPABASE_ANON_KEY di .env.local",
+    );
+  }
+}
+
+/** Bentuk kontrak frontend dari baris DB (listing + join stores). */
+function mapListing(row) {
+  const images = (row.listing_images || [])
+    .slice()
+    .sort((a, b) => a.sort_order - b.sort_order)
+    .map((img) => img.image_url)
+    .filter(Boolean);
   return {
-    id: item.id,
-    name: item.title,
-    category: item.category,
-    price: item.price_per_day ?? 0,
-    image: item.image_url || "",
-    seller: store?.name || item.seller_name || "Mitra JabSewa",
-    store_id: item.store_id ?? null,
-    location: item.location || store?.city || "",
-    available: item.available !== false,
-    deposit: item.deposit ?? 0,
-    description: item.description || "",
-    rating: typeof item.rating === "number" ? item.rating : 0,
-    total_transactions: item.total_transactions ?? 0,
+    id: row.id,
+    name: row.name,
+    // `category` = slug kategori (label via CATEGORY_LABELS); category_id = uuid FK.
+    category:
+      row.categories?.slug || row.category_slug || row.category_id,
+    category_name: row.categories?.name || row.category_name || null,
+    category_id: row.category_id,
+    price: row.price ?? 0,
+    deposit: row.deposit ?? 0,
+    image: images[0] || "",
+    images,
+    rental_unit: row.rental_unit || "day",
+    min_rental_duration: row.min_rental_duration ?? null,
+    stock: row.stock ?? 0,
+    seller: row.stores?.name || "Toko JabSewa",
+    store_id: row.store_id ?? null,
+    location: row.stores?.address || "",
+    // Display-only: ketersediaan periode aktual dihitung server saat quote/booking.
+    available: row.status === "active" && (row.stock ?? 0) > 0,
+    description: row.description || "",
   };
 }
 
-function mapAll(items) {
-  const stores = getStores();
-  const storesById = new Map(stores.map((s) => [s.id, s]));
-  return items.map((item) => mapItem(item, storesById));
-}
+const LISTING_SELECT = `
+  id, store_id, category_id, name, description, price, deposit, stock,
+  rental_unit, min_rental_duration, status, created_at,
+  stores(name, address, status),
+  categories(slug, name),
+  listing_images(image_url, sort_order)
+`;
 
-/**
- * Ambil semua listing dari LocalStorage (join nama toko via store_id).
- * Selalu berhasil — tidak ada jaringan, tidak ada fallback lain.
- */
+/* ------------------------------- Katalog --------------------------------- */
+
+/** Katalog aktif (listing aktif di toko aktif — RLS menegakkan). */
 export async function fetchListings() {
-  return mapAll(getItems());
+  requireConfigured();
+  const { data, error } = await getClient()
+    .from("listings")
+    .select(LISTING_SELECT)
+    .eq("status", "active")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data || []).map(mapListing);
 }
 
-/**
- * Ambil satu listing berdasarkan id (bentuk kontrak sama dengan fetchListings).
- */
+/** Satu listing berdasarkan id (uuid string). */
 export async function fetchListingById(id) {
-  const listings = await fetchListings();
-  return listings.find((item) => String(item.id) === String(id)) || null;
+  requireConfigured();
+  const { data, error } = await getClient()
+    .from("listings")
+    .select(LISTING_SELECT)
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw error;
+  return data ? mapListing(data) : null;
 }
+
+/** Kategori dari tabel categories (id + name; label map untuk UI). */
+export async function fetchCategories() {
+  requireConfigured();
+  const { data, error } = await getClient()
+    .from("categories")
+    .select("id, name, slug")
+    .order("name");
+  if (error) throw error;
+  return data || [];
+}
+
+/** Toko aktif untuk pencarian & kartu toko. */
+export async function fetchStores() {
+  requireConfigured();
+  const { data, error } = await getClient()
+    .from("stores")
+    .select("id, name, description, address, logo_url, status")
+    .eq("status", "active")
+    .order("name");
+  if (error) throw error;
+  return (data || []).map((s) => ({
+    id: s.id,
+    store_name: s.name,
+    description: s.description || "",
+    city: (s.address || "").split(",")[0] || "",
+    is_verified: false, // kolom verifikasi tidak ada di ERD v2
+  }));
+}
+
+/* ----------------------------- Seller read ------------------------------- */
 
 /**
- * Listing milik SATU toko (seller side) — sebelumnya seller melihat
- * barang demo semua orang. Difilter lewat store_id.
+ * Katalog listing milik toko milik seller login — direct SELECT, RLS-scoped:
+ * policy listings_read hanya mengekspos listing milik pemilik (via stores
+ * owner_id = auth.uid()) — identitas dari sesi, bukan parameter client.
  */
-export async function fetchListingsByStore(storeId) {
-  if (!storeId) return [];
-  return mapAll(getItems().filter((item) => item.store_id === storeId));
+export async function fetchMyStoreListings() {
+  requireConfigured();
+  const { data, error } = await getClient()
+    .from("listings")
+    .select(LISTING_SELECT)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data || []).map(mapListing);
 }
 
-/** Persist a listing through the temporary data layer. */
-export function saveListing(listing) {
-  return upsertItem({
-    id: listing.id,
-    store_id: listing.store_id,
-    title: listing.name,
-    description: listing.description || "",
-    category: listing.category || "",
-    price_per_day: Number(listing.price_per_day || 0),
-    deposit: Number(listing.deposit || 0),
-    image_url: listing.image_url || "",
-    location: listing.location || "",
-    available: listing.available !== false,
-    rating: listing.rating ?? 0,
-    total_transactions: listing.total_transactions ?? 0,
+/** Kompatibilitas pemanggil lama: scope ditentukan server dari sesi. */
+export async function fetchListingsByStore() {
+  return fetchMyStoreListings();
+}
+
+/* ------------------------------ Seller CRUD ------------------------------ */
+
+/**
+ * Simpan (tambah/edit) listing pada toko milik seller login.
+ * Semua nilai divalidasi server (RPC save_listing) — frontend tidak dipercaya.
+ * images: array URL string (urut) — replace penuh bila disertakan.
+ */
+export async function saveListing(listing) {
+  requireConfigured();
+  const { data, error } = await getClient().rpc("save_listing", {
+    p_listing_id: listing.id ?? null,
+    p_store_id: listing.store_id ?? null,
+    p_category_id: listing.category_id ?? listing.category ?? null,
+    p_name: listing.name,
+    p_description: listing.description || "",
+    p_price: Number(listing.price ?? 0),
+    p_deposit: Number(listing.deposit ?? 0),
+    p_stock: Number(listing.stock ?? 1),
+    p_rental_unit: listing.rental_unit || "day",
+    p_min_rental_duration: listing.min_rental_duration ?? null,
+    p_available: listing.available !== false,
+    p_image_urls: Array.isArray(listing.images) ? listing.images : null,
   });
+  if (error) throw error;
+  const row = data?.[0];
+  if (!row?.ok) throw new Error(row?.error || "save_failed");
+  return row.listing_id;
 }
 
-export function updateListingAvailability(listingId, available) {
-  return upsertItem({ id: listingId, available: Boolean(available) });
+export async function updateListingAvailability(listingId, available) {
+  requireConfigured();
+  const { data, error } = await getClient().rpc("set_listing_availability", {
+    p_listing_id: listingId,
+    p_available: Boolean(available),
+  });
+  if (error) throw error;
+  const row = data?.[0];
+  if (!row?.ok) throw new Error(row?.error || "update_failed");
+  return true;
 }
 
-export function removeListing(listingId) {
-  deleteItem(listingId);
+export async function removeListing(listingId) {
+  requireConfigured();
+  const { data, error } = await getClient().rpc("delete_listing", {
+    p_listing_id: listingId,
+  });
+  if (error) throw error;
+  const row = data?.[0];
+  if (!row?.ok) throw new Error(row?.error || "delete_failed");
+  return true;
 }

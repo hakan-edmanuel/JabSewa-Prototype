@@ -1,7 +1,7 @@
 export default function SellerSidebar({ activeMenu, setActiveMenu }) {
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard' },
-    { id: 'items', label: 'Barang Saya' },
+    { id: 'items', label: 'Barang Listig' },
     { id: 'orders', label: 'Pesanan' },
     { id: 'store', label: 'Info Toko' },
   ]

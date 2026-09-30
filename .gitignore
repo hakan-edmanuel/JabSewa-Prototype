@@ -28,5 +28,16 @@ dist-ssr
 .env.local
 .env.*.local
 
+# Fixture state test rental (berisi kredensial test — jangan commit)
+scripts/.rental-fixture.json
+
 # Audit output
 scripts/audit-report.json
+
+# Supabase CLI metadata lokal (linked-project/pooler) — bukan migration, jangan di-track
+supabase/.temp/
+
+# Output sementara script audit/test (dotfiles — bukan source code)
+scripts/.audit-out.json
+scripts/.audit-err.txt
+scripts/.frontend-e2e-out.txt

@@ -3,19 +3,22 @@ import { useAuth } from '../auth/AuthContext'
 import logo from '../assets/logo-jabsewa.jpeg'
 
 /*
- * Halaman login/daftar. Mode ditentukan dari route (/login vs /register).
- * Setelah berhasil, onAuthenticated(user) meneruskan ke tujuan semula
- * (barang yang ingin disewa, onboarding seller, atau buyer dashboard).
+ * Halaman login/daftar — Supabase Auth.
+ * Mode ditentukan dari route (/login vs /register). Setelah berhasil,
+ * onAuthenticated(user) meneruskan ke tujuan semula (barang yang ingin
+ * disewa, onboarding seller, atau buyer dashboard).
  *
- * Auth mock lokal (LocalStorage):
- * - Akun diverifikasi terhadap koleksi `users` (seed: superadmin/tenant/owner).
- * - Email belum terdaftar / password salah diterjemahkan ke pesan Indonesia.
+ * Password diverifikasi server-side (GoTrue); error diterjemahkan ke
+ * pesan Indonesia.
  */
 
 const ERROR_TRANSLATIONS = [
   { match: /invalid login credentials/i, message: 'Email atau password salah.' },
   { match: /user already registered/i, message: 'Email sudah terdaftar. Coba masuk saja.' },
   { match: /password should be at least/i, message: 'Password minimal 6 karakter.' },
+  { match: /email not confirmed/i, message: 'Email belum dikonfirmasi. Cek kotak masuk kamu.' },
+  { match: /signups not allowed/i, message: 'Pendafturan sedang ditutup. Hubungi admin.' },
+  { match: /rate limit/i, message: 'Terlalu banyak percobaan. Coba lagi beberapa saat.' },
 ]
 
 function translateError(message) {
@@ -123,7 +126,7 @@ export default function AuthPage({ onNavigate, mode, onAuthenticated, intent }) 
           </p>
 
           <p className="auth-demo-note">
-            Akun demo — penyewa: tenant@jabsewa.id / tenant123 · toko: owner@jabsewa.id / owner123
+            Belum punya akun? Daftar — satu akun untuk menyewa & menyewakan.
           </p>
         </div>
       </main>

@@ -3,39 +3,60 @@ import Footer from '../components/Footer'
 import { useAuth } from '../auth/AuthContext'
 
 /*
- * Halaman profil — satu akun, satu siklus.
- * Akun → aktivitas penyewa (rentals/wishlist) → status ajuan seller.
- * Tidak ada switch role: seller adalah LIFECYCLE (ajuan → review → approved),
- * profil seller hanya muncul setelah ajuan disetujui.
+ * Halaman profil — satu akun, satu siklus (ERD v2).
+ * Akun → aktivitas penyewa (rentals/wishlist) → status ajuan toko.
+ * Tidak ada switch role: seller adalah LIFECYCLE (ajuan → review → approved).
+ * "Profil seller" = kepemilikan store aktif (users.is_seller cache server);
+ * nama toko diambil dari RPC get_my_stores.
  */
+
+import { useEffect, useState } from 'react'
+import { getClient } from '../lib/supabaseClient'
+
 export default function ProfilePage({ onNavigate, onSellerIntent }) {
   const { user, hasSellerAccess, sellerApplication, logout } = useAuth()
+  const [storeName, setStoreName] = useState(null)
 
   const handleLogout = async () => {
     await logout()
     onNavigate('home')
   }
 
+  // Nama toko milik sesi (server-side resolve; kolom `name` dari get_my_stores).
+  useEffect(() => {
+    let active = true
+    if (!hasSellerAccess) {
+      Promise.resolve().then(() => {
+        if (active) setStoreName(null)
+      })
+      return undefined
+    }
+    getClient()
+      .rpc('get_my_stores')
+      .then(({ data }) => {
+        if (active) setStoreName(data?.[0]?.name || null)
+      })
+      .catch(() => {})
+    return () => {
+      active = false
+    }
+  }, [hasSellerAccess])
+
   const appStatus = sellerApplication?.status
 
   /* --- Blok status seller sesuai lifecycle --- */
   const renderSellerBlock = () => {
     if (hasSellerAccess) {
-      const profile = user?.sellerProfile
       return (
         <div className="profile-block">
           <h2 className="profile-block-title">Seller</h2>
           <div className="profile-row">
-            <span className="profile-row-label">Profil seller</span>
+            <span className="profile-row-label">Status seller</span>
             <span className="profile-row-value">Aktif</span>
           </div>
           <div className="profile-row">
             <span className="profile-row-label">Nama toko</span>
-            <span className="profile-row-value">{profile?.storeName}</span>
-          </div>
-          <div className="profile-row">
-            <span className="profile-row-label">Kota</span>
-            <span className="profile-row-value">{profile?.city || '—'}</span>
+            <span className="profile-row-value">{storeName || '—'}</span>
           </div>
           <div className="profile-seller-actions">
             <button
@@ -50,7 +71,7 @@ export default function ProfilePage({ onNavigate, onSellerIntent }) {
       )
     }
 
-    if (appStatus === 'under_review' || appStatus === 'submitted') {
+    if (appStatus === 'pending') {
       return (
         <div className="profile-block">
           <h2 className="profile-block-title">Seller</h2>

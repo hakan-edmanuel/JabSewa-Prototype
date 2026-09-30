@@ -1,64 +1,237 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import SimpleNavbar from "../components/SimpleNavbar";
 import Footer from "../components/Footer";
 import { useAuth } from "../auth/AuthContext";
 import {
   getRentals,
   getWishlist,
-  setRentalStatus,
+  getPaymentsForRental,
+  getMyReviewedRentalIds,
+  cancelRental,
+  submitPayment,
   toggleWishlist,
+  openDispute,
+  createReview,
+  translateRentalError,
 } from "../lib/userData";
 import { fetchListings } from "../lib/listings";
 import { formatPrice } from "../lib/format";
-import { RENTAL_STATUS, RENTAL_STATUS_META } from "../lib/constants";
+import { TRANSACTION_STATUS, TRANSACTION_STATUS_META, PAYMENT_METHODS } from "../lib/constants";
 
 /*
- * Dashboard penyewa (Buyer): pesanan sewa + wishlist.
- * Data rental/wishlist dari lapisan data mock (lib/userData) — per-user.
+ * Dashboard penyewa (Buyer) — ERD v2.
+ * Data rental/wishlist milik user login (RLS-scoped). Aksi buyer:
+ *   - Kirim bukti pembayaran (pending → payment_verify via RPC submit_payment)
+ *   - Batalkan permintaan (pending/payment_verify via RPC cancel_rental)
+ *   - Buka sengketa (ongoing/overdue/completed) & ulasan (completed, sekali)
+ * Pembayaran manual transfer + bukti — tanpa gateway (PRD §6).
  *
- * Status yang ditampilkan adalah STATUS FRONTEND (pending → accepted →
- * active → completed / cancelled). Tidak ada simulasi pembayaran; aksi
- * tenant hanya "Batalkan" pada permintaan yang masih menunggu.
+ * PENTING (CATATAN-K): bukti ditolak ≠ transaksi batal. Server mengembalikan
+ * tx ke `pending` (payment berstatus `failed`) agar buyer dapat mengirim
+ * ulang bukti — UI menampilkan alasan penolakan dari payment terakhir.
  */
 export default function BuyerPage({ onNavigate, onSellerIntent }) {
   const { user } = useAuth();
   const [items, setItems] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  // Rental & wishlist dibaca saat render (baca localStorage sinkron) dan
-  // di-refresh lewat counter setelah aksi lokal (batalkan / hapus wishlist).
-  const [dataTick, setDataTick] = useState(0);
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dataTick memicu pembacaan ulang setelah aksi
-  const rentals = useMemo(() => getRentals(), [dataTick]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- idem: kunci user + tick
-  const wishlist = useMemo(() => getWishlist(user?.id), [user?.id, dataTick]);
+  const [rentals, setRentals] = useState([]);
+  const [rentalsState, setRentalsState] = useState("loading");
+  const [wishlist, setWishlist] = useState([]);
+  const [wishlistState, setWishlistState] = useState("loading");
+  const [actionError, setActionError] = useState("");
+  const [busyRentalId, setBusyRentalId] = useState(null);
+  const [busyWishId, setBusyWishId] = useState(null);
+  const [payTarget, setPayTarget] = useState(null); // rental yang sedang kirim bukti
+  const [payMethod, setPayMethod] = useState("bank_transfer");
+  const [payProof, setPayProof] = useState("");
+  const [payRef, setPayRef] = useState("");
+  // Pembayaran & review per rental (RLS-scoped):
+  const [paymentRows, setPaymentRows] = useState({}); // rental_id → payments[]
+  const [reviewedIds, setReviewedIds] = useState([]); // transaction_id yang sudah direview
+  const [disputeTarget, setDisputeTarget] = useState(null); // rental yang sedang buka sengketa
+  const [disputeReason, setDisputeReason] = useState("");
+  const [reviewTarget, setReviewTarget] = useState(null); // rental yang sedang direview
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState("");
 
+  /* --- Muat katalog (untuk kartu wishlist) --- */
   useEffect(() => {
     let active = true;
-    fetchListings().then((data) => {
-      if (active) {
-        setItems(data);
-        setIsLoading(false);
-      }
-    });
+    Promise.resolve()
+      .then(() => fetchListings())
+      .then((data) => {
+        if (active) setItems(data);
+      })
+      .catch(() => {
+        if (active) setItems([]);
+      });
     return () => {
       active = false;
     };
   }, []);
 
+  /* --- Muat rentals milik user login (RLS-scoped) --- */
+  const loadRentals = useCallback(() => {
+    setRentalsState("loading");
+    getRentals()
+      .then((data) => {
+        setRentals(data);
+        setRentalsState("ready");
+      })
+      .catch(() => setRentalsState("error"));
+  }, []);
+
+  useEffect(() => {
+    if (!user?.id) {
+      Promise.resolve().then(() => {
+        setRentals([]);
+        setRentalsState("ready");
+      });
+      return;
+    }
+    Promise.resolve().then(() => loadRentals());
+  }, [user?.id, loadRentals]);
+
+  /* --- Muat wishlist user login (persist di server) --- */
+  const loadWishlist = useCallback(() => {
+    if (!user?.id) {
+      Promise.resolve().then(() => {
+        setWishlist([]);
+        setWishlistState("ready");
+      });
+      return;
+    }
+    Promise.resolve().then(() => setWishlistState("loading"));
+    getWishlist()
+      .then((ids) => {
+        setWishlist(ids);
+        setWishlistState("ready");
+      })
+      .catch(() => setWishlistState("error"));
+  }, [user?.id]);
+
+  useEffect(() => {
+    loadWishlist();
+  }, [loadWishlist]);
+
+  /* --- Review milik sesi: sembunyikan tombol ulasan untuk tx yang sudah direview --- */
+  useEffect(() => {
+    let active = true;
+    if (!user?.id) {
+      Promise.resolve().then(() => {
+        if (active) setReviewedIds([]);
+      });
+      return;
+    }
+    getMyReviewedRentalIds()
+      .then((ids) => {
+        if (active) setReviewedIds(ids);
+      })
+      .catch(() => {
+        if (active) setReviewedIds([]);
+      });
+    return () => {
+      active = false;
+    };
+  }, [user?.id]);
+
+  /* --- Bukti pembayaran rental pending: lihat alasan penolakan (tx kembali pending, bukan cancelled) --- */
+  useEffect(() => {
+    if (rentalsState !== "ready") return;
+    rentals.forEach((rental) => {
+      if (rental.status === TRANSACTION_STATUS.PENDING && paymentRows[rental.id] === undefined) {
+        getPaymentsForRental(rental.id)
+          .then((rows) => setPaymentRows((cur) => ({ ...cur, [rental.id]: rows })))
+          .catch(() => setPaymentRows((cur) => ({ ...cur, [rental.id]: [] })));
+      }
+    });
+  }, [rentalsState, rentals, paymentRows]);
+
+  /* --- Aksi: batalkan (buyer: pending/payment_verify — divalidasi server) --- */
+  const handleCancel = async (rentalId) => {
+    setActionError("");
+    setBusyRentalId(rentalId);
+    try {
+      await cancelRental(rentalId);
+      loadRentals();
+    } catch (err) {
+      setActionError(translateRentalError(err?.message));
+    } finally {
+      setBusyRentalId(null);
+    }
+  };
+
+  /* --- Aksi: kirim bukti pembayaran (pending → payment_verify) --- */
+  const handleSubmitProof = async (rentalId) => {
+    setActionError("");
+    setBusyRentalId(rentalId);
+    try {
+      await submitPayment(rentalId, {
+        method: payMethod,
+        proofUrl: payProof.trim(),
+        externalReference: payRef.trim() || null,
+      });
+      setPayTarget(null);
+      setPayProof("");
+      setPayRef("");
+      setPaymentRows((cur) => ({ ...cur, [rentalId]: undefined })); // muat ulang bukti
+      loadRentals();
+    } catch (err) {
+      setActionError(translateRentalError(err?.message));
+    } finally {
+      setBusyRentalId(null);
+    }
+  };
+
+  const handleRemoveWish = async (itemId) => {
+    setActionError("");
+    setBusyWishId(itemId);
+    try {
+      await toggleWishlist(user.id, itemId);
+      loadWishlist();
+    } catch (err) {
+      setActionError(translateRentalError(err?.message));
+    } finally {
+      setBusyWishId(null);
+    }
+  };
+
+  /* --- Aksi: buka sengketa (ongoing/overdue/completed — divalidasi server) --- */
+  const handleOpenDispute = async (rentalId) => {
+    setActionError("");
+    setBusyRentalId(rentalId);
+    try {
+      await openDispute(rentalId, disputeReason.trim(), "");
+      setDisputeTarget(null);
+      setDisputeReason("");
+      loadRentals();
+    } catch (err) {
+      setActionError(translateRentalError(err?.message));
+    } finally {
+      setBusyRentalId(null);
+    }
+  };
+
+  /* --- Aksi: review transaksi selesai (satu per transaksi — server) --- */
+  const handleSubmitReview = async (rentalId) => {
+    setActionError("");
+    setBusyRentalId(rentalId);
+    try {
+      await createReview(rentalId, reviewRating, reviewComment.trim());
+      setReviewTarget(null);
+      setReviewComment("");
+      setReviewedIds((cur) => [...cur, rentalId]);
+      loadRentals();
+    } catch (err) {
+      setActionError(translateRentalError(err?.message));
+    } finally {
+      setBusyRentalId(null);
+    }
+  };
+
   const wishItems = useMemo(
     () => items.filter((item) => wishlist.includes(item.id)),
     [items, wishlist],
   );
-
-  const handleCancel = (rentalId) => {
-    setRentalStatus(rentalId, RENTAL_STATUS.CANCELLED);
-    setDataTick((tick) => tick + 1);
-  };
-
-  const handleRemoveWish = (itemId) => {
-    toggleWishlist(user.id, itemId);
-    setDataTick((tick) => tick + 1);
-  };
 
   const firstName = (user?.name || "Penyewa").split(" ")[0];
 
@@ -73,13 +246,12 @@ export default function BuyerPage({ onNavigate, onSellerIntent }) {
             <h1>Halo, {firstName}</h1>
             <p>Kelola pesanan sewa dan barang yang kamu simpan.</p>
           </div>
-          <button
-            className="primary-button"
-            onClick={() => onNavigate("consumer")}
-          >
+          <button className="primary-button" onClick={() => onNavigate("consumer")}>
             Cari Barang
           </button>
         </header>
+
+        {actionError && <p className="rental-note is-error">{actionError}</p>}
 
         <section className="buyer-section">
           <div className="buyer-section-head">
@@ -87,48 +259,241 @@ export default function BuyerPage({ onNavigate, onSellerIntent }) {
             <span className="buyer-count">{rentals.length}</span>
           </div>
 
-          {rentals.length ? (
+          {rentalsState === "loading" ? (
+            <div className="buyer-empty">
+              <p>Memuat pesanan sewa…</p>
+            </div>
+          ) : rentalsState === "error" ? (
+            <div className="buyer-empty">
+              <p>Gagal memuat pesanan. Periksa koneksi lalu coba lagi.</p>
+              <button className="btn-small btn-primary" onClick={loadRentals}>
+                Muat ulang
+              </button>
+            </div>
+          ) : rentals.length ? (
             <div className="buyer-rental-list">
               {rentals.map((rental) => {
-                const meta = RENTAL_STATUS_META[rental.status] || {
+                const meta = TRANSACTION_STATUS_META[rental.status] || {
                   label: rental.status,
                   className: "status-pending",
                 };
-                const cancellable = rental.status === RENTAL_STATUS.PENDING;
+                const cancellable = [
+                  TRANSACTION_STATUS.PENDING,
+                  TRANSACTION_STATUS.PAYMENT_VERIFY,
+                ].includes(rental.status);
+                const payable = rental.status === TRANSACTION_STATUS.PENDING;
+                const disputable = [
+                  TRANSACTION_STATUS.ONGOING,
+                  TRANSACTION_STATUS.OVERDUE,
+                  TRANSACTION_STATUS.COMPLETED,
+                ].includes(rental.status);
+                const reviewable =
+                  rental.status === TRANSACTION_STATUS.COMPLETED &&
+                  !reviewedIds.includes(rental.id);
+                const reviewing = reviewTarget === rental.id;
+                const paying = payTarget === rental.id;
+                // Bukti terakhir yang DITOLAK — alasan verifikator ditampilkan
+                // (tx kembali pending, bukan cancelled — CATATAN-K).
+                const rejectedProof = (paymentRows[rental.id] || []).find(
+                  (p) => p.status === "failed",
+                );
                 return (
                   <article key={rental.id} className="buyer-rental-card">
                     <div className="buyer-rental-top">
                       <div>
-                        <h3>{rental.item_name}</h3>
-                        <p>Pemilik: {rental.seller_name}</p>
+                        <h3>
+                          {rental.items.map((i) => i.name).join(", ") || "Transaksi sewa"}
+                        </h3>
+                        <p>Pemilik: {rental.store_name}</p>
                       </div>
-                      <span className={`status-badge ${meta.className}`}>
-                        {meta.label}
-                      </span>
+                      <span className={`status-badge ${meta.className}`}>{meta.label}</span>
                     </div>
                     <div className="buyer-rental-meta">
                       <span>
-                        {rental.start_date} → {rental.end_date} ·{" "}
-                        {rental.total_days} hari
+                        {rental.start_date} → {rental.end_date} · {rental.total_days} hari ·{" "}
+                        {rental.items.length} barang
                       </span>
                       <strong>{formatPrice(rental.total)}</strong>
                     </div>
-                    {[RENTAL_STATUS.REJECTED, RENTAL_STATUS.CANCELLED].includes(
-                      rental.status,
-                    ) &&
-                      rental.rejection_reason && (
-                        <p className="buyer-rental-reject">
-                          Alasan: {rental.rejection_reason}
-                        </p>
-                      )}
-                    {cancellable && (
+                    {rental.status === TRANSACTION_STATUS.OVERDUE && (
+                      <p className="buyer-rental-payment">
+                        Denda keterlambatan: {formatPrice(rental.late_fee_total)}
+                      </p>
+                    )}
+                    {rental.cancel_reason && (
+                      <p className="buyer-rental-reject">Alasan: {rental.cancel_reason}</p>
+                    )}
+                    {payable && rejectedProof && (
+                      <p className="buyer-rental-reject">
+                        Bukti pembayaran sebelumnya ditolak
+                        {rejectedProof.external_reference
+                          ? ` (ref ${rejectedProof.external_reference})`
+                          : "."}{" "}
+                        Silakan kirim ulang bukti yang benar.
+                      </p>
+                    )}
+                    {(cancellable || payable || disputable) && (
                       <div className="buyer-rental-actions">
+                        {payable && !paying && !reviewing && (
+                          <button
+                            type="button"
+                            className="btn-small btn-primary"
+                            disabled={busyRentalId === rental.id}
+                            onClick={() => {
+                              setPayTarget(rental.id);
+                              setPayMethod("bank_transfer");
+                              setPayProof("");
+                              setPayRef("");
+                            }}
+                          >
+                            Kirim bukti pembayaran
+                          </button>
+                        )}
+                        {cancellable && !paying && !reviewing && (
+                          <button
+                            type="button"
+                            className="btn-small btn-danger"
+                            disabled={busyRentalId === rental.id}
+                            onClick={() => handleCancel(rental.id)}
+                          >
+                            {busyRentalId === rental.id ? "Membatalkan…" : "Batalkan permintaan"}
+                          </button>
+                        )}
+                        {disputable && !paying && !reviewing && disputeTarget !== rental.id && (
+                          <button
+                            type="button"
+                            className="btn-small btn-secondary"
+                            disabled={busyRentalId === rental.id}
+                            onClick={() => {
+                              setDisputeTarget(rental.id);
+                              setDisputeReason("");
+                            }}
+                          >
+                            Buka sengketa
+                          </button>
+                        )}
+                        {reviewable && !reviewing && disputeTarget !== rental.id && (
+                          <button
+                            type="button"
+                            className="btn-small btn-success"
+                            disabled={busyRentalId === rental.id}
+                            onClick={() => {
+                              setReviewTarget(rental.id);
+                              setReviewRating(5);
+                              setReviewComment("");
+                            }}
+                          >
+                            Beri ulasan
+                          </button>
+                        )}
+                      </div>
+                    )}
+                    {payable && !paying && !reviewing && rejectedProof && (
+                      <button
+                        type="button"
+                        className="btn-small btn-secondary"
+                        disabled={busyRentalId === rental.id}
+                        onClick={() =>
+                          setPaymentRows((cur) => ({ ...cur, [rental.id]: undefined }))
+                        }
+                      >
+                        Perbarui status bukti
+                      </button>
+                    )}
+                    {disputeTarget === rental.id && (
+                      <div className="order-reject-box" style={{ marginTop: 8 }}>
+                        <input
+                          value={disputeReason}
+                          onChange={(e) => setDisputeReason(e.target.value)}
+                          placeholder="Jelaskan masalahnya (wajib)"
+                          className="search-box-small"
+                        />
                         <button
-                          type="button"
-                          className="btn-small btn-danger"
-                          onClick={() => handleCancel(rental.id)}
+                          className="btn-small btn-primary"
+                          disabled={busyRentalId === rental.id || !disputeReason.trim()}
+                          onClick={() => handleOpenDispute(rental.id)}
                         >
-                          Batalkan permintaan
+                          Kirim sengketa
+                        </button>
+                        <button
+                          className="btn-small btn-secondary"
+                          onClick={() => setDisputeTarget(null)}
+                        >
+                          Batal
+                        </button>
+                      </div>
+                    )}
+                    {reviewing && (
+                      <div className="order-reject-box" style={{ marginTop: 8 }}>
+                        <select
+                          value={reviewRating}
+                          onChange={(e) => setReviewRating(Number(e.target.value))}
+                          className="filter-select"
+                        >
+                          {[5, 4, 3, 2, 1].map((n) => (
+                            <option key={n} value={n}>
+                              {"★".repeat(n)} ({n}/5)
+                            </option>
+                          ))}
+                        </select>
+                        <input
+                          value={reviewComment}
+                          onChange={(e) => setReviewComment(e.target.value)}
+                          placeholder="Ulasan kamu (wajib)"
+                          className="search-box-small"
+                        />
+                        <button
+                          className="btn-small btn-primary"
+                          disabled={busyRentalId === rental.id || !reviewComment.trim()}
+                          onClick={() => handleSubmitReview(rental.id)}
+                        >
+                          Kirim ulasan
+                        </button>
+                        <button
+                          className="btn-small btn-secondary"
+                          onClick={() => setReviewTarget(null)}
+                        >
+                          Batal
+                        </button>
+                      </div>
+                    )}
+                    {paying && (
+                      <div className="order-reject-box" style={{ marginTop: 8 }}>
+                        <select
+                          value={payMethod}
+                          onChange={(e) => setPayMethod(e.target.value)}
+                          className="filter-select"
+                        >
+                          {PAYMENT_METHODS.map((m) => (
+                            <option key={m.id} value={m.id}>
+                              {m.label}
+                            </option>
+                          ))}
+                        </select>
+                        <input
+                          value={payProof}
+                          onChange={(e) => setPayProof(e.target.value)}
+                          placeholder="URL bukti transfer (img/tautan)"
+                          className="search-box-small"
+                        />
+                        <input
+                          value={payRef}
+                          onChange={(e) => setPayRef(e.target.value)}
+                          placeholder="Nomor referensi (opsional)"
+                          className="search-box-small"
+                        />
+                        <button
+                          className="btn-small btn-primary"
+                          disabled={busyRentalId === rental.id || !payProof.trim()}
+                          onClick={() => handleSubmitProof(rental.id)}
+                        >
+                          Kirim
+                        </button>
+                        <button
+                          className="btn-small btn-secondary"
+                          onClick={() => setPayTarget(null)}
+                        >
+                          Batal
                         </button>
                       </div>
                     )}
@@ -142,10 +507,7 @@ export default function BuyerPage({ onNavigate, onSellerIntent }) {
               <p className="buyer-empty-sub">
                 Cari barang yang kamu butuhkan, lalu kirim permintaan sewa.
               </p>
-              <button
-                className="primary-button"
-                onClick={() => onNavigate("consumer")}
-              >
+              <button className="primary-button" onClick={() => onNavigate("consumer")}>
                 Mulai Cari Barang
               </button>
             </div>
@@ -158,36 +520,37 @@ export default function BuyerPage({ onNavigate, onSellerIntent }) {
             <span className="buyer-count">{wishItems.length}</span>
           </div>
 
-          {isLoading ? (
+          {wishlistState === "loading" ? (
             <p className="buyer-empty-sub">Memuat wishlist…</p>
+          ) : wishlistState === "error" ? (
+            <div className="buyer-empty">
+              <p>Gagal memuat wishlist. Coba lagi.</p>
+              <button className="btn-small btn-primary" onClick={loadWishlist}>
+                Muat ulang
+              </button>
+            </div>
           ) : wishItems.length ? (
             <div className="buyer-wish-grid">
               {wishItems.map((item) => (
                 <article key={item.id} className="buyer-wish-card">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="buyer-wish-thumb"
-                  />
+                  <img src={item.image} alt={item.name} className="buyer-wish-thumb" />
                   <div className="buyer-wish-info">
                     <h3>{item.name}</h3>
-                    <p>
-                      {item.seller} · {item.location}
-                    </p>
+                    <p>{item.seller}</p>
                     <p className="buyer-wish-price">
-                      {formatPrice(item.price)} <small>/hari</small>
+                      {formatPrice(item.price)}{" "}
+                      <small>/{item.rental_unit === "day" ? "hari" : item.rental_unit}</small>
                     </p>
                     <div className="buyer-wish-actions">
                       <button
                         className="btn-small btn-primary"
-                        onClick={() =>
-                          onNavigate("consumer", { itemId: item.id })
-                        }
+                        onClick={() => onNavigate("consumer", { itemId: item.id })}
                       >
                         Sewa
                       </button>
                       <button
                         className="btn-text-action danger"
+                        disabled={busyWishId === item.id}
                         onClick={() => handleRemoveWish(item.id)}
                         aria-label={`Hapus ${item.name} dari wishlist`}
                       >
@@ -213,10 +576,7 @@ export default function BuyerPage({ onNavigate, onSellerIntent }) {
             <h2>Punya barang yang jarang dipakai?</h2>
             <p>Daftarkan barangmu dan mulai terima pesanan sewa.</p>
           </div>
-          <button
-            className="primary-button buyer-cta-btn"
-            onClick={onSellerIntent}
-          >
+          <button className="primary-button buyer-cta-btn" onClick={onSellerIntent}>
             Mulai Jadi Seller
           </button>
         </section>

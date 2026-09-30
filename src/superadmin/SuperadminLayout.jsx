@@ -15,13 +15,13 @@
 import { useState } from 'react'
 import '../styles/sys-control.css'
 import { useSuperadmin } from './SuperadminContext'
-import { logAdminAction } from '../lib/superadmin'
 import logo from '../assets/logo-jabsewa.jpeg'
 
 /** Menu sidebar superadmin — statik, TIDAK membaca role user biasa. */
 const SYS_MENU = [
   { id: 'dashboard', label: 'Dashboard', hint: 'Ringkasan platform' },
   { id: 'applications', label: 'Ajuan Seller', hint: 'Review & keputusan' },
+  { id: 'orders', label: 'Transaksi', hint: 'Verifikasi, sengketa, denda' },
   { id: 'audit', label: 'Audit Log', hint: 'Jejak aksi admin' },
 ]
 
@@ -35,10 +35,7 @@ export default function SuperadminLayout({ currentPage, onNavigate, children }) 
   }
 
   const handleLogout = () => {
-    logAdminAction('logout_sys_control', {
-      targetType: 'session',
-      targetId: superadmin?.email || '',
-    })
+    // ERD v2: audit ditulis server-side oleh RPC; logout adalah aksi UI saja.
     onNavigate('logout')
   }
 
