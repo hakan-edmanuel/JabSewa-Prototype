@@ -17,11 +17,16 @@ import '../styles/sys-control.css'
 import { useSuperadmin } from './SuperadminContext'
 import logo from '../assets/logo-jabsewa.jpeg'
 
-/** Menu sidebar superadmin — statik, TIDAK membaca role user biasa. */
+/**
+ * Menu sidebar superadmin — statik, TIDAK membaca role user biasa.
+ * Scope Admin MVP 1.0 (keputusan Step 2): Seller Approval, Customer Reports
+ * (dispute rental), Audit Trail. Moderasi users/stores/listings tidak ada di
+ * menu — halamannya tetap terjangkau via URL, RPC backend tidak diubah.
+ */
 const SYS_MENU = [
-  { id: 'dashboard', label: 'Dashboard', hint: 'Ringkasan platform' },
+  { id: 'dashboard', label: 'Dashboard', hint: 'Antrian kerja' },
   { id: 'applications', label: 'Ajuan Seller', hint: 'Review & keputusan' },
-  { id: 'orders', label: 'Transaksi', hint: 'Verifikasi, sengketa, denda' },
+  { id: 'orders', label: 'Laporan & Sengketa', hint: 'Dispute rental' },
   { id: 'audit', label: 'Audit Log', hint: 'Jejak aksi admin' },
 ]
 

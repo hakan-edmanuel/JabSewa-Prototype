@@ -28,6 +28,7 @@ import {
 import { getPaymentsForRental, getLateFeeForRental } from '../../lib/userData'
 import { formatPrice, formatDate } from '../../lib/format'
 import { TRANSACTION_STATUS, TRANSACTION_STATUS_META } from '../../lib/constants'
+import ProofLink from '../../components/ProofLink'
 
 const FILTERS = [
   { key: 'all', label: 'Semua' },
@@ -317,9 +318,7 @@ export default function SysOrders() {
                           {p.payment_proof_url && (
                             <>
                               {' — '}
-                              <a href={p.payment_proof_url} target="_blank" rel="noreferrer">
-                                lihat bukti
-                              </a>
+                              <ProofLink value={p.payment_proof_url} />
                             </>
                           )}
                           {p.external_reference ? ` · ref ${p.external_reference}` : ''}

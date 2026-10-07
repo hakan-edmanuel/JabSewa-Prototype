@@ -17,6 +17,7 @@ import {
 import { fetchListings } from "../lib/listings";
 import { formatPrice } from "../lib/format";
 import { TRANSACTION_STATUS, TRANSACTION_STATUS_META, PAYMENT_METHODS } from "../lib/constants";
+import { uploadPaymentProof, validateImageFile, IMAGE_ALLOWED_TYPES } from "../lib/uploads";
 
 /*
  * Dashboard penyewa (Buyer) — ERD v2.
@@ -42,7 +43,10 @@ export default function BuyerPage({ onNavigate, onSellerIntent }) {
   const [busyWishId, setBusyWishId] = useState(null);
   const [payTarget, setPayTarget] = useState(null); // rental yang sedang kirim bukti
   const [payMethod, setPayMethod] = useState("bank_transfer");
-  const [payProof, setPayProof] = useState("");
+  const [payProof, setPayProof] = useState(""); // URL manual (opsional — kompatibilitas)
+  const [payFile, setPayFile] = useState(null); // file bukti — diunggah ke Storage saat kirim
+  const [payPreview, setPayPreview] = useState(""); // objectURL pratinjau payFile
+  const [payFileError, setPayFileError] = useState("");
   const [payRef, setPayRef] = useState("");
   // Pembayaran & review per rental (RLS-scoped):
   const [paymentRows, setPaymentRows] = useState({}); // rental_id → payments[]
@@ -160,17 +164,50 @@ export default function BuyerPage({ onNavigate, onSellerIntent }) {
     }
   };
 
-  /* --- Aksi: kirim bukti pembayaran (pending → payment_verify) --- */
+  /* --- Lampiran bukti: file + pratinjau + validasi client-side (UX) --- */
+  const resetPayAttachment = () => {
+    if (payPreview) URL.revokeObjectURL(payPreview);
+    setPayFile(null);
+    setPayPreview("");
+    setPayFileError("");
+  };
+
+  const handlePayFileChange = (file) => {
+    if (payPreview) URL.revokeObjectURL(payPreview);
+    setPayPreview("");
+    setPayFile(null);
+    const invalid = validateImageFile(file);
+    if (invalid) {
+      setPayFileError(invalid);
+      return;
+    }
+    setPayFileError("");
+    setPayFile(file);
+    setPayPreview(URL.createObjectURL(file));
+  };
+
+  /* --- Aksi: kirim bukti pembayaran (pending → payment_verify) ---
+     File diprioritaskan: diunggah ke bucket private payment-proofs (policy
+     storage mengikat path proofs/{rental_id}/ ke buyer transaksi), lalu PATH
+     storage disimpan ke payment_proof_url via RPC submit_payment. Bila tidak
+     ada file, URL manual dipakai (kompatibilitas alur lama). */
   const handleSubmitProof = async (rentalId) => {
     setActionError("");
+    setPayFileError("");
     setBusyRentalId(rentalId);
     try {
+      let proofValue = payProof.trim();
+      if (payFile) {
+        const { path } = await uploadPaymentProof(rentalId, payFile);
+        proofValue = path;
+      }
       await submitPayment(rentalId, {
         method: payMethod,
-        proofUrl: payProof.trim(),
+        proofUrl: proofValue,
         externalReference: payRef.trim() || null,
       });
       setPayTarget(null);
+      resetPayAttachment();
       setPayProof("");
       setPayRef("");
       setPaymentRows((cur) => ({ ...cur, [rentalId]: undefined })); // muat ulang bukti
@@ -344,6 +381,7 @@ export default function BuyerPage({ onNavigate, onSellerIntent }) {
                               setPayMethod("bank_transfer");
                               setPayProof("");
                               setPayRef("");
+                              resetPayAttachment();
                             }}
                           >
                             Kirim bukti pembayaran
@@ -470,10 +508,41 @@ export default function BuyerPage({ onNavigate, onSellerIntent }) {
                             </option>
                           ))}
                         </select>
+                        <div className="proof-upload">
+                          <input
+                            id={`proof-file-${rental.id}`}
+                            type="file"
+                            accept={IMAGE_ALLOWED_TYPES.join(",")}
+                            className="upload-input-hidden"
+                            disabled={busyRentalId === rental.id}
+                            onChange={(event) => {
+                              handlePayFileChange(event.target.files?.[0] || null);
+                              event.target.value = ""; // izinkan pilih file yang sama lagi
+                            }}
+                          />
+                          <label
+                            htmlFor={`proof-file-${rental.id}`}
+                            className="proof-upload-label"
+                          >
+                            {payPreview ? (
+                              <img
+                                src={payPreview}
+                                alt="Pratinjau bukti transfer"
+                                className="proof-preview"
+                              />
+                            ) : (
+                              <span>📷 Pilih foto bukti (JPG/PNG/WebP · maks 3 MB)</span>
+                            )}
+                          </label>
+                          {payFileError && <p className="rental-note is-error">{payFileError}</p>}
+                          {payFile && payProof.trim() && (
+                            <p className="rental-note">Foto terpilih dipakai — URL manual diabaikan.</p>
+                          )}
+                        </div>
                         <input
                           value={payProof}
                           onChange={(e) => setPayProof(e.target.value)}
-                          placeholder="URL bukti transfer (img/tautan)"
+                          placeholder="Atau tempel URL bukti (opsional)"
                           className="search-box-small"
                         />
                         <input
@@ -484,14 +553,17 @@ export default function BuyerPage({ onNavigate, onSellerIntent }) {
                         />
                         <button
                           className="btn-small btn-primary"
-                          disabled={busyRentalId === rental.id || !payProof.trim()}
+                          disabled={busyRentalId === rental.id || (!payFile && !payProof.trim())}
                           onClick={() => handleSubmitProof(rental.id)}
                         >
-                          Kirim
+                          {busyRentalId === rental.id && payFile ? "Mengunggah…" : "Kirim"}
                         </button>
                         <button
                           className="btn-small btn-secondary"
-                          onClick={() => setPayTarget(null)}
+                          onClick={() => {
+                            setPayTarget(null);
+                            resetPayAttachment();
+                          }}
                         >
                           Batal
                         </button>

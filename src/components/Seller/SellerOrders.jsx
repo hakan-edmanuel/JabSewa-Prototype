@@ -14,6 +14,7 @@ import {
 } from "../../lib/userData";
 import { formatPrice } from "../../lib/format";
 import { TRANSACTION_STATUS, TRANSACTION_STATUS_META } from "../../lib/constants";
+import ProofLink from "../ProofLink";
 
 /*
  * Pesanan Saya (seller) — ERD v2.
@@ -278,9 +279,7 @@ export default function SellerOrders({ store, onChanged }) {
                                 {p.payment_proof_url && (
                                   <>
                                     {" — "}
-                                    <a href={p.payment_proof_url} target="_blank" rel="noreferrer">
-                                      lihat bukti
-                                    </a>
+                                    <ProofLink value={p.payment_proof_url} />
                                   </>
                                 )}
                                 {p.external_reference ? ` · ref ${p.external_reference}` : ""}

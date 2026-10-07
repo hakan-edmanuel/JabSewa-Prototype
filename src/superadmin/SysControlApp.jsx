@@ -16,12 +16,18 @@ import SysDashboard from './pages/SysDashboard'
 import SysApplications from './pages/SysApplications'
 import SysAudit from './pages/SysAudit'
 import SysOrders from './pages/SysOrders'
+import SysStores from './pages/SysStores'
+import SysListings from './pages/SysListings'
+import SysUsers from './pages/SysUsers'
 import { superadminLogout } from '../lib/superadmin'
 
 /** Petakan path /sys-control-jab/* → key halaman internal (lokal file ini). */
 function getSysPageFromPath(pathname) {
   if (pathname === '/sys-control-jab/applications') return 'applications'
   if (pathname === '/sys-control-jab/orders') return 'orders'
+  if (pathname === '/sys-control-jab/stores') return 'stores'
+  if (pathname === '/sys-control-jab/listings') return 'listings'
+  if (pathname === '/sys-control-jab/users') return 'users'
   if (pathname === '/sys-control-jab/audit') return 'audit'
   return 'dashboard' // /sys-control-jab dan /sys-control-jab/ lainnya
 }
@@ -52,6 +58,9 @@ function SysControlRouter({ onExit }) {
   let content = <SysDashboard onNavigate={navigate} />
   if (page === 'applications') content = <SysApplications />
   if (page === 'orders') content = <SysOrders />
+  if (page === 'stores') content = <SysStores />
+  if (page === 'listings') content = <SysListings />
+  if (page === 'users') content = <SysUsers />
   if (page === 'audit') content = <SysAudit />
 
   return (

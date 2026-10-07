@@ -1,9 +1,17 @@
 -- ============================================================================
--- USAUAN MIGRATION (FORWARD-ONLY) — 20260927000001_rpcs_status_ambiguity_fix.sql
+-- MIGRATION CANONICAL REPOSITORY (FORWARD-ONLY) — 20260927000001_rpcs_status_ambiguity_fix.sql
 -- ============================================================================
--- STATUS: PROPOSAL — BELUM DITERAPKAN. Menunggu persetujuan owner.
--- Letak: docs/db-rebuild/ (sengaja TIDAK di supabase/migrations agar tidak
---        ikut tereksekusi tooling sebelum disetujui).
+-- STATUS: Migration canonical repository — bagian WAJIB dari migration chain
+--         (setelah 20260927000000_rpcs_guard_stop_fix.sql). Idempotent
+--         (CREATE OR REPLACE), aman dijalankan ulang.
+--         Riwayat environment (evidence historis, BUKAN klaim live-state
+--         terbaru): diterapkan 27 Sep 2026 ke project dev `yjwlqqigbzvjbvpwybup`
+--         via `node scripts/apply-migration.mjs … --yes` — regresi 79/79
+--         create_rental + 26/26 quote_rental + `npm run verify:supabase` PASS
+--         (docs/db-rebuild/06-migration-plan.md & 14-create-rental-fix-report.md).
+--         Asal: fix diusulkan sebagai docs/db-rebuild/13-usulan-migration-
+--         status-ambiguity.sql, disetujui, lalu dipromosikan 1:1 ke file ini
+--         (salinan usulan tetap di docs sebagai artefak historis).
 --
 -- BUG-1 (kritis, laporan 13-create-rental-test-report.md §7):
 --   create_rental & cancel_rental punya OUT parameter bernama `status`
@@ -14,11 +22,10 @@
 -- FIX: kualifikasi referensi kolom yang ambigu. DUA baris berubah,
 --   perilaku kontrak TIDAK berubah. CREATE OR REPLACE mempertahankan grants.
 --
--- CARA TERAP (setelah disetujui):
---   1. Salin file ini ke supabase/migrations/20260927000001_rpcs_status_ambiguity_fix.sql
---   2. node scripts/apply-migration.mjs supabase/migrations/20260927000001_rpcs_status_ambiguity_fix.sql --yes
---   3. node scripts/test-create-rental.mjs   (28 PASS lama tetap; 24 FAIL harus jadi PASS)
---   4. npm run verify:supabase
+-- VERIFIKASI pasca-terap:
+--   1. node scripts/test-create-rental.mjs   (regresi penuh; menulis data uji)
+--   2. node scripts/test-quote-rental.mjs
+--   3. npm run verify:supabase               (read-only)
 -- ============================================================================
 
 -- ---------------------------------------------------------------------------

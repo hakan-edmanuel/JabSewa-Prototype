@@ -65,6 +65,22 @@ async function fetchLatestApplication() {
 
 const AuthContext = createContext(null)
 
+/**
+ * Klasifikasi hasil signUp (fungsi murni — mudah dites tanpa mock Supabase).
+ * Akar dari bug registrasi: signUp sukses dengan email confirmation aktif
+ * mengembalikan user TANPA session — kondisi yang wajib dibedakan dari
+ * "authenticated" agar frontend tidak menganggap user sudah login.
+ *
+ *   CASE A  failed             → user null (registrasi tidak jadi)
+ *   CASE B  authenticated      → session tersedia → boleh masuk dashboard
+ *   CASE C  needs_confirmation → user ada, session null → minta verifikasi email
+ */
+export function resolveSignUpOutcome(data) {
+  if (!data?.user) return { outcome: 'failed' }
+  if (!data.session) return { outcome: 'needs_confirmation', email: data.user.email }
+  return { outcome: 'authenticated', userId: data.user.id }
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [storeApplication, setStoreApplication] = useState(null)
@@ -148,13 +164,26 @@ export function AuthProvider({ children }) {
       },
     })
     if (error) throw error
-    if (!data.user) throw new Error('register failed')
-    // Trigger handle_new_user membuat baris public.users — tunggu singkat (best-effort).
-    await new Promise((resolve) => setTimeout(resolve, 400))
+    const outcome = resolveSignUpOutcome(data)
+    if (outcome.outcome === 'failed') throw new Error('register failed')
+
+    // CASE C — email confirmation aktif: signUp sukses tetapi session belum
+    // tersedia (data.user != null, data.session == null). JANGAN dianggap
+    // authenticated: tanpa JWT, RLS menyaring baris profil dan fetchProfile
+    // diam-diam mengembalikan null. Sinyalkan ke pemanggil, jangan set user.
+    if (outcome.outcome === 'needs_confirmation') {
+      setUser(null)
+      setStoreApplication(null)
+      return { needsEmailConfirmation: true, email: outcome.email }
+    }
+
+    // CASE B — session tersedia: trigger handle_new_user sudah commit
+    // (transaksi yang sama dengan INSERT auth.users), profil siap dimuat.
     const profile = await fetchProfile(data.user.id).catch(() => null)
     setUser(profile)
+    refreshApplication().catch(() => {})
     return profile
-  }, [])
+  }, [refreshApplication])
 
   const logout = useCallback(async () => {
     if (isSupabaseConfigured) {

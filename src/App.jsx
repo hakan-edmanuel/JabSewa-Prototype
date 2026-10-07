@@ -28,6 +28,8 @@ import Footer from './components/Footer'
 import ConsumerPage from './pages/ConsumerPage'
 import SellerPage from './pages/SellerPage'
 import AboutPage from './pages/AboutPage'
+import TermsPage from './pages/TermsPage'
+import PrivacyPage from './pages/PrivacyPage'
 import AuthPage from './pages/AuthPage'
 import BuyerPage from './pages/BuyerPage'
 import SellerOnboardingPage from './pages/SellerOnboardingPage'
@@ -36,6 +38,12 @@ import NotFoundPage from './pages/NotFoundPage'
 import SysControlApp from './superadmin/SysControlApp'
 import DevRoleSwitcher from './components/DevRoleSwitcher'
 import { useAuth } from './auth/AuthContext'
+import {
+  resolvePostLoginTarget,
+  recordSysControlVisit,
+  getSysControlReturnPath,
+  clearSysControlReturnPath,
+} from './lib/postLoginRouting'
 
 function getPageFromPath(pathname) {
   if (pathname === '/consumer') return 'consumer'
@@ -45,6 +53,8 @@ function getPageFromPath(pathname) {
   if (pathname === '/profile') return 'profile'
   if (pathname === '/sys-control-jab' || pathname.startsWith('/sys-control-jab/')) return 'sys-control'
   if (pathname === '/about') return 'about'
+  if (pathname === '/terms') return 'terms'
+  if (pathname === '/privacy') return 'privacy'
   if (pathname === '/login' || pathname === '/register') return 'auth'
   if (pathname === '/') return 'home'
   return 'not-found'
@@ -105,6 +115,24 @@ function App() {
   const handleAuthenticated = (authenticatedUser) => {
     const intent = authIntent || (guardTarget ? { page: guardTarget } : null)
     setAuthIntent(null)
+
+    // Operator entry (task routing): admin aktif yang login tanpa tujuan
+    // eksplisit masuk ke workspace-nya. Intent eksplisit tetap menang —
+    // deep-link existing tidak dirusak. Keputusan murni UX/route;
+    // otorisasi tetap server-side (is_admin + RLS + RPC + guard sys-control).
+    const operatorTarget = resolvePostLoginTarget({
+      profile: authenticatedUser,
+      intent,
+      sysControlReturnPath: getSysControlReturnPath(),
+    })
+    if (operatorTarget.kind === 'sys-control') {
+      clearSysControlReturnPath()
+      window.history.pushState({}, '', operatorTarget.path)
+      setPage('sys-control')
+      window.scrollTo({ top: 0 })
+      return
+    }
+
     if (!intent) {
       navigate('home')
       return
@@ -129,6 +157,16 @@ function App() {
     window.addEventListener('popstate', handlePopState)
     return () => window.removeEventListener('popstate', handlePopState)
   }, [])
+
+  // Rekam deep-link /sys-control-jab/* yang dibuka TANPA sesi (yang tampil
+  // tetap 404 samaran — anti-enumeration tidak berubah). Return-to-nya hanya
+  // dipakai bila yang login belakangan adalah operator aktif; ditulis di
+  // effect (bukan saat render), memori modul — bukan localStorage/authority.
+  useEffect(() => {
+    if (page === 'sys-control' && !user) {
+      recordSysControlVisit(window.location.pathname)
+    }
+  }, [page, user])
 
   useEffect(() => {
     if (page !== 'home') return undefined
@@ -229,6 +267,8 @@ function App() {
   if (effectivePage === 'buyer') return <Shell><BuyerPage onNavigate={navigate} onSellerIntent={goSeller} /></Shell>
   if (effectivePage === 'profile') return <Shell><ProfilePage onNavigate={navigate} onSellerIntent={goSeller} /></Shell>
   if (effectivePage === 'about') return <Shell><AboutPage onNavigate={navigate} /></Shell>
+  if (effectivePage === 'terms') return <Shell><TermsPage onNavigate={navigate} /></Shell>
+  if (effectivePage === 'privacy') return <Shell><PrivacyPage onNavigate={navigate} /></Shell>
 
   if (effectivePage === 'not-found') return <NotFoundPage />
 

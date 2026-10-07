@@ -7,7 +7,8 @@ memverifikasi pembayaran transfer manual, dan menangani pengembalian/denda.
 ## Stack
 
 - **Frontend**: React 19 + Vite (SPA, tanpa framework router eksternal)
-- **Backend**: Supabase — Auth (GoTrue), Postgres (RLS + 30 RPC `SECURITY DEFINER`)
+- **Backend**: Supabase — Auth (GoTrue), Postgres (RLS + 30 RPC `SECURITY DEFINER`),
+  Storage (foto listing — bucket publik; bukti pembayaran — bucket private + signed URL)
 - **Pembayaran**: transfer bank manual + bukti (tanpa gateway — MVP)
 
 ## Arsitektur singkat
@@ -35,10 +36,17 @@ memverifikasi pembayaran transfer manual, dan menangani pengembalian/denda.
    untuk 4 kategori awal.
 4. Jalankan fix migrations (berurutan, idempotent):
    `supabase/migrations/20260926000002_rpcs_return_next_fix.sql` lalu
-   `supabase/migrations/20260927000000_rpcs_guard_stop_fix.sql`.
-5. Verifikasi: SQL Editor → jalankan `scripts/verify-schema-readonly.sql` —
+   `supabase/migrations/20260927000000_rpcs_guard_stop_fix.sql` lalu
+   `supabase/migrations/20260927000001_rpcs_status_ambiguity_fix.sql`.
+5. Storage (foto & bukti): jalankan
+   `supabase/migrations/20260928000000_storage_buckets_policies.sql`
+   (idempotent — membuat 2 bucket + policy storage.objects: `listing-images`
+   public-read untuk foto katalog, `payment-proofs` private untuk bukti
+   transfer via signed URL). Wajib koneksi operator (SQL Editor /
+   `scripts/apply-migration.mjs`), bukan dari frontend.
+6. Verifikasi: SQL Editor → jalankan `scripts/verify-schema-readonly.sql` —
    semua baris wajib `PASS` (skrip 100% read-only).
-6. Bootstrap admin (sekali, manual):
+7. Bootstrap admin (sekali, manual):
    - Daftar akun lewat aplikasi (trigger membuat profil `consumer`).
    - `UPDATE public.users SET role = 'admin' WHERE email = '<email-operator>';`
 

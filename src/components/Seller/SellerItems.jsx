@@ -9,6 +9,12 @@ import {
 import { translateRentalError } from "../../lib/userData";
 import { formatPrice } from "../../lib/format";
 import { CATEGORY_LABELS, RENTAL_UNITS, RENTAL_UNIT_LABELS } from "../../lib/constants";
+import {
+  uploadListingImage,
+  validateImageFile,
+  IMAGE_ALLOWED_TYPES,
+  MAX_LISTING_IMAGES,
+} from "../../lib/uploads";
 
 const DEFAULT_IMG =
   "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80";
@@ -18,7 +24,11 @@ const DEFAULT_IMG =
  * Data dari direct SELECT listings (RLS-scoped: hanya listing toko milik
  * sesi yang terlihat). Tambah/edit via RPC save_listing (validasi server;
  * harga/stok tidak dipercaya dari client). Kategori dari tabel categories.
- * Gambar: URL (MVP) — multi-gambar diurutkan; upload Storage menyusul.
+ * Gambar: unggah file ke Supabase Storage (bucket listing-images, path
+ * listings/{listing_id}/ — ownership dipatuahkan storage policy) ATAU URL
+ * manual (kompatibilitas). Multi-gambar diurutkan; foto pertama jadi thumbnail.
+ * Listing disimpan dulu (butuh listing_id untuk namespace path), lalu file
+ * diunggah, lalu URL hasil unggahan disimpan via save_listing kedua.
  */
 export default function SellerItems({ store }) {
   const [items, setItems] = useState(null);
@@ -30,6 +40,12 @@ export default function SellerItems({ store }) {
   const [status, setStatus] = useState("Semua Status");
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
+  // Upload foto (Supabase Storage — lib/uploads):
+  const [pendingImageUrls, setPendingImageUrls] = useState([]); // URL storage draft (sudah terunggah)
+  const [newFiles, setNewFiles] = useState([]); // file terpilih — diunggah saat submit
+  const [previews, setPreviews] = useState([]); // objectURL pratinjau newFiles
+  const [uploading, setUploading] = useState(false); // simpan+unggah berlangsung
+  const [uploadError, setUploadError] = useState(""); // validasi file terpilih
 
   useEffect(() => {
     let active = true;
@@ -80,37 +96,117 @@ export default function SellerItems({ store }) {
     [items, query, status],
   );
 
+  /* Buka form dengan state upload bersih (dipakai tombol Tambah & Edit). */
+  const openForm = (item) => {
+    previews.forEach((url) => URL.revokeObjectURL(url));
+    setEditing(item);
+    setShowForm(true);
+    setPendingImageUrls([]);
+    setNewFiles([]);
+    setPreviews([]);
+    setUploadError("");
+  };
+
+  const resetFormAndClose = () => {
+    previews.forEach((url) => URL.revokeObjectURL(url));
+    setEditing(null);
+    setShowForm(false);
+    setPendingImageUrls([]);
+    setNewFiles([]);
+    setPreviews([]);
+    setUploadError("");
+  };
+
+  /* Pilih file: validasi client-side (UX) — unggah terjadi saat submit
+     (namespace path butuh listing_id dari hasil simpan). */
+  const handleFilesChange = (fileList) => {
+    const files = Array.from(fileList || []).slice(0, MAX_LISTING_IMAGES);
+    const errors = [];
+    const ok = [];
+    for (const file of files) {
+      const invalid = validateImageFile(file);
+      if (invalid) errors.push(invalid);
+      else ok.push(file);
+    }
+    previews.forEach((url) => URL.revokeObjectURL(url));
+    setNewFiles(ok);
+    setPreviews(ok.map((file) => URL.createObjectURL(file)));
+    setUploadError(errors.join(" · "));
+  };
+
   const handleSaveListing = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     setFormError("");
-    const imageUrls = String(data.get("images") || "")
+    const manualUrls = String(data.get("images") || "")
       .split(/[\n,]/)
       .map((s) => s.trim())
       .filter(Boolean);
+    const baseImages = [...pendingImageUrls, ...manualUrls];
+    const images = baseImages.length ? baseImages : editing?.images || [DEFAULT_IMG];
+    const payload = {
+      store_id: store?.id ?? null,
+      category_id: data.get("category"),
+      name: String(data.get("name") || "").trim(),
+      description: String(data.get("description") || "").trim(),
+      price: Number(data.get("price") || 0),
+      deposit: Number(data.get("deposit") || 0),
+      stock: Number(data.get("stock") || 1),
+      rental_unit: data.get("rental_unit") || "day",
+      min_rental_duration: data.get("min_duration")
+        ? Number(data.get("min_duration"))
+        : null,
+      available: data.get("status") === "Aktif",
+    };
+    setUploading(true);
+    let uploadedUrls = [];
+    const uploadFailures = [];
+    let listingId = null;
     try {
-      await saveListing({
-        id: editing?.id ?? null,
-        store_id: store?.id ?? null,
-        category_id: data.get("category"),
-        name: String(data.get("name") || "").trim(),
-        description: String(data.get("description") || "").trim(),
-        price: Number(data.get("price") || 0),
-        deposit: Number(data.get("deposit") || 0),
-        stock: Number(data.get("stock") || 1),
-        rental_unit: data.get("rental_unit") || "day",
-        min_rental_duration: data.get("min_duration")
-          ? Number(data.get("min_duration"))
-          : null,
-        available: data.get("status") === "Aktif",
-        images: imageUrls.length ? imageUrls : editing?.images || [DEFAULT_IMG],
-      });
+      // 1) Simpan listing dulu — namespace path Storage butuh listing_id.
+      listingId = await saveListing({ ...payload, id: editing?.id ?? null, images });
+      // 2) Unggah file baru ke listings/{listing_id}/ (policy: owner toko).
+      for (const file of newFiles) {
+        try {
+          const { publicUrl } = await uploadListingImage(listingId, file);
+          uploadedUrls.push(publicUrl);
+        } catch (err) {
+          uploadFailures.push(err?.message || "gagal mengunggah");
+        }
+      }
+      // 3) URL hasil unggahan masuk listing_images (urut: upload dulu → thumbnail).
+      if (uploadedUrls.length) {
+        await saveListing({ ...payload, id: listingId, images: [...uploadedUrls, ...images] });
+      }
       const next = await fetchListingsByStore(store?.id ?? null);
       setItems(next);
-      setEditing(null);
-      setShowForm(false);
+      if (uploadFailures.length) {
+        // Listing tersimpan, sebagian foto gagal — form tetap terbuka mode edit
+        // draft agar coba ulang tidak membuat listing duplikat.
+        setEditing({ ...payload, id: listingId, images: [...uploadedUrls, ...images] });
+        setPendingImageUrls((cur) => [...cur, ...uploadedUrls]);
+        setNewFiles([]);
+        setPreviews([]);
+        setFormError(
+          `Barang tersimpan, tetapi ${uploadFailures.length} foto gagal diunggah: ${uploadFailures[0]}${
+            uploadFailures.length > 1 ? " · dst." : ""
+          }`,
+        );
+      } else {
+        resetFormAndClose();
+      }
     } catch (err) {
+      if (listingId) {
+        // RPC pertama sukses tapi langkah berikutnya gagal — jadikan draft edit
+        // agar submit ulang memperbarui, bukan membuat listing baru.
+        setEditing({ ...payload, id: listingId, images: [...uploadedUrls, ...images] });
+        setPendingImageUrls((cur) => [...cur, ...uploadedUrls]);
+        setNewFiles([]);
+        setPreviews([]);
+      }
       setFormError(translateRentalError(err?.message));
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -151,10 +247,7 @@ export default function SellerItems({ store }) {
         </div>
         <button
           className="btn-primary-solid"
-          onClick={() => {
-            setEditing(null);
-            setShowForm(true);
-          }}
+          onClick={() => openForm(null)}
         >
           + Tambah Barang
         </button>
@@ -167,7 +260,8 @@ export default function SellerItems({ store }) {
             <button
               type="button"
               className="btn-secondary-solid"
-              onClick={() => setShowForm(false)}
+              disabled={uploading}
+              onClick={resetFormAndClose}
             >
               Batal
             </button>
@@ -303,8 +397,48 @@ export default function SellerItems({ store }) {
 
             <section className="form-section">
               <h3 className="form-section-title">Foto Barang</h3>
+              <div className="upload-block">
+                <input
+                  id="listing-image-input"
+                  type="file"
+                  accept={IMAGE_ALLOWED_TYPES.join(",")}
+                  multiple
+                  className="upload-input-hidden"
+                  disabled={uploading}
+                  onChange={(event) => {
+                    handleFilesChange(event.target.files);
+                    event.target.value = ""; // izinkan pilih file yang sama lagi
+                  }}
+                />
+                <label
+                  htmlFor="listing-image-input"
+                  className="simple-image-upload upload-label-solid"
+                >
+                  <span className="upload-placeholder">
+                    <span className="upload-icon" aria-hidden="true">🖼️</span>
+                    <span>Pilih foto ({IMAGE_ALLOWED_TYPES.map((t) => t.replace("image/", "").toUpperCase()).join(" / ")} · maks 3 MB · hingga {MAX_LISTING_IMAGES} foto)</span>
+                    <span className="upload-hint">
+                      Foto diunggah saat kamu menekan Simpan Barang — foto pertama jadi thumbnail
+                    </span>
+                  </span>
+                </label>
+                {uploadError && <p className="rental-note is-error">{uploadError}</p>}
+                {previews.length > 0 && (
+                  <div className="upload-previews">
+                    {previews.map((url) => (
+                      <img
+                        key={url}
+                        src={url}
+                        alt="Pratinjau foto barang"
+                        className="upload-preview-thumb"
+                      />
+                    ))}
+                  </div>
+                )}
+                {uploading && <p className="rental-note">Menyimpan &amp; mengunggah foto…</p>}
+              </div>
               <label className="form-wide">
-                URL gambar (satu per baris — gambar pertama jadi thumbnail)
+                URL gambar manual (opsional — satu per baris)
                 <textarea
                   name="images"
                   rows="3"
@@ -315,8 +449,12 @@ export default function SellerItems({ store }) {
             </section>
 
             <div className="form-actions-footer">
-              <button type="submit" className="btn-primary-solid form-submit-btn">
-                Simpan Barang
+              <button
+                type="submit"
+                className="btn-primary-solid form-submit-btn"
+                disabled={uploading}
+              >
+                {uploading ? "Menyimpan…" : "Simpan Barang"}
               </button>
             </div>
           </form>
@@ -384,10 +522,7 @@ export default function SellerItems({ store }) {
                   <div className="item-actions-row">
                     <button
                       className="btn-text-action"
-                      onClick={() => {
-                        setEditing(item);
-                        setShowForm(true);
-                      }}
+                      onClick={() => openForm(item)}
                     >
                       Edit
                     </button>
@@ -418,10 +553,7 @@ export default function SellerItems({ store }) {
                   </p>
                   <button
                     className="btn-primary-solid"
-                    onClick={() => {
-                      setEditing(null);
-                      setShowForm(true);
-                    }}
+                    onClick={() => openForm(null)}
                   >
                     + Tambah Barang
                   </button>

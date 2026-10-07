@@ -8,6 +8,7 @@
 | `supabase/migrations/20260926000002_rpcs_return_next_fix.sql` | **Fix forward-only** (post-baseline): CREATE OR REPLACE 25 RPC plpgsql ber-RETURNS TABLE — `RETURN;` → `RETURN NEXT;` (bug 0-baris) + sanity check keras di akhir. Idempotent. **Wajib** setelah baseline | Project yang sudah menjalankan baseline |
 | `supabase/migrations/20260927000000_rpcs_guard_stop_fix.sql` | **Fix forward-only** (post-…000002): CREATE OR REPLACE 25 RPC plpgsql yang sama — guard error kini `RETURN NEXT; RETURN;` (emit lalu berhenti). Bug multi-baris: RETURN NEXT tidak menghentikan eksekusi → guard beruntun menghasilkan 3–4 baris dan ditutup `ok=true`; pada `create_rental` INSERT tetap jalan meski validasi gagal. Sanity check keras: tanpa fall-through, tanpa `RETURN;` tanpa emit. Idempotent. **Wajib** setelah …000002 | Project yang sudah menjalankan baseline + …000002 |
 | `supabase/migrations/20260927000001_rpcs_status_ambiguity_fix.sql` | **Fix forward-only** (post-…000000): CREATE OR REPLACE 2 RPC (`create_rental`, `cancel_rental`) — kualifikasi referensi kolom `status` yang ambigu dengan OUT param RETURNS TABLE (bug 42702 `column reference "status" is ambiguous` di seluruh success-path): `SELECT s.status … FROM public.stores s` dan `UPDATE public.payments p … WHERE p.status = 'pending'`. Kontrak, signature, RLS, grants tidak berubah; + sanity check deploy-time. Idempotent. **Wajib** setelah …000000 | Project yang sudah menjalankan baseline + …000000 |
+| `supabase/migrations/20260928000000_storage_buckets_policies.sql` | **Storage forward-only** (post-…000001): 2 bucket (`listing-images` public-read, `payment-proofs` private) + policy storage.objects (INSERT/UPDATE/DELETE listing-images = owner toko via listings→stores.owner_id; INSERT payment-proofs = buyer via rental_transactions.buyer_id; SELECT proofs = buyer/owner/admin matriks payments_select; proofs tanpa UPDATE/DELETE — immutable) + helper `storage_path_in_namespace` + sanity check. **TIDAK mengubah** schema public/RPC/RLS public. Idempotent. Wajib koneksi operator (SQL Editor / apply-migration.mjs). Status: **BELUM diterapkan ke live** — menunggu approval owner | Project yang sudah menjalankan baseline + semua fix |
 | `supabase/migrations/20260926000001_seed_dev_categories.sql` (opsional, terpisah) | Seed 4 kategori dev (`photography, gadget, sports, event`) — seed **tidak pernah** di dalam baseline | Dev/staging bila disetujui |
 
 Migration legacy (3 file lama) **tidak dijalankan** dan tidak dijadikan dasar; statusnya
@@ -81,6 +82,9 @@ Migration historis lain tidak disentuh; tidak ada reset database atau perubahan 
       (`yjwlqqigbzvjbvpwybup` — project aktif `.env.local`) — SELESAI 27 Sep 2026
       via `node scripts/apply-migration.mjs … --yes` (satu transaksi, PostgreSQL 17.6);
       regression 79/79 + 26/26 + verifier PASS (detail `14-create-rental-fix-report.md`).
+- [ ] Eksekusi `20260928000000_storage_buckets_policies.sql` — **MENUNGGU APPROVAL**
+      (migration storage ditulis & ter-audit, TIDAK diterapkan otomatis; setelah
+      diterapkan, jalankan smoke upload manual — lihat report tahap storage).
 - [x] Verifikasi via `verify-schema-readonly.sql` di project baru — PASS.
 - [ ] Bootstrap admin — menunggu registrasi akun operator + UPDATE role.
 - [x] Env frontend mengarah ke project baru — SELESAI (`.env.local`).

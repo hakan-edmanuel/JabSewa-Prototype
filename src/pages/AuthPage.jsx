@@ -32,10 +32,14 @@ export default function AuthPage({ onNavigate, mode, onAuthenticated, intent }) 
   const isLogin = mode === 'login'
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  // CASE C — email terisi saat registration sukses tetapi session belum ada
+  // (email confirmation aktif): tampilkan instruksi verifikasi, bukan redirect.
+  const [awaitingEmailConfirmation, setAwaitingEmailConfirmation] = useState('')
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+    setAwaitingEmailConfirmation('')
     setIsSubmitting(true)
     const data = new FormData(e.currentTarget)
     const email = data.get('email')
@@ -46,10 +50,18 @@ export default function AuthPage({ onNavigate, mode, onAuthenticated, intent }) 
         onAuthenticated(user)
       } else {
         const name = data.get('name')
-        const user = await register({ name, email, password })
-        onAuthenticated(user)
+        const result = await register({ name, email, password })
+        // CASE C — registration sukses, session null (perlu verifikasi email):
+        // jangan dianggap authenticated dan JANGAN redirect ke dashboard.
+        if (result?.needsEmailConfirmation) {
+          setAwaitingEmailConfirmation(result.email || String(email || ''))
+          return
+        }
+        // CASE B — session tersedia: lanjut ke tujuan semula (authenticated).
+        onAuthenticated(result)
       }
     } catch (err) {
+      // CASE A — gagal: tampilkan error, tetap di halaman ini.
       setError(translateError(err?.message))
     } finally {
       setIsSubmitting(false)
@@ -88,6 +100,12 @@ export default function AuthPage({ onNavigate, mode, onAuthenticated, intent }) 
           </p>
 
           {intentNote && <p className="auth-context-note">{intentNote}</p>}
+          {awaitingEmailConfirmation && (
+            <p className="auth-context-note" role="status">
+              Pendaftaran berhasil! Cek kotak masuk <strong>{awaitingEmailConfirmation}</strong>{' '}
+              untuk memverifikasi email kamu, lalu masuk di sini setelah verifikasi.
+            </p>
+          )}
           {error && <p className="auth-error">{error}</p>}
 
           <form onSubmit={handleSubmit}>
@@ -125,9 +143,11 @@ export default function AuthPage({ onNavigate, mode, onAuthenticated, intent }) 
             Dengan melanjutkan, kamu menyetujui Syarat Layanan dan Kebijakan Privasi JabSewa.
           </p>
 
-          <p className="auth-demo-note">
-            Belum punya akun? Daftar — satu akun untuk menyewa & menyewakan.
-          </p>
+          {!awaitingEmailConfirmation && (
+            <p className="auth-demo-note">
+              Belum punya akun? Daftar — satu akun untuk menyewa & menyewakan.
+            </p>
+          )}
         </div>
       </main>
     </div>

@@ -182,11 +182,11 @@ export default function SysApplications() {
               <dl className="sys-kv">
                 <div className="sys-kv-row">
                   <dt>Kota</dt>
-                  <dd>{selected.storeApplication?.city || '—'}</dd>
+                  <dd>{selected.sellerApplication?.city || '—'}</dd>
                 </div>
                 <div className="sys-kv-row">
                   <dt>Kontak</dt>
-                  <dd>{selected.storeApplication?.contact || '—'}</dd>
+                  <dd>{selected.sellerApplication?.contact || selected.applicant?.email || '—'}</dd>
                 </div>
                 <div className="sys-kv-row">
                   <dt>Dikirim</dt>

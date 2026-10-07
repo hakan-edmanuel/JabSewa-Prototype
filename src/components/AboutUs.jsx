@@ -72,8 +72,8 @@ export default function AboutUs() {
             <div className="about-belief-item">
               <span className="accent-mark" aria-hidden="true"></span>
               <div>
-                <strong>Sewa itu opsional</strong>
-                <p>Nggak semua barang harus dimiliki. Nyoba dulu juga boleh.</p>
+                <strong>Gunakan tanpa harus memiliki</strong>
+                <p>Temukan barang yang kamu butuhkan, gunakan seperlunya, lalu kembalikan.</p>
               </div>
             </div>
           </div>
@@ -85,7 +85,7 @@ export default function AboutUs() {
           <h2 className="about-block-title">Founder JabSewa.id</h2>
           <p className="about-block-text">
             JabSewa mulai dari dua orang yang sering kebingungan cari barang
-            buat Untuk Acara — dan akhirnya bikin sendiri.
+            buat acara — dan akhirnya bikin sendiri.
           </p>
           <div className="about-founders">
             <div className="about-founder-card">
@@ -104,14 +104,13 @@ export default function AboutUs() {
             </div>
           </div>
           <p className="about-founder-note">
-            "Kami bikin JabSewa karena butuh. Kalau kalian juga butuh — sewa
-            aja."
+            "Kami bikin JabSewa karena butuh. Kalau kamu juga butuh — sewa aja."
           </p>
         </div>
 
         {/* Closing */}
         <div className="about-closing">
-          <p>Barang untuk nyoba atau event. Sewa aja.</p>
+          <p>Butuh barang? Sewa, pakai, kembalikan.</p>
           <span>— Tim JabSewa.id</span>
         </div>
       </div>
