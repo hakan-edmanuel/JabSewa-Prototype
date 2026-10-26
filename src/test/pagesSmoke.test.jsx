@@ -127,9 +127,9 @@ describe("halaman hasil pemecahan Fase 4", () => {
   });
 
   it.each([
-    ["AdminStores", AdminStores, "Stores"],
-    ["AdminUsers", AdminUsers, "Users"],
-    ["AdminListings", AdminListings, "Listings"],
+    ["AdminStores", AdminStores, "Toko"],
+    ["AdminUsers", AdminUsers, "Pengguna"],
+    ["AdminListings", AdminListings, "Listing"],
   ])("%s merender daftar kosong", async (_name, Page, heading) => {
     render(<Page />);
     expect(await screen.findByRole("heading", { name: heading, level: 1 })).toBeTruthy();

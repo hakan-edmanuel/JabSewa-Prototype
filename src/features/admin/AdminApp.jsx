@@ -22,7 +22,8 @@ import AdminStores from './pages/AdminStores'
 import AdminListings from './pages/AdminListings'
 import AdminUsers from './pages/AdminUsers'
 import { adminLogout } from '../../data/admin'
-import { SYS_CONTROL_ROOT, SYS_CONTROL_SUBPATHS } from '../../domain/postLoginRouting'
+import NotFoundPage from '../../ui/NotFoundPage'
+import { ADMIN_PAGE_IDS, adminPath, getAdminPageFromPath } from './adminRoutes'
 
 /** Satu-satunya pemetaan halaman → komponen. */
 const PAGE_COMPONENTS = {
@@ -35,19 +36,8 @@ const PAGE_COMPONENTS = {
   audit: AdminAudit,
 }
 
-const PAGE_IDS = ['dashboard', ...SYS_CONTROL_SUBPATHS]
-
-/** Path publik halaman admin (dashboard = root). */
-function adminPath(pageId) {
-  return pageId === 'dashboard' ? SYS_CONTROL_ROOT : `${SYS_CONTROL_ROOT}/${pageId}`
-}
-
-/** Path → id halaman. Path asing di area admin jatuh ke dashboard. */
-function getAdminPageFromPath(pathname) {
-  return PAGE_IDS.find((id) => adminPath(id) === pathname) || 'dashboard'
-}
-
 function AdminRouter({ onExit }) {
+  // null = path asing di dalam area admin → NotFoundPage (bukan dashboard).
   const [page, setPage] = useState(() => getAdminPageFromPath(window.location.pathname))
 
   // Sinkron tombol back/forward browser.
@@ -58,16 +48,19 @@ function AdminRouter({ onExit }) {
   }, [])
 
   // Navigasi internal + pintu keluar: 'logout' mengakhiri sesi, lalu keluar
-  // dari area (tanpa pushState).
+  // dari area (tanpa pushState). Hanya id halaman terdaftar yang diterima.
   const navigate = (nextPage) => {
     if (nextPage === 'logout') {
       Promise.resolve(adminLogout()).then(onExit)
       return
     }
+    if (!ADMIN_PAGE_IDS.includes(nextPage)) return
     window.history.pushState({}, '', adminPath(nextPage))
     setPage(nextPage)
     window.scrollTo({ top: 0 })
   }
+
+  if (!page) return <NotFoundPage />
 
   const Page = PAGE_COMPONENTS[page] || AdminDashboard
 

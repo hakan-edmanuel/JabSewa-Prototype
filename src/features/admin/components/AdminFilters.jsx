@@ -1,8 +1,13 @@
-/* Bar filter status (+ pencarian opsional) dengan jumlah per filter. */
+/*
+ * Bar filter status (+ pencarian opsional) dengan jumlah per filter.
+ * `countsReady=false` menampilkan "—" alih-alih 0 saat daftar belum siap
+ * dimuat — angka nol palsu membuat filter tampak kosong padahal gagal.
+ */
 export default function AdminFilters({
   ariaLabel,
   filters,
   counts,
+  countsReady = true,
   value,
   onChange,
   search,
@@ -18,7 +23,9 @@ export default function AdminFilters({
           onClick={() => onChange(f.key)}
         >
           {f.label}
-          <span className="sys-filter-count">{counts[f.key] ?? 0}</span>
+          <span className="sys-filter-count">
+            {countsReady ? counts[f.key] ?? 0 : "—"}
+          </span>
         </button>
       ))}
       {search && (

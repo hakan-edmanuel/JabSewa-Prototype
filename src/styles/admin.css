@@ -339,6 +339,10 @@
   color: #5b6672;
 }
 
+.sys-note-block {
+  margin-top: 12px;
+}
+
 .sys-note code {
   background: #e9edf1;
   border-radius: 4px;
@@ -660,6 +664,233 @@
   font-weight: 600;
 }
 
+/* --- Kartu metrik sebagai tombol (dashboard) --- */
+button.sys-stat {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+button.sys-stat:hover {
+  border-color: #c6cfd4;
+}
+
+.sys-stat-value,
+.sys-stat-label {
+  display: block;
+}
+
+.sys-stat-hint {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.75rem;
+  color: #8a94a0;
+}
+
+/* --- Detail kartu & sub-panel (sengketa/transaksi) --- */
+.sys-panel-head .sys-note {
+  margin: 0 0 12px;
+  max-width: 62ch;
+  line-height: 1.5;
+}
+
+.sys-card-title {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 700;
+}
+
+.sys-dispute-list,
+.sys-transaction-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sys-subcard {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #eef1f4;
+}
+
+.sys-subcard-title {
+  margin: 0 0 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8a94a0;
+}
+
+.sys-proof-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 10px;
+  padding-top: 10px;
+  margin-top: 10px;
+  border-top: 1px solid #f1f4f6;
+}
+
+.sys-proof-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 240px;
+  min-width: 0;
+}
+
+.sys-proof-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.sys-proof-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-left: auto;
+  margin-top: 10px;
+}
+
+.sys-proof-row > .sys-proof-actions {
+  margin-left: 0;
+  margin-top: 0;
+}
+
+.sys-subcard > .sys-proof-actions {
+  margin-left: 0;
+}
+
+.sys-decision-form {
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid #d9dee3;
+  border-radius: 10px;
+  background: #fafbfb;
+}
+
+.sys-reject-form {
+  flex: 1 1 100%;
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.sys-field {
+  margin-bottom: 10px;
+}
+
+.sys-field:last-of-type {
+  margin-bottom: 0;
+}
+
+.sys-input,
+.sys-select {
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid #d9dee3;
+  border-radius: 8px;
+  background: #fff;
+  color: #10151c;
+  font: inherit;
+  font-size: 0.88rem;
+}
+
+.sys-select {
+  max-width: 340px;
+}
+
+.sys-kv-text {
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+
+.sys-btn-sm {
+  padding: 6px 12px;
+  font-size: 0.8rem;
+}
+
+.sys-empty .sys-btn-ghost {
+  margin-top: 12px;
+}
+
+.sys-note .sys-btn-ghost {
+  margin-left: 8px;
+}
+
+/* --- Audit: hierarki aktor → aksi → target --- */
+.sys-table-wrap {
+  overflow-x: auto;
+}
+
+.sys-audit-when {
+  white-space: nowrap;
+  color: #5b6672;
+}
+
+.sys-audit-badge {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.sys-audit-badge.is-ok { background: #d1fae5; color: #065f46; }
+.sys-audit-badge.is-danger { background: #fee2e2; color: #991b1b; }
+.sys-audit-badge.is-neutral { background: #eef1f4; color: #475361; }
+
+.sys-audit-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.72rem;
+  color: #8a94a0;
+}
+
+.sys-audit-actor {
+  max-width: 190px;
+  word-break: break-all;
+  color: #37424e;
+}
+
+.sys-audit-target {
+  display: block;
+  font-weight: 600;
+}
+
+.sys-audit-target-id {
+  display: block;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.72rem;
+  color: #8a94a0;
+}
+
+.sys-audit-meta {
+  max-width: 300px;
+  font-size: 0.8rem;
+  color: #5b6672;
+  word-break: break-word;
+}
+
+/* --- Fokus keyboard (area admin) --- */
+.sys-btn:focus-visible,
+.sys-btn-ghost:focus-visible,
+.sys-filter:focus-visible,
+.sys-nav-item:focus-visible,
+.sys-row:focus-visible,
+button.sys-stat:focus-visible,
+.sys-logout:focus-visible,
+.sys-input:focus-visible,
+.sys-select:focus-visible,
+.sys-textarea:focus-visible {
+  outline: 2px solid var(--jabsewa-primary);
+  outline-offset: 2px;
+}
+
 /* --- Responsive --- */
 @media (max-width: 960px) {
   .sys-content-cols {
@@ -694,4 +925,18 @@
   .sys-search {
     min-width: 0;
     width: 100%;
-  }}
+  }
+
+  .sys-table {
+    min-width: 640px;
+  }
+
+  .sys-proof-actions {
+    margin-left: 0;
+  }
+
+  .sys-audit-actor,
+  .sys-audit-meta {
+    max-width: none;
+  }
+}

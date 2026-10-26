@@ -14,7 +14,7 @@
  * ============================================================================
  */
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { listUsers, setUserStatus, setUserRole } from "../../../data/admin";
 import { formatDate, initialOf } from "../../../domain/format";
 import { translateServerError, USER_STATUS_META } from "../../../domain/constants";
@@ -42,6 +42,8 @@ export default function AdminUsers() {
   const [actionError, setActionError] = useState("");
   const [notice, setNotice] = useState("");
   const [confirmAction, setConfirmAction] = useState(null); // { kind, value, label }
+  // Ref (bukan state) agar dua klik pada tick yang sama tidak mengirim dua RPC.
+  const busyRef = useRef(false);
 
   const load = useCallback(() => {
     setState("loading");
@@ -51,8 +53,8 @@ export default function AdminUsers() {
         setRows(data);
         setState("ready");
       })
-      .catch((err) => {
-        setError(err?.message || "Gagal memuat user.");
+      .catch(() => {
+        setError("Gagal memuat daftar pengguna. Periksa koneksi, lalu coba lagi.");
         setState("error");
       });
   }, []);
@@ -88,7 +90,8 @@ export default function AdminUsers() {
 
   /** Semua aksi via RPC — hasil dari backend, bukan state lokal. */
   const runAction = async (fn, okMessage) => {
-    if (!selected) return;
+    if (!selected || busyRef.current) return;
+    busyRef.current = true;
     setBusyId(selected.id);
     setActionError("");
     setNotice("");
@@ -100,6 +103,7 @@ export default function AdminUsers() {
     } catch (err) {
       setActionError(translateServerError(err?.message));
     } finally {
+      busyRef.current = false;
       setBusyId(null);
     }
   };
@@ -111,20 +115,34 @@ export default function AdminUsers() {
   return (
     <div className="sys-page">
       <AdminPageHead
-        title="Users"
-        subtitle={`${counts.all} akun · ${counts.sellers} seller · ${counts.admins} admin — scope dari RLS (is_admin).`}
-        pendingCount={counts.suspended}
+        title="Pengguna"
+        subtitle={
+          state === "ready"
+            ? `${counts.all} akun · ${counts.sellers} seller · ${counts.admins} admin — scope dari RLS (is_admin).`
+            : "Daftar akun terdaftar — scope dari RLS (is_admin)."
+        }
+        pendingCount={state === "ready" ? counts.suspended : "—"}
         pendingLabel="akun di-suspend"
         onReload={load}
+        loading={state === "loading"}
       />
 
-      {notice && <p className="sys-note sys-note-ok">{notice}</p>}
-      {actionError && <p className="sys-note sys-note-err">⚠ {actionError}</p>}
+      {notice && (
+        <p className="sys-note sys-note-ok" role="status">
+          {notice}
+        </p>
+      )}
+      {actionError && (
+        <p className="sys-note sys-note-err" role="alert">
+          {actionError}
+        </p>
+      )}
 
       <AdminFilters
         ariaLabel="Filter status akun"
         filters={STATUS_FILTERS}
         counts={counts}
+        countsReady={state === "ready"}
         value={filter}
         onChange={setFilter}
         search={{
@@ -141,7 +159,7 @@ export default function AdminUsers() {
           state={state}
           error={error}
           loadingText="Memuat user…"
-          emptyText="Tidak ada user yang cocok."
+          emptyText="Tidak ada pengguna yang cocok."
           rows={visible}
           selectedId={selectedId}
           onReload={load}
@@ -180,7 +198,7 @@ export default function AdminUsers() {
                 </div>
                 <div className="sys-kv-row">
                   <dt>Seller</dt>
-                  <dd>{selected.is_seller ? "Ya (cache is_seller)" : "Bukan"}</dd>
+                  <dd>{selected.is_seller ? "Ya" : "Tidak"}</dd>
                 </div>
                 <div className="sys-kv-row">
                   <dt>Status</dt>
@@ -254,23 +272,23 @@ export default function AdminUsers() {
                       : ""
                   }`}
                   busy={busyId === selected.id}
-                  confirmLabel="Ya, lanjutkan"
+                  confirmLabel={`Ya, ${confirmAction.label.toLowerCase()}`}
                   onCancel={() => setConfirmAction(null)}
                   onConfirm={() =>
                     confirmAction.kind === "status"
                       ? runAction(
                           () => setUserStatus(selected.id, confirmAction.value),
-                          `Status akun diubah ke ${confirmAction.value}.`,
+                          `Status akun diubah ke ${statusMeta(confirmAction.value).label}.`,
                         )
                       : runAction(
                           () => setUserRole(selected.id, confirmAction.value),
-                          `Role diubah menjadi ${confirmAction.value}.`,
+                          `Role diubah menjadi ${ROLE_LABELS[confirmAction.value] || confirmAction.value}.`,
                         )
                   }
                 />
               )}
 
-              <p className="sys-note" style={{ marginTop: 12 }}>
+              <p className="sys-note sys-note-block">
                 Catatan: admin tidak dapat mengubah akunnya sendiri (server:
                 <code> self_action_forbidden</code>).
               </p>

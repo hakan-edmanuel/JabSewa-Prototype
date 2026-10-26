@@ -26,7 +26,7 @@ import logo from '../../assets/logo-jabsewa.jpeg'
 const SYS_MENU = [
   { id: 'dashboard', label: 'Dashboard', hint: 'Antrian kerja' },
   { id: 'applications', label: 'Ajuan Seller', hint: 'Review & keputusan' },
-  { id: 'orders', label: 'Laporan & Sengketa', hint: 'Dispute rental' },
+  { id: 'orders', label: 'Sengketa Rental', hint: 'Dispute & pembayaran' },
   { id: 'audit', label: 'Audit Log', hint: 'Jejak aksi admin' },
 ]
 
@@ -51,12 +51,13 @@ export default function AdminLayout({ currentPage, onNavigate, children }) {
           </div>
         </div>
 
-        <nav className="sys-nav" aria-label="Menu admin">
+        <nav className="sys-nav" id="sys-nav" aria-label="Menu admin">
           {SYS_MENU.map((item) => (
             <button
               key={item.id}
               type="button"
               className={`sys-nav-item ${currentPage === item.id ? 'is-active' : ''}`}
+              aria-current={currentPage === item.id ? 'page' : undefined}
               onClick={() => go(item.id)}
             >
               <span className="sys-nav-label">{item.label}</span>
@@ -81,6 +82,8 @@ export default function AdminLayout({ currentPage, onNavigate, children }) {
             type="button"
             className="sys-burger"
             aria-label={navOpen ? 'Tutup menu' : 'Buka menu'}
+            aria-expanded={navOpen}
+            aria-controls="sys-nav"
             onClick={() => setNavOpen((o) => !o)}
           >
             <span />

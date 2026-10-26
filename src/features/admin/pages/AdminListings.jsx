@@ -13,7 +13,7 @@
  * ============================================================================
  */
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { adminListListings, setListingStatus } from "../../../data/admin";
 import { formatPrice, formatDate, initialOf } from "../../../domain/format";
 import {
@@ -45,6 +45,8 @@ export default function AdminListings() {
   const [actionError, setActionError] = useState("");
   const [notice, setNotice] = useState("");
   const [confirm, setConfirm] = useState(null); // { value, label, danger }
+  // Ref (bukan state) agar dua klik pada tick yang sama tidak mengirim dua RPC.
+  const busyRef = useRef(false);
 
   const load = useCallback(() => {
     setState("loading");
@@ -54,8 +56,8 @@ export default function AdminListings() {
         setRows(data);
         setState("ready");
       })
-      .catch((err) => {
-        setError(err?.message || "Gagal memuat listing.");
+      .catch(() => {
+        setError("Gagal memuat daftar listing. Periksa koneksi, lalu coba lagi.");
         setState("error");
       });
   }, []);
@@ -85,7 +87,8 @@ export default function AdminListings() {
   const selected = rows.find((l) => l.id === selectedId) || null;
 
   const runAction = async (fn, okMessage) => {
-    if (!selected) return;
+    if (!selected || busyRef.current) return;
+    busyRef.current = true;
     setBusyId(selected.id);
     setActionError("");
     setNotice("");
@@ -97,6 +100,7 @@ export default function AdminListings() {
     } catch (err) {
       setActionError(translateServerError(err?.message));
     } finally {
+      busyRef.current = false;
       setBusyId(null);
     }
   };
@@ -118,20 +122,30 @@ export default function AdminListings() {
   return (
     <div className="sys-page">
       <AdminPageHead
-        title="Listings"
+        title="Listing"
         subtitle="Moderasi katalog lintas toko — listing ter-suspend otomatis hilang dari katalog publik."
-        pendingCount={counts.suspended}
+        pendingCount={state === "ready" ? counts.suspended : "—"}
         pendingLabel="listing di-suspend"
         onReload={load}
+        loading={state === "loading"}
       />
 
-      {notice && <p className="sys-note sys-note-ok">{notice}</p>}
-      {actionError && <p className="sys-note sys-note-err">⚠ {actionError}</p>}
+      {notice && (
+        <p className="sys-note sys-note-ok" role="status">
+          {notice}
+        </p>
+      )}
+      {actionError && (
+        <p className="sys-note sys-note-err" role="alert">
+          {actionError}
+        </p>
+      )}
 
       <AdminFilters
         ariaLabel="Filter status listing"
         filters={FILTERS}
         counts={counts}
+        countsReady={state === "ready"}
         value={filter}
         onChange={setFilter}
         search={{
@@ -244,7 +258,7 @@ export default function AdminListings() {
                   message={
                     <>
                       Ubah status <strong>{selected.name}</strong> menjadi{" "}
-                      <strong>{confirm.value}</strong>?
+                      <strong>{statusMeta(confirm.value).label}</strong>?
                     </>
                   }
                   hint={`Dieksekusi via RPC admin_set_listing_status dan tercatat di audit log.${
@@ -253,11 +267,12 @@ export default function AdminListings() {
                       : ""
                   }`}
                   busy={busyId === selected.id}
+                  confirmLabel={`Ya, ${confirm.label.toLowerCase()}`}
                   onCancel={() => setConfirm(null)}
                   onConfirm={() =>
                     runAction(
                       () => setListingStatus(selected.id, confirm.value),
-                      `Status listing diubah ke ${confirm.value}.`,
+                      `Status listing diubah ke ${statusMeta(confirm.value).label}.`,
                     )
                   }
                 />

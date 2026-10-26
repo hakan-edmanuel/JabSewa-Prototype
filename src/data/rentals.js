@@ -304,7 +304,7 @@ export async function getActiveDisputes() {
   const { data, error } = await getClient()
     .from('disputes')
     .select(`
-      id, transaction_id, status, reason, description, resolution, created_at,
+      id, transaction_id, status, reason, description, resolution, opened_by, created_at,
       rental_transactions!inner(id, status, start_date, end_date, total, buyer_id, store_id,
         stores(name),
         users!rental_transactions_buyer_id_fkey(full_name, email))
@@ -319,11 +319,15 @@ export async function getActiveDisputes() {
     reason: d.reason,
     description: d.description,
     resolution: d.resolution,
+    // Siapa pembuka sengketa — dibandingkan dengan buyer_id di UI untuk
+    // menampilkan peran (penyewa/pemilik toko). Tidak ada join tambahan.
+    opened_by: d.opened_by || null,
     created_at: d.created_at,
     rental: d.rental_transactions
       ? {
           id: d.rental_transactions.id,
           status: d.rental_transactions.status,
+          buyer_id: d.rental_transactions.buyer_id || null,
           start_date: d.rental_transactions.start_date,
           end_date: d.rental_transactions.end_date,
           total: d.rental_transactions.total,

@@ -1,6 +1,8 @@
 /*
  * Panel daftar admin (list-detail): status muat, error, kosong, dan baris.
  * `renderRow(row)` mengembalikan { avatar, name, sub, meta, status }.
+ * Status muat/error diberi peran aksesibilitas agar pembaca layar tahu
+ * daftar sedang dimuat atau gagal — bukan sekadar teks di tengah panel.
  */
 export default function AdminList({
   ariaLabel,
@@ -17,14 +19,14 @@ export default function AdminList({
   return (
     <section className="sys-list" aria-label={ariaLabel}>
       {state === "loading" && (
-        <div className="sys-empty">
+        <div className="sys-empty" role="status">
           <p>{loadingText}</p>
         </div>
       )}
       {state === "error" && (
-        <div className="sys-empty">
+        <div className="sys-empty" role="alert">
           <p>{error}</p>
-          <button type="button" className="sys-btn sys-btn-ghost" onClick={onReload}>
+          <button type="button" className="sys-btn-ghost" onClick={onReload}>
             Coba lagi
           </button>
         </div>

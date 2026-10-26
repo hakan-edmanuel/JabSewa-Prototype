@@ -11,7 +11,7 @@
  * ============================================================================
  */
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { listStores, setStoreStatus } from "../../../data/admin";
 import { formatDate, initialOf } from "../../../domain/format";
 import { translateServerError, STORE_STATUS_META } from "../../../domain/constants";
@@ -37,6 +37,8 @@ export default function AdminStores() {
   const [actionError, setActionError] = useState("");
   const [notice, setNotice] = useState("");
   const [confirm, setConfirm] = useState(null); // { value, label, danger }
+  // Ref (bukan state) agar dua klik pada tick yang sama tidak mengirim dua RPC.
+  const busyRef = useRef(false);
 
   const load = useCallback(() => {
     setState("loading");
@@ -46,8 +48,8 @@ export default function AdminStores() {
         setRows(data);
         setState("ready");
       })
-      .catch((err) => {
-        setError(err?.message || "Gagal memuat toko.");
+      .catch(() => {
+        setError("Gagal memuat daftar toko. Periksa koneksi, lalu coba lagi.");
         setState("error");
       });
   }, []);
@@ -74,7 +76,8 @@ export default function AdminStores() {
   const selected = rows.find((s) => s.id === selectedId) || null;
 
   const runAction = async (fn, okMessage) => {
-    if (!selected) return;
+    if (!selected || busyRef.current) return;
+    busyRef.current = true;
     setBusyId(selected.id);
     setActionError("");
     setNotice("");
@@ -86,6 +89,7 @@ export default function AdminStores() {
     } catch (err) {
       setActionError(translateServerError(err?.message));
     } finally {
+      busyRef.current = false;
       setBusyId(null);
     }
   };
@@ -110,20 +114,30 @@ export default function AdminStores() {
   return (
     <div className="sys-page">
       <AdminPageHead
-        title="Stores"
+        title="Toko"
         subtitle="Semua toko terdaftar — perubahan status menyinkronkan akses seller (is_seller) dan tercatat di audit log."
-        pendingCount={counts.suspended}
+        pendingCount={state === "ready" ? counts.suspended : "—"}
         pendingLabel="toko di-suspend"
         onReload={load}
+        loading={state === "loading"}
       />
 
-      {notice && <p className="sys-note sys-note-ok">{notice}</p>}
-      {actionError && <p className="sys-note sys-note-err">⚠ {actionError}</p>}
+      {notice && (
+        <p className="sys-note sys-note-ok" role="status">
+          {notice}
+        </p>
+      )}
+      {actionError && (
+        <p className="sys-note sys-note-err" role="alert">
+          {actionError}
+        </p>
+      )}
 
       <AdminFilters
         ariaLabel="Filter status toko"
         filters={FILTERS}
         counts={counts}
+        countsReady={state === "ready"}
         value={filter}
         onChange={setFilter}
       />
@@ -217,16 +231,17 @@ export default function AdminStores() {
                   message={
                     <>
                       Ubah status <strong>{selected.name}</strong> menjadi{" "}
-                      <strong>{confirm.value}</strong>?
+                      <strong>{statusMeta(confirm.value).label}</strong>?
                     </>
                   }
                   hint="Dieksekusi via RPC admin_set_store_status; akses seller owner ikut disinkronkan server, dan aksi ini tercatat di audit log."
                   busy={busyId === selected.id}
+                  confirmLabel={`Ya, ${confirm.label.toLowerCase()}`}
                   onCancel={() => setConfirm(null)}
                   onConfirm={() =>
                     runAction(
                       () => setStoreStatus(selected.id, confirm.value),
-                      `Status toko diubah ke ${confirm.value}.`,
+                      `Status toko diubah ke ${statusMeta(confirm.value).label}.`,
                     )
                   }
                 />

@@ -62,6 +62,14 @@ export const APPLICATION_STATUS_META = {
   [APPLICATION_STATUS.REJECTED]: { label: "Ditolak", className: "is-rejected" },
 };
 
+/** Status sengketa (enum dispute_status). */
+export const DISPUTE_STATUS_META = {
+  open: { label: "Baru dibuka", className: "is-review" },
+  investigating: { label: "Sedang ditinjau", className: "is-review" },
+  resolved: { label: "Diselesaikan", className: "is-approved" },
+  rejected: { label: "Ditolak", className: "is-rejected" },
+};
+
 /** Status toko (enum store_status). */
 export const STORE_STATUS_META = {
   active: { label: "Aktif", className: "is-approved" },
@@ -156,6 +164,7 @@ const SERVER_ERROR_MESSAGES = {
   has_rentals: "Barang punya riwayat transaksi — nonaktifkan saja, jangan dihapus.",
   dispute_exists: "Transaksi ini sudah punya sengketa aktif.",
   dispute_closed: "Sengketa ini sudah selesai.",
+  dispute_not_found: "Sengketa tidak ditemukan.",
   invalid_outcome: "Keputusan sengketa tidak valid.",
   resolution_required: "Resolusi wajib diisi.",
   rental_not_completed: "Review hanya untuk transaksi yang selesai.",
