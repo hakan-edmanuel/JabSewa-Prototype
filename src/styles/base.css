@@ -1,0 +1,437 @@
+/* Dipisah dari app.css (baris 1-503) — urutan cascade dipertahankan. */
+/* ==========================================================================
+   JabSewa Marketplace CSS - Clean, Solid-Color, Human-Designed Rental Platform
+   STRICT RULE: ZERO GRADIENTS ANYWHERE.
+   ========================================================================== */
+
+/* --- Animation on Scroll --- */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
+}
+
+.reveal-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-on-scroll,
+  .reveal-on-scroll.is-visible,
+  * {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }}
+
+/* --- Base Layout --- */
+.page-shell {
+  background: var(--jabsewa-white);
+  color: var(--jabsewa-text);
+  min-height: 100vh;
+}
+
+.container {
+  width: min(1200px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+/* --- Section Headings --- */
+.section-heading {
+  margin-bottom: 32px;
+}
+
+.section-heading h2 {
+  font-size: clamp(1.3rem, 2vw, 1.6rem);
+  line-height: 1.28;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  color: var(--jabsewa-black);
+  margin-top: 4px;
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.eyebrow-dark {
+  color: var(--jabsewa-text-soft);
+}
+
+.split-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.split-heading h2 {
+  max-width: 620px;
+}
+
+.section-kicker {
+  color: var(--jabsewa-text-soft);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.featured-explore-link {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--jabsewa-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.15s ease;
+}
+
+.featured-explore-link:hover {
+  color: var(--jabsewa-blue-deep);
+  text-decoration: underline;
+}
+
+/* --- Buttons --- */
+.primary-button,
+.secondary-button{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  border-radius: 8px;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.primary-button {
+  background: var(--jabsewa-primary);
+  color: var(--jabsewa-white);
+  padding: 11px 22px;
+  font-size: 0.92rem;
+}
+
+.primary-button:hover {
+  background: var(--jabsewa-blue-deep);
+}
+
+.secondary-button {
+  background: var(--jabsewa-white);
+  border: 1px solid var(--jabsewa-border);
+  color: var(--jabsewa-black);
+  padding: 11px 22px;
+  font-size: 0.92rem;
+}
+
+.secondary-button:hover {
+  background: var(--jabsewa-soft);
+  border-color: var(--jabsewa-border-strong);
+}
+
+/* --- Main Navbar --- */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--jabsewa-white);
+  border-bottom: 1px solid var(--jabsewa-border);
+}
+
+.navbar-container {
+  width: min(1200px, calc(100% - 40px));
+  margin: 0 auto;
+  min-height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.logo-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.logo-image {
+  width: 38px;
+  height: 38px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--jabsewa-border);
+}
+
+.logo-text {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--jabsewa-black);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  flex: 1;
+}
+
+.nav-link {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--jabsewa-text-soft);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px 0;
+  transition: color 0.15s ease;
+}
+
+.nav-link:hover {
+  color: var(--jabsewa-primary);
+}
+
+.nav-buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-login {
+  background: transparent;
+  color: var(--jabsewa-black);
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 9px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--jabsewa-border);
+  transition: background 0.15s ease;
+}
+
+.nav-login:hover {
+  background: var(--jabsewa-soft);
+}
+
+/* --- Hero Section --- */
+.hero-section {
+  padding: 40px 0 44px;
+  background: var(--jabsewa-bg);
+  border-bottom: 1px solid var(--jabsewa-border);
+}
+
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  align-items: center;
+  gap: 48px;
+  width: min(1200px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.hero-copy {
+  max-width: 620px;
+}
+
+.hero-copy h1 {
+  font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  color: var(--jabsewa-black);
+}
+
+.hero-title-accent {
+  display: block;
+  color: var(--jabsewa-primary);
+}
+
+.hero-subtitle {
+  margin-top: 16px;
+  margin-bottom: 24px;
+  font-size: 1.02rem;
+  line-height: 1.65;
+  color: var(--jabsewa-text-soft);
+}
+
+/* Hero Search Box */
+.hero-search-container {
+  display: flex;
+  align-items: center;
+  background: var(--jabsewa-white);
+  border: 1.5px solid var(--jabsewa-black);
+  border-radius: 10px;
+  padding: 4px;
+  gap: 6px;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+}
+
+.hero-search-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+}
+
+.hero-search-main {
+  flex: 1.4;
+  min-width: 0;
+}
+
+.hero-search-city {
+  flex: 0.9;
+  border-left: 1px solid var(--jabsewa-border);
+}
+
+.hero-search-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.92rem;
+  color: var(--jabsewa-black);
+}
+
+.hero-search-input::placeholder {
+  color: var(--text-faint);
+}
+
+.hero-search-select {
+  width: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--jabsewa-black);
+  cursor: pointer;
+}
+
+.hero-search-submit {
+  padding: 12px 22px;
+  font-size: 0.92rem;
+  white-space: nowrap;
+}
+
+/* Quick Tags */
+.hero-quick-tags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.quick-tag-label {
+  font-size: 0.8rem;
+  color: var(--jabsewa-text-soft);
+  font-weight: 600;
+}
+
+.quick-tag-pill {
+  background: var(--jabsewa-soft);
+  border: 1px solid var(--jabsewa-border);
+  color: var(--jabsewa-text);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.quick-tag-pill:hover {
+  background: var(--jabsewa-placeholder);
+  border-color: var(--jabsewa-border-strong);
+}
+
+/* Hero visual — ditata di bagian DESIGN SYSTEM v4 di akhir file */
+
+/* --- Category Section --- */
+.category-section {
+  padding: 72px 0;
+  background: var(--jabsewa-soft);
+  border-bottom: 1px solid var(--jabsewa-border);
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.category-card {
+  background: var(--jabsewa-white);
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition:
+    border-color 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.category-card:hover {
+  border-color: var(--jabsewa-primary);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+}
+
+.category-image-container {
+  position: relative;
+  height: 160px;
+  background: var(--jabsewa-placeholder);
+}
+
+.category-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.category-card-content {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.category-name {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--jabsewa-black);
+}
+
+.category-desc {
+  font-size: 0.82rem;
+  color: var(--jabsewa-text-soft);
+  line-height: 1.45;
+  margin-bottom: 14px;
+}
+
+.category-card-link {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--jabsewa-primary);
+  padding-top: 10px;
+  border-top: 1px solid var(--jabsewa-line-soft);
+}

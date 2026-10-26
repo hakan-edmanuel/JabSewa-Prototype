@@ -89,7 +89,7 @@ CREATE POLICY storage_listing_images_insert ON storage.objects
       SELECT 1
       FROM public.listings l
       JOIN public.stores s ON s.id = l.store_id
-      WHERE l.id::text = split_part(name, '/', 2)
+      WHERE l.id::text = split_part(storage.objects.name, '/', 2)
         AND s.owner_id = auth.uid()
     )
   );
@@ -103,7 +103,7 @@ CREATE POLICY storage_listing_images_update ON storage.objects
       SELECT 1
       FROM public.listings l
       JOIN public.stores s ON s.id = l.store_id
-      WHERE l.id::text = split_part(name, '/', 2)
+      WHERE l.id::text = split_part(storage.objects.name, '/', 2)
         AND s.owner_id = auth.uid()
     )
   )
@@ -113,7 +113,7 @@ CREATE POLICY storage_listing_images_update ON storage.objects
       SELECT 1
       FROM public.listings l
       JOIN public.stores s ON s.id = l.store_id
-      WHERE l.id::text = split_part(name, '/', 2)
+      WHERE l.id::text = split_part(storage.objects.name, '/', 2)
         AND s.owner_id = auth.uid()
     )
   );
@@ -127,7 +127,7 @@ CREATE POLICY storage_listing_images_delete ON storage.objects
       SELECT 1
       FROM public.listings l
       JOIN public.stores s ON s.id = l.store_id
-      WHERE l.id::text = split_part(name, '/', 2)
+      WHERE l.id::text = split_part(storage.objects.name, '/', 2)
         AND s.owner_id = auth.uid()
     )
   );
@@ -147,7 +147,7 @@ CREATE POLICY storage_payment_proofs_insert ON storage.objects
     AND EXISTS (
       SELECT 1
       FROM public.rental_transactions r
-      WHERE r.id::text = split_part(name, '/', 2)
+      WHERE r.id::text = split_part(storage.objects.name, '/', 2)
         AND r.buyer_id = auth.uid()
     )
   );
@@ -161,7 +161,7 @@ CREATE POLICY storage_payment_proofs_select ON storage.objects
       SELECT 1
       FROM public.rental_transactions r
       LEFT JOIN public.stores s ON s.id = r.store_id
-      WHERE r.id::text = split_part(name, '/', 2)
+      WHERE r.id::text = split_part(storage.objects.name, '/', 2)
         AND (
           r.buyer_id = auth.uid()
           OR public.is_admin()

@@ -1,0 +1,274 @@
+/* Dipisah dari app.css (baris 504-997) — urutan cascade dipertahankan. */
+/* --- Featured Listings / Rental Cards --- */
+.featured-section {
+  padding: 80px 0;
+  background: var(--jabsewa-white);
+  border-bottom: 1px solid var(--jabsewa-border);
+}
+
+.listing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.listing-card {
+  background: var(--jabsewa-white);
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition:
+    border-color 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.listing-card:hover {
+  border-color: var(--jabsewa-primary);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.07);
+}
+
+.listing-image-wrap {
+  position: relative;
+  height: 200px;
+  background: var(--jabsewa-placeholder);
+}
+
+.listing-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.listing-status-tag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #15803d;
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.listing-body {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.listing-location {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--jabsewa-text-soft);
+}
+
+.listing-title {
+  font-size: 1.08rem;
+  font-weight: 800;
+  color: var(--jabsewa-black);
+  line-height: 1.32;
+  margin-bottom: 6px;
+}
+
+.listing-bottom {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+}
+
+.listing-price {
+  font-size: 1.22rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--jabsewa-primary);
+}
+
+.listing-period {
+  font-size: 0.75rem;
+  color: var(--jabsewa-text-soft);
+  font-weight: 600;
+}
+
+.listing-action-btn {
+  padding: 8px 16px;
+  font-size: 0.84rem;
+}
+
+/* --- How It Works --- */
+.how-section {
+  padding: 80px 0;
+  background: var(--jabsewa-white);
+  border-bottom: 1px solid var(--jabsewa-border);
+}
+
+.how-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.step-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--jabsewa-black);
+  margin-bottom: 8px;
+}
+
+.step-description {
+  font-size: 0.86rem;
+  color: var(--jabsewa-text-soft);
+  line-height: 1.6;
+  margin-bottom: 18px;
+}
+/* --- Seller CTA Box --- */
+.seller-cta {
+  padding: 80px 0;
+  background: var(--jabsewa-white);
+}
+
+.seller-cta-box {
+  background: var(--jabsewa-ink);
+  color: #ffffff;
+  border-radius: 16px;
+  padding: 48px;
+  display: grid;
+  grid-template-columns: 1.3fr 0.9fr;
+  align-items: center;
+  gap: 40px;
+}
+
+.seller-cta-title {
+  font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.22;
+  margin-bottom: 12px;
+}
+
+.seller-cta-desc {
+  font-size: 0.94rem;
+  color: var(--text-faint);
+  line-height: 1.65;
+  margin-bottom: 24px;
+}
+
+.seller-cta-btn {
+  background: var(--jabsewa-primary);
+  color: #ffffff;
+  padding: 13px 20px;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.seller-cta-btn:hover {
+  background: var(--jabsewa-blue-deep);
+}
+
+.action-card-footnote {
+  font-size: 0.72rem;
+  color: var(--jabsewa-text-soft);
+  margin-top: 10px;
+}
+
+/* --- Main Footer --- */
+.footer {
+  background: var(--jabsewa-ink);
+  color: #ffffff;
+  padding: 56px 0 28px;
+  border-top: 1px solid var(--jabsewa-dark-border);
+}
+
+.footer-inner {
+  width: min(1200px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 36px;
+  margin-bottom: 40px;
+}
+
+.footer-brand p {
+  font-size: 0.84rem;
+  color: var(--text-faint);
+  line-height: 1.65;
+  margin-top: 12px;
+  margin-bottom: 18px;
+  max-width: 320px;
+}
+
+.footer-logo .logo-text {
+  color: #ffffff;
+}
+
+.footer-column h4 {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--jabsewa-text-soft);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.footer-column ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-column a,
+.footer-column span {
+  font-size: 0.82rem;
+  color: var(--text-faint);
+  transition: color 0.15s ease;
+}
+
+.footer-column a:hover {
+  color: #ffffff;
+}
+
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 24px;
+  border-top: 1px solid var(--jabsewa-dark-border);
+  font-size: 0.78rem;
+  color: var(--jabsewa-text-soft);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-bottom-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-bottom-links a {
+  color: var(--text-faint);
+}
+
+.footer-bottom-links a:hover {
+  color: #ffffff;
+}
+
+/* ==================== STRUCTURED FOOTER (CONSUMER) ==================== */

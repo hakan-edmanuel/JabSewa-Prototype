@@ -1,0 +1,426 @@
+/* Dipisah dari app.css (baris 3991-4454) — urutan cascade dipertahankan. */
+/* ==================== BUYER DASHBOARD (MODE PENYEWA) ==================== */
+.page-buyer-shell {
+  background: var(--jabsewa-bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.buyer-page {
+  flex: 1;
+  width: min(1100px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 40px 0 64px;
+}
+
+.buyer-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+
+.buyer-kicker {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--jabsewa-primary);
+  margin-bottom: 8px;
+}
+
+.buyer-head h1 {
+  font-size: clamp(1.6rem, 3vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.buyer-head p {
+  color: var(--jabsewa-text-soft);
+  font-size: 0.92rem;
+  margin-top: 6px;
+}
+
+.buyer-section {
+  background: var(--jabsewa-white);
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.buyer-section-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.buyer-section-head h2 {
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.buyer-count {
+  background: var(--jabsewa-soft);
+  color: var(--jabsewa-text-soft);
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 2px 10px;
+  border-radius: 999px;
+}
+
+.buyer-rental-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.buyer-rental-card {
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.buyer-rental-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.buyer-rental-top h3 {
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+
+.buyer-rental-top p {
+  font-size: 0.82rem;
+  color: var(--jabsewa-text-soft);
+  margin-top: 2px;
+}
+
+.buyer-rental-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--jabsewa-border-strong);
+  font-size: 0.85rem;
+  color: var(--jabsewa-text-soft);
+}
+
+.buyer-rental-meta strong {
+  color: var(--jabsewa-black);
+  font-size: 0.95rem;
+}
+
+/* Timeline status rental — data-driven dari rentalTimeline.js (tanpa langkah
+   dummy: status di luar progres normal tampil via badge meta di kanan) */
+.rental-timeline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--jabsewa-border-strong);
+}
+
+.rental-timeline-steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  flex: 1;
+  min-width: 0;
+}
+
+.rental-timeline-step {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  color: var(--jabsewa-text-soft);
+  font-size: 0.78rem;
+}
+
+.rental-timeline-step + .rental-timeline-step {
+  padding-left: 8px;
+}
+
+.rental-timeline-step::before {
+  content: "";
+  flex: 1;
+  height: 2px;
+  background: var(--jabsewa-border-strong);
+  display: none;
+}
+
+.rental-timeline-dot {
+  width: 10px;
+  height: 10px;
+  min-width: 10px;
+  border-radius: 999px;
+  border: 2px solid var(--jabsewa-border-strong);
+  background: transparent;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.rental-timeline-step.is-reached .rental-timeline-dot {
+  border-color: var(--jabsewa-black);
+}
+
+.rental-timeline-step.is-current .rental-timeline-dot {
+  border-color: var(--jabsewa-black);
+  background: var(--jabsewa-black);
+}
+
+.rental-timeline-step.is-current {
+  color: var(--jabsewa-black);
+  font-weight: 600;
+}
+
+.rental-timeline-step:last-child {
+  flex: 0 0 auto;
+}
+
+.rental-timeline.is-cancelled .rental-timeline-step {
+  opacity: 0.45;
+}
+
+.rental-timeline.is-cancelled .rental-timeline-step:first-child {
+  opacity: 1;
+}
+
+@media (max-width: 560px) {
+  .rental-timeline {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .rental-timeline-steps {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .rental-timeline-label {
+    display: none;
+  }
+
+  .rental-timeline-step:first-child .rental-timeline-label {
+    display: inline;
+  }
+
+  .rental-timeline-step:last-child .rental-timeline-label {
+    display: inline;
+  }}
+
+.buyer-empty {
+  padding: 28px 12px;
+  text-align: center;
+}
+
+.buyer-empty p {
+  color: var(--jabsewa-text);
+  font-size: 0.92rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.buyer-empty .buyer-empty-sub {
+  color: var(--jabsewa-text-soft);
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+
+.buyer-empty .primary-button {
+  margin-top: 16px;
+}
+
+.buyer-wish-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.buyer-wish-card {
+  display: flex;
+  gap: 12px;
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.buyer-wish-thumb {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  font-size: 1.8rem;
+  background: var(--jabsewa-soft);
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 8px;
+}
+
+.buyer-wish-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.buyer-wish-info h3 {
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.buyer-wish-info p {
+  font-size: 0.8rem;
+  color: var(--jabsewa-text-soft);
+}
+
+.buyer-wish-price {
+  font-weight: 800;
+  color: var(--jabsewa-black);
+}
+
+.buyer-wish-price small {
+  font-weight: 600;
+  color: var(--jabsewa-text-soft);
+}
+
+.buyer-wish-info .btn-small {
+  margin-top: 6px;
+}
+
+.buyer-cta-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  background: var(--jabsewa-black);
+  border-radius: 14px;
+  padding: 28px;
+}
+
+.buyer-cta-strip h2 {
+  color: var(--jabsewa-white);
+  font-size: 1.2rem;
+}
+
+.buyer-cta-strip p {
+  color: #a9b1b8;
+  font-size: 0.88rem;
+  margin-top: 4px;
+}
+
+/* ==================== SELLER ONBOARDING ==================== */
+.onboarding-main {
+  flex: 1;
+  width: min(720px, 100%);
+  margin: 0 auto;
+  padding: 48px 20px 64px;
+}
+
+.onboarding-card {
+  background: var(--jabsewa-white);
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 14px;
+  padding: 36px;
+}
+
+.onboarding-card h1 {
+  font-size: clamp(1.5rem, 3vw, 1.9rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 10px;
+}
+
+.onboarding-lede {
+  font-size: 0.93rem;
+  line-height: 1.6;
+  color: var(--jabsewa-text-soft);
+  max-width: 560px;
+}
+
+@media (max-width: 640px) {
+  .buyer-page {
+    width: min(100%, calc(100% - 24px));
+    padding: 28px 0 48px;
+  }
+
+  .buyer-section {
+    padding: 18px 14px;
+  }
+
+  .buyer-wish-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .buyer-cta-strip {
+    padding: 22px 18px;
+  }
+
+  .onboarding-main {
+    padding: 32px 16px 48px;
+  }
+
+  .onboarding-card {
+    padding: 24px 18px;
+  }}
+
+/* Seller navbar: ringkas di layar kecil */
+@media (max-width: 768px) {
+  .seller-store-name {
+    display: none;
+  }}
+
+@media (max-width: 480px) {
+  .seller-navbar .nav-mode-btn {
+    padding: 6px 8px;
+    font-size: 0.72rem;
+  }}
+
+/* ==========================================================================
+   DESIGN SYSTEM v2 — ACTIVE NAV, SELLER CTA, PROFILE
+   ========================================================================== */
+
+/* Active nav link → biru primary */
+.nav-link.is-active {
+  color: var(--jabsewa-primary);
+  font-weight: 700;
+}
+
+/* CTA seller = ink band button; hover flips to the #1DCED8 accent */
+.seller-cta-btn {
+  background: var(--jabsewa-ink) !important;
+  color: #ffffff !important;
+}
+
+.seller-cta-btn:hover {
+  background: var(--jabsewa-primary) !important;
+  color: var(--jabsewa-ink) !important;
+}
+
+.onboarding-form .auth-submit-btn {
+  background: var(--jabsewa-accent);
+  color: var(--jabsewa-black);
+}
+
+.onboarding-form .auth-submit-btn:hover {
+  background: var(--jabsewa-accent-deep);
+  color: var(--jabsewa-black);
+}

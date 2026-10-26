@@ -1,0 +1,183 @@
+/* Dipisah dari app.css (baris 2870-3069) — urutan cascade dipertahankan. */
+/* ==================== STATIC / AUTH PAGES ==================== */
+.page-about-shell,
+.page-auth-shell {
+  background: var(--jabsewa-bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.about-page-main,
+.auth-page-main {
+  flex: 1;
+  padding: 48px 20px;
+  width: min(800px, 100%);
+  margin: 0 auto;
+}
+
+.about-page-card,
+.auth-card {
+  background: #ffffff;
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 14px;
+  padding: 36px;
+}
+
+/* ==================== LEGAL / INFO PAGES (Terms, Privacy) ====================
+   Pola sama dengan halaman statis (about): SimpleNavbar → kartu → Footer.
+   Zero gradients — ikuti color system JabSewa. */
+.page-legal-shell {
+  background: var(--jabsewa-bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.legal-page-main {
+  flex: 1;
+  padding: 48px 20px 72px;
+  width: min(800px, 100%);
+  margin: 0 auto;
+}
+
+.legal-card {
+  background: #ffffff;
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 14px;
+  padding: 36px;
+}
+
+.legal-header h1 {
+  font-size: clamp(1.7rem, 3vw, 2.2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--jabsewa-black);
+}
+
+.legal-updated {
+  font-size: 0.82rem;
+  color: var(--jabsewa-text-soft);
+  margin-top: 12px;
+}
+
+.legal-toc {
+  margin-top: 28px;
+  padding: 18px 20px;
+  background: var(--jabsewa-soft);
+  border: 1px solid var(--jabsewa-line-soft);
+  border-radius: 10px;
+}
+
+.legal-toc-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--jabsewa-text-soft);
+  margin-bottom: 10px;
+}
+
+.legal-toc ol {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 6px;
+}
+
+.legal-toc a {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--jabsewa-primary-text);
+}
+
+.legal-toc a:hover {
+  text-decoration: underline;
+}
+
+.legal-section {
+  padding-top: 32px;
+  border-top: 1px solid var(--jabsewa-border);
+  margin-top: 32px;
+}
+
+.legal-body > .legal-section:first-child {
+  border-top: none;
+  margin-top: 0;
+}
+
+.legal-section h2 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--jabsewa-black);
+  margin-bottom: 10px;
+}
+
+.legal-section p {
+  font-size: 0.93rem;
+  line-height: 1.75;
+  color: var(--jabsewa-text);
+  margin-bottom: 12px;
+  max-width: 640px;
+}
+
+.legal-section p:last-child {
+  margin-bottom: 0;
+}
+
+.legal-section ul {
+  margin: 0 0 12px;
+  padding-left: 20px;
+  display: grid;
+  gap: 8px;
+}
+
+.legal-section li {
+  font-size: 0.93rem;
+  line-height: 1.7;
+  color: var(--jabsewa-text);
+}
+
+.legal-section strong {
+  color: var(--jabsewa-black);
+}
+
+.legal-placeholder {
+  font-weight: 700;
+  color: var(--jabsewa-text-soft);
+  background: var(--jabsewa-soft);
+  border: 1px dashed var(--jabsewa-border-strong);
+  border-radius: 6px;
+  padding: 2px 8px;
+}
+
+.legal-back {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--jabsewa-border);
+}
+
+.legal-back a {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--jabsewa-primary-text);
+}
+
+.legal-back a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  .legal-page-main {
+    padding: 32px 16px 56px;
+  }
+
+  .legal-card {
+    padding: 24px 18px;
+  }
+
+  .legal-section {
+    padding-top: 26px;
+    margin-top: 26px;
+  }}

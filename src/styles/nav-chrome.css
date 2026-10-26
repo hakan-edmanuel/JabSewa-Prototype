@@ -1,0 +1,243 @@
+/* Dipisah dari app.css (baris 3746-3990) — urutan cascade dipertahankan. */
+/* ==========================================================================
+   FLOW v2 — AUTH-AWARE NAV, MOBILE MENU, MODE SWITCH, BUYER, ONBOARDING
+   ========================================================================== */
+
+/* --- Hamburger (mobile) --- */
+.nav-mobile-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 40px;
+  height: 40px;
+  padding: 10px;
+  background: var(--jabsewa-soft);
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.nav-mobile-toggle span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background: var(--jabsewa-black);
+  border-radius: 2px;
+}
+
+.nav-mobile-panel {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .nav-mobile-toggle {
+    display: inline-flex;
+  }
+
+  .nav-mobile-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 16px 18px;
+    background: var(--jabsewa-white);
+    border-bottom: 1px solid var(--jabsewa-border);
+  }
+
+  .nav-mobile-panel .nav-link,
+  .nav-mobile-panel .nav-menu-item {
+    text-align: left;
+    width: 100%;
+    padding: 12px 8px;
+    font-size: 0.95rem;
+    border-bottom: 1px solid var(--jabsewa-border);
+  }
+
+  .nav-mobile-panel .nav-login {
+    display: inline-flex !important;
+    width: 100%;
+    justify-content: center;
+    margin-top: 8px;
+  }
+
+  .nav-buttons,
+  .consumer-navbar-actions {
+    display: none;
+  }}
+
+/* Consumer navbar: menu desktop sudah disembunyikan di <768px,
+   jadi hamburger + panel aktif lebih awal. */
+@media (max-width: 768px) {
+  .consumer-navbar .nav-mobile-toggle {
+    display: inline-flex;
+  }
+
+  .consumer-navbar .nav-mobile-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 16px 18px;
+    background: var(--jabsewa-white);
+    border-bottom: 1px solid var(--jabsewa-border);
+  }
+
+  .consumer-navbar .nav-mobile-panel .nav-link,
+  .consumer-navbar .nav-mobile-panel .nav-menu-item {
+    text-align: left;
+    width: 100%;
+    padding: 12px 8px;
+    font-size: 0.95rem;
+    border-bottom: 1px solid var(--jabsewa-border);
+  }
+
+  .consumer-navbar .nav-mobile-panel .nav-login {
+    display: inline-flex !important;
+    width: 100%;
+    justify-content: center;
+    margin-top: 8px;
+  }
+
+  .consumer-navbar .consumer-navbar-actions {
+    display: none;
+  }}
+
+/* --- Mode switch Penyewa / Seller --- */
+.nav-mode-switch {
+  display: inline-flex;
+  align-items: center;
+  background: var(--jabsewa-soft);
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.nav-mode-btn {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--jabsewa-text-soft);
+  background: transparent;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.nav-mode-btn:hover {
+  color: var(--jabsewa-black);
+}
+
+.nav-mode-btn.is-active {
+  background: var(--jabsewa-light-blue);
+  color: var(--jabsewa-primary-text);
+  box-shadow: none;
+}
+
+.nav-mode-switch-mobile {
+  width: 100%;
+  margin: 6px 0;
+}
+
+.nav-mode-switch-mobile .nav-mode-btn {
+  flex: 1;
+  text-align: center;
+}
+
+/* --- CTA seller di navbar --- */
+.nav-seller-cta {
+  background: var(--jabsewa-accent);
+  color: var(--jabsewa-black);
+  font-size: 0.85rem;
+  font-weight: 800;
+  padding: 9px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.nav-seller-cta:hover {
+  background: var(--jabsewa-ink-2);
+}
+
+.nav-link-accent {
+  color: var(--jabsewa-primary-text) !important;
+  font-weight: 700;
+}
+
+.nav-link-danger {
+  color: #dc2626 !important;
+}
+
+/* --- User menu (profil) --- */
+.user-menu {
+  position: relative;
+}
+
+.profile-btn.avatar-initial {
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--jabsewa-black);
+}
+
+.profile-dropdown-menu.is-open {
+  display: flex;
+}
+
+.seller-store-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--jabsewa-text-soft);
+}
+
+/* --- CTA teks di consumer navbar --- */
+.consumer-nav-action {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--jabsewa-text-soft);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px 0;
+  transition: color 0.15s ease;
+}
+
+.consumer-nav-action:hover {
+  color: var(--jabsewa-primary);
+}
+
+.consumer-nav-accent {
+  color: var(--jabsewa-primary);
+}
+
+/* --- Auth page: intent note & error --- */
+.auth-context-note {
+  background: var(--jabsewa-accent-soft);
+  border: 1px solid #f0e0a8;
+  color: var(--jabsewa-black);
+  font-size: 0.84rem;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 18px;
+  line-height: 1.5;
+}
+
+.auth-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  font-size: 0.84rem;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 14px;
+}
+
+.auth-demo-note {
+  margin-top: 14px;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--text-faint);
+  text-align: center;
+}

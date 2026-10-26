@@ -1,0 +1,16 @@
+/*
+ * app.css — pintu masuk CSS aplikasi.
+ * Isi dipecah per area; urutan @import di bawah = urutan cascade asli (dulu satu file 7.114 baris).
+ * Jangan mengubah urutan tanpa memeriksa ulang tampilan: lapisan akhir sengaja menimpa lapisan awal.
+ */
+@import "./base.css";
+@import "./landing.css";
+@import "./seller-form.css";
+@import "./marketplace.css";
+@import "./seller.css";
+@import "./content-pages.css";
+@import "./auth-about.css";
+@import "./nav-chrome.css";
+@import "./buyer.css";
+@import "./profile.css";
+@import "./design-system.css";

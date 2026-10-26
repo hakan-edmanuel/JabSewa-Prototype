@@ -1,0 +1,1717 @@
+/* Dipisah dari app.css (baris 4773-7114) — urutan cascade dipertahankan. */
+/* ==========================================================================
+   DESIGN SYSTEM v4 — FINAL PASS
+   Palet: #091540 fondasi · #1B2CC1 interaksi · #FFD758 aksen · #000 footer
+   Tanpa gradien, tanpa glow, tanpa dekorasi.
+   ========================================================================== */
+
+/* --- Landing hero: dua kolom seimbang, satu titik fokus visual --- */
+.hero-inner {
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 64px;
+}
+
+.hero-copy h1 {
+  font-size: clamp(1.7rem, 3vw, 2.35rem);
+  line-height: 1.18;
+}
+
+.hero-title-accent {
+  color: var(--jabsewa-primary);
+}
+
+.hero-showcase {
+  position: relative;
+  align-self: center;
+}
+
+.hero-visual {
+  margin: 0;
+  background: var(--jabsewa-white);
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(9, 21, 64, 0.07);
+}
+
+.hero-visual-img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+}
+
+.hero-visual-caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 18px;
+  border-top: 1px solid var(--jabsewa-border);
+}
+
+.hero-visual-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.hero-visual-info strong {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--jabsewa-black);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hero-visual-info span {
+  font-size: 0.78rem;
+  color: var(--jabsewa-text-soft);
+}
+
+.hero-visual-price {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.hero-visual-price strong {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--jabsewa-primary);
+}
+
+.hero-visual-price span {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--jabsewa-text-soft);
+}
+
+@media (max-width: 980px) {
+  .hero-inner {
+    gap: 36px;
+  }}
+
+@media (max-width: 640px) {
+  .hero-visual-img {
+    aspect-ratio: 16 / 10;
+  }}
+
+/* Phone layout: keep every primary surface inside the viewport. */
+@media (max-width: 640px) {
+  .container,
+  .hero-inner,
+  .navbar-container,
+  .consumer-navbar-container,
+  .seller-navbar-container,
+  .seller-container {
+    width: min(100%, calc(100% - 24px));
+  }
+
+  .hero-inner,
+  .hero-copy,
+  .hero-showcase,
+  .hero-visual,
+  .consumer-main,
+  .consumer-browser,
+  .seller-content {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .hero-inner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hero-showcase {
+    max-width: 100%;
+  }
+
+  .hero-visual-caption {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    padding: 12px 14px;
+  }
+
+  .hero-visual-info {
+    flex: 1 1 150px;
+  }
+
+  .hero-visual-price {
+    flex: 0 1 auto;
+  }
+
+  .navbar-container,
+  .consumer-navbar-container,
+  .seller-navbar-container {
+    min-height: 60px;
+    gap: 10px;
+  }
+
+  .logo-button,
+  .consumer-logo-button,
+  .seller-logo-button {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .logo-text,
+  .consumer-brand,
+  .seller-brand {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .nav-mobile-toggle {
+    flex: 0 0 40px;
+  }
+
+  .hero-search-container,
+  .consumer-search-container {
+    width: 100%;
+  }
+
+  .hero-search-container {
+    align-items: stretch;
+  }
+
+  .hero-search-field {
+    min-width: 0;
+  }
+
+  .hero-search-input,
+  .hero-search-select {
+    min-width: 0;
+  }
+
+  .consumer-search-container {
+    padding-left: 10px;
+  }
+
+  .consumer-search-btn {
+    flex: 0 0 auto;
+    min-height: 40px;
+    padding-inline: 14px;
+  }
+
+  .section-heading.split-heading {
+    align-items: flex-start;
+  }
+
+  .listing-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  .featured-explore-link {
+    min-height: 40px;
+  }
+
+  .listing-card,
+  .category-card,
+  .browser-item-card {
+    min-width: 0;
+  }
+
+  .listing-image-wrap {
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+
+  .listing-bottom,
+  .browser-item-footer {
+    align-items: center;
+    gap: 10px;
+  }
+
+  .listing-action-btn,
+  .btn-add-cart {
+    min-height: 40px;
+    white-space: nowrap;
+  }
+
+  .consumer-hero {
+    padding: 28px 12px 24px;
+  }
+
+  .consumer-hero-title {
+    font-size: clamp(1.4rem, 7vw, 1.75rem);
+    line-height: 1.18;
+  }
+
+  .consumer-main {
+    display: block;
+  }
+
+  .consumer-filters {
+    padding: 16px 12px;
+  }
+
+  .filters-container {
+    padding: 0;
+  }
+
+  .consumer-browser {
+    padding: 22px 12px 32px;
+  }
+
+  .browser-header {
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .items-browser-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  .item-badge-container {
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+
+  .browser-item-info {
+    padding: 14px;
+  }
+
+  .browser-item-footer {
+    flex-wrap: wrap;
+  }
+
+  .browser-item-footer .btn-add-cart {
+    margin-left: auto;
+  }
+
+  .product-detail {
+    padding: 24px 12px 40px;
+  }
+
+  .product-detail-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .product-main-image {
+    height: auto;
+    aspect-ratio: 4 / 3;
+  }
+
+  .date-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .date-grid input {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .rental-panel {
+    position: static;
+    padding: 18px;
+  }
+
+  /* Seller navbar: sembunyikan mode switch & nama toko saja — UserMenu
+     (profil/keluar) TETAP tampil agar logout tetap bisa di mobile. */
+  .seller-navbar-actions .nav-mode-switch,
+  .seller-navbar-actions .seller-store-name {
+    display: none;
+  }
+
+  .seller-container {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    padding: 16px 0 40px;
+  }
+
+  .seller-sidebar {
+    position: static;
+    padding: 8px;
+  }
+
+  .seller-menu {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .seller-menu-item {
+    justify-content: center;
+    padding: 10px 6px;
+    text-align: center;
+    min-height: 44px;
+  }
+  .items-grid,
+  .quick-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .dashboard-section{
+    padding: 16px;
+  }
+
+  .items-filters,
+  .orders-filters,
+  .orders-summary {
+    width: 100%;
+  }
+
+  .items-filters,
+  .orders-filters {
+    align-items: stretch;
+  }
+
+  .orders-summary {
+    flex-wrap: wrap;
+  }
+
+  .summary-item {
+    flex: 1 1 33%;
+    padding: 10px 12px;
+  }
+
+  .action-btn {
+    min-height: 48px;
+  }
+
+  .form-actions-footer,
+  .order-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .form-actions-footer > *,
+  .order-actions > * {
+    width: 100%;
+  }}
+
+/* --- Kartu listing: ringkas, fokus informasi --- */
+.listing-image-wrap {
+  padding: 0;
+  border: none;
+  background: var(--jabsewa-placeholder);
+  cursor: pointer;
+  width: 100%;
+  display: block;
+}
+
+.listing-category {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--jabsewa-text-soft);
+  margin-bottom: 4px;
+}
+
+.listing-location {
+  font-size: 0.8rem;
+  color: var(--jabsewa-text-soft);
+  margin-bottom: 14px;
+}
+
+.listing-card:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.listing-card:hover .listing-image {
+  opacity: 0.92;
+}
+
+/* --- CTA seller: satu band, tanpa kartu aksi --- */
+.seller-cta-box {
+  grid-template-columns: 1.4fr 0.6fr;
+  gap: 32px;
+  padding: 40px 44px;
+  border-radius: 12px;
+}
+
+.seller-cta-title {
+  font-size: clamp(1.3rem, 2.2vw, 1.7rem);
+  line-height: 1.25;
+  margin-bottom: 10px;
+}
+
+.seller-cta-title-accent {
+  display: block;
+  color: var(--jabsewa-primary);
+}
+
+.seller-cta-desc {
+  margin-bottom: 0;
+  max-width: 440px;
+}
+
+.seller-cta-action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.seller-cta-action .action-card-footnote {
+  color: #8b93a7;
+  margin-top: 0;
+}
+
+.seller-cta-btn {
+  width: auto;
+  white-space: nowrap;
+}
+
+@media (max-width: 980px) {
+  .seller-cta-box {
+    grid-template-columns: 1fr;
+    padding: 32px 28px;
+  }}
+
+/* --- Detail barang: fakta barang + aksesibilitas status --- */
+.detail-availability {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--jabsewa-text-soft);
+  margin-bottom: 16px;
+}
+
+.availability-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.availability-dot.is-available {
+  background: #16a34a;
+}
+
+.availability-dot.is-rented {
+  background: var(--text-faint);
+}
+
+.detail-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  padding: 16px 0;
+  border-top: 1px solid var(--jabsewa-border);
+  border-bottom: 1px solid var(--jabsewa-border);
+  margin: 20px 0 24px;
+}
+
+.detail-fact dt {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--jabsewa-text-soft);
+  margin-bottom: 3px;
+}
+
+.detail-fact dd {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--jabsewa-black);
+}
+
+@media (max-width: 640px) {
+  .detail-facts {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }}
+
+/* --- Dashboard seller: daftar praktis, tanpa metrik palsu --- */
+.dashboard-empty-note {
+  font-size: 0.88rem;
+  color: var(--jabsewa-text-soft);
+  padding: 8px 0;
+}
+
+.order-sub {
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 500;
+  color: var(--jabsewa-text-soft);
+  margin-top: 2px;
+}
+
+.dashboard-item-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dashboard-item-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--jabsewa-line-soft);
+}
+
+.dashboard-item-row:last-child {
+  border-bottom: none;
+}
+
+.dashboard-item-thumb {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--jabsewa-border);
+  flex-shrink: 0;
+}
+
+.dashboard-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.dashboard-item-info strong {
+  font-size: 0.9rem;
+  color: var(--jabsewa-black);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dashboard-item-info span {
+  font-size: 0.76rem;
+  color: var(--jabsewa-text-soft);
+}
+
+.dashboard-item-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.dashboard-item-side strong {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--jabsewa-black);
+}
+
+.dash-status {
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.dash-status.is-available {
+  color: #15803d;
+}
+
+.dash-status.is-rented {
+  color: #b45309;
+}
+
+/* --- Seller items: filter bar + form lebar --- */
+.search-box-solid {
+  flex: 1;
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 0.84rem;
+}
+
+.filter-select-solid {
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 0.84rem;
+  background: #ffffff;
+}
+
+.form-wide {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--jabsewa-text);
+}
+
+.form-wide textarea {
+  padding: 10px 12px;
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background: var(--jabsewa-soft);
+  color: var(--jabsewa-black);
+  font-family: inherit;
+  resize: vertical;
+}
+
+/* --- Nomor langkah (onboarding seller) --- */
+
+/* --- Footer hitam, final --- */
+.footer {
+  background: #000000;
+  border-top: none;
+  padding: 48px 0 24px;
+}
+
+.footer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-logo-img {
+  width: 34px;
+  height: 34px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.footer-logo .logo-text {
+  color: #ffffff;
+}
+
+.footer-bottom-links span {
+  color: #4b5563;
+}
+
+/* --- Navbar: tombol Daftar (CTA primer) --- */
+.nav-register {
+  background: var(--jabsewa-primary);
+  color: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 9px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--jabsewa-primary);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.nav-register:hover {
+  background: var(--jabsewa-blue-deep);
+}
+
+.nav-mobile-auth {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.nav-mobile-auth .nav-mobile-login {
+  flex: 1;
+  margin-top: 0;
+  display: inline-flex !important;
+  justify-content: center;
+}
+
+.nav-mobile-auth .nav-mobile-register {
+  flex: 1;
+  display: inline-flex;
+  justify-content: center;
+  font-size: 0.85rem;
+}
+
+/* ==========================================================================
+   UI POLISH v5 — INTENTIONAL, EDITORIAL, SLIGHTLY TECHNICAL
+   Hierarchy: #1DCED8 accent · ink text · white/off-white surfaces · gray
+   Accent is a scalpel, not a paint roller. Texture is hairline, not noise.
+   ========================================================================== */
+
+/* --- Texture: technical dot grid for hero + CTA band (accent, barely-there) --- */
+.texture-dots {
+  position: relative;
+}
+
+.texture-dots::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+    rgba(29, 206, 216, 0.13) 1px,
+    transparent 1px
+  );
+  background-size: 22px 22px;
+  pointer-events: none;
+}
+
+.texture-dots > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* --- Global audit: the ONE accent-color audit block for the whole app --- */
+.primary-button:not(.seller-cta-btn),
+.btn-primary-solid,
+.consumer-search-btn,
+.auth-submit-btn,
+.btn-small.btn-primary,
+.nav-register {
+  background: var(--jabsewa-primary);
+  border-color: var(--jabsewa-primary);
+  color: var(--jabsewa-ink);
+}
+
+.primary-button:not(.seller-cta-btn):hover,
+.btn-primary-solid:hover,
+.consumer-search-btn:hover,
+.auth-submit-btn:hover,
+.btn-small.btn-primary:hover,
+.nav-register:hover {
+  background: var(--jabsewa-primary-strong);
+  border-color: var(--jabsewa-primary-strong);
+}
+
+.nav-register {
+  border: 1px solid var(--jabsewa-primary);
+}
+
+/* Text accents, links, icons — always the AA text-teal, never #1DCED8 on white */
+.hero-title-accent,
+.about-intro-kicker,
+.about-kicker,
+.buyer-kicker,
+.step-number,
+.featured-explore-link,
+.back-button,
+.nav-link-accent,
+.consumer-nav-accent,
+.hero-seller-link,
+.link-more,
+.auth-switch-link,
+.hero-visual-price strong,
+.listing-price,
+.browser-item-price,
+.item-price-solid,
+.detail-price-row strong,
+.rental-panel > strong,
+.seller-badge,
+.consumer-nav-menu .nav-menu-item:hover,
+.consumer-nav-action:hover,
+.nav-link:hover,
+.nav-link.is-active,
+.dropdown-item:hover{
+  color: var(--jabsewa-primary-text);
+}
+
+/* Secondary/eyebrow labels stay NEUTRAL — accent only as a small tick mark */
+.eyebrow,
+.about-intro-kicker,
+.about-kicker,
+.buyer-kicker {
+  color: var(--jabsewa-text-soft);
+}
+
+.eyebrow::before,
+.about-intro-kicker::before,
+.about-kicker::before,
+.step-number::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 2px;
+  background: var(--jabsewa-primary);
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+/* --- Forms: gray idle, ink focus ring, teal caret --- */
+.structured-listing-form input:focus,
+.structured-listing-form select:focus,
+.structured-listing-form textarea:focus,
+.auth-input:focus,
+.date-grid input:focus,
+.search-box-solid:focus,
+.filter-select-solid:focus,
+.filter-select:focus,
+.search-box-small:focus{
+  outline: none;
+  border-color: var(--jabsewa-ink);
+  background: var(--jabsewa-white);
+  box-shadow: 0 0 0 3px rgba(29, 206, 216, 0.22);
+  caret-color: var(--jabsewa-primary-text);
+}
+
+.structured-listing-form input,
+.structured-listing-form select,
+.structured-listing-form textarea,
+.auth-input,
+.date-grid input,
+.search-box-solid,
+.filter-select-solid,
+.filter-select,
+.search-box-small{
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+
+.hero-search-container:focus-within,
+.consumer-search-container:focus-within {
+  border-color: var(--jabsewa-ink);
+  box-shadow: 0 0 0 3px rgba(29, 206, 216, 0.22);
+}
+
+/* --- Badges: quiet chips; count/seller badges get the tinted teal only --- */
+.seller-badge,
+.status-badge.status-accepted {
+  background: var(--jabsewa-primary-soft);
+  border: 1px solid var(--jabsewa-primary-line);
+  color: var(--jabsewa-primary-text);
+}
+
+.status-badge.status-accepted {
+  color: var(--jabsewa-primary-text);
+}
+
+/* --- Focus-visible: calm single accent ring, consistent app-wide --- */
+.primary-button:focus-visible,
+.secondary-button:focus-visible,
+.btn-primary-solid:focus-visible,
+.btn-secondary-solid:focus-visible,
+.nav-register:focus-visible,
+.nav-login:focus-visible,
+.nav-seller-cta:focus-visible,
+.consumer-search-btn:focus-visible,
+.auth-submit-btn:focus-visible,
+.btn-small:focus-visible,
+.quick-tag-pill:focus-visible,
+.suggestion-tag:focus-visible,
+.category-card:focus-visible,
+.filter-option:focus-visible,
+.seller-menu-item:focus-visible {
+  outline: 2px solid var(--jabsewa-primary);
+  outline-offset: 2px;
+}
+
+/* Category count pill: tinted teal chip, no saturated fill */
+
+/* ==========================================================================
+   UI POLISH v5 — PASS 2 · COLOR AUDIT (navy/lavender/yellow → new system)
+   Old hardcoded values remapped: #091540→ink, #EDEFF7→line-soft/soft,
+   #E9ECFB/#D5DAF5→primary-soft/primary-line, #1d4ed8→primary-text,
+   #FFD758 yellow → #1DCED8 accent, per role.
+   ========================================================================== */
+
+/* Dark fills: category/listing badges, step badge, avatars, seller menu */
+.about-founder-avatar,
+.seller-menu-item.active,
+.filter-option.active {
+  background: var(--jabsewa-ink);
+  color: #ffffff;
+  border-color: var(--jabsewa-ink);
+}
+
+/* Filter selection: tinted chip + teal border reads better than ink fill */
+.filter-option.active {
+  background: var(--jabsewa-primary-soft) !important;
+  border-color: var(--jabsewa-primary) !important;
+  color: var(--jabsewa-primary-text) !important;
+}
+
+/* Teal-on-white icon squares → neutral gray; active state → tinted teal */
+.profile-btn{
+  background: var(--jabsewa-soft);
+  border-color: var(--jabsewa-border);
+}
+
+.action-btn:hover,
+.seller-menu-item:hover {
+  background: var(--jabsewa-primary-soft);
+  border-color: var(--jabsewa-primary-line);
+}
+
+.action-btn:hover {
+  color: var(--jabsewa-primary-text);
+}
+
+/* Hairline dividers that used lavender #EDEFF7 */
+.category-card-link,
+.browser-item-footer,
+.dashboard-item-row {
+  border-color: var(--jabsewa-line-soft);
+}
+.summary-item,
+.orders-table td {
+  border-color: var(--jabsewa-line-soft);
+}
+
+/* Placeholder image blocks → neutral */
+.item-image-box,
+.item-badge-container{
+  background: var(--jabsewa-placeholder);
+  border-color: var(--jabsewa-border);
+}
+
+/* Yellow seller-CTA → ink band with #1DCED8 accent (single intentional use) */
+.nav-seller-cta,
+.seller-cta-btn,
+.onboarding-form .auth-submit-btn {
+  background: var(--jabsewa-ink);
+  color: #ffffff;
+}
+
+.nav-seller-cta:hover,
+.seller-cta-btn:hover,
+.onboarding-form .auth-submit-btn:hover {
+  background: var(--jabsewa-ink-2);
+  color: #ffffff;
+}
+
+.seller-cta-btn {
+  border: 1px solid var(--jabsewa-ink);
+}
+
+/* Yellow accent marks → #1DCED8 ticks (tiny, decorative-but-systematic) */
+.accent-mark,
+.quick-tag-label::before {
+  background: var(--jabsewa-primary);
+}
+.about-founder-note {
+  border-color: var(--jabsewa-primary);
+}
+
+/* Eyebrow-light on dark band → accent teal */
+
+/* Auth context note: yellow-soft → teal tint */
+.auth-context-note {
+  background: var(--jabsewa-primary-soft);
+  border: 1px solid var(--jabsewa-primary-line);
+  color: var(--jabsewa-text);
+}
+
+/* CTA title accent line on dark band → teal */
+.seller-cta-title-accent {
+  color: var(--jabsewa-primary);
+}
+
+/* Rented/amber chip stays amber (semantic), dot colors unchanged */
+
+/* ==========================================================================
+   UI POLISH v5 — PASS 3 · DE-SLOP LAYOUT + EDITORIAL COMPOSITION
+   ========================================================================== */
+
+/* Landing: alternating surfaces instead of same-white card seas.
+   Off-white band on category; hairline rules between sections. */
+.category-section {
+  background: var(--jabsewa-bg);
+}
+
+.how-section {
+  background: var(--jabsewa-bg);
+}
+
+.featured-section {
+  background: var(--jabsewa-white);
+}
+
+.how-section,
+.featured-section,
+.category-section {
+  border-bottom: none;
+}
+
+/* Featured grid: varied proportions — first card spans 2 columns (editorial) */
+.listing-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.listing-card:first-child {
+  grid-column: span 2;
+}
+
+.listing-card:first-child .listing-image-wrap {
+  height: 260px;
+}
+
+@media (max-width: 980px) {
+  .listing-card:first-child {
+    grid-column: auto;
+  }
+
+  .listing-card:first-child .listing-image-wrap {
+    height: 200px;
+  }}
+
+/* Cards: quieter hover — border shift only, no lift/translate/shadow */
+.category-card:hover,
+.listing-card:hover,
+.browser-item-card:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.listing-card:hover,
+.browser-item-card:hover,
+.category-card:hover {
+  border-color: var(--jabsewa-primary);
+}
+
+.listing-card:hover .listing-image {
+  opacity: 0.92;
+}
+
+/* How-it-works steps: editorial columns with top rule + tick, not cards */
+.how-grid {
+  gap: 32px;
+}
+
+.step-item {
+  border-top: 2px solid var(--jabsewa-ink);
+}
+
+/* Buttons: calmer radius, align with inputs (8px), subtle press state */
+.primary-button,
+.secondary-button,
+.btn-primary-solid,
+.btn-secondary-solid,
+.nav-register,
+.nav-login,
+.consumer-search-btn,
+.auth-submit-btn {
+  border-radius: 8px;
+}
+
+.primary-button:active,
+.btn-primary-solid:active,
+.consumer-search-btn:active,
+.auth-submit-btn:active,
+.nav-register:active {
+  transform: translateY(1px);
+}
+
+/* Section heading: subtitle sits close, tighter editorial rhythm */
+.section-heading {
+  margin-bottom: 36px;
+}
+
+/* Landing hero: slightly tighter, composition over size */
+.hero-section {
+  padding: 48px 0 56px;
+}
+
+/* --- Texture placement: hero + dark CTA band only, nothing else --- */
+.hero-section.texture-dots::before {
+  background-image: radial-gradient(
+    rgba(29, 206, 216, 0.16) 1px,
+    transparent 1px
+  );
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.seller-cta-box.texture-dots::before {
+  background-image: radial-gradient(
+    rgba(29, 206, 216, 0.2) 1px,
+    transparent 1px
+  );
+}
+
+/* Dark CTA band: ink (not navy), technical dot texture, accent title line */
+.seller-cta-box {
+  background: var(--jabsewa-ink);
+}
+
+/* The one saturated accent moment on the landing page: teal CTA on ink band */
+.seller-cta .seller-cta-btn {
+  background: var(--jabsewa-primary) !important;
+  border: 1px solid var(--jabsewa-primary);
+  color: var(--jabsewa-ink) !important;
+}
+
+.seller-cta .seller-cta-btn:hover {
+  background: var(--jabsewa-primary-strong) !important;
+  border-color: var(--jabsewa-primary-strong);
+  color: var(--jabsewa-ink) !important;
+}
+
+.seller-cta-desc {
+  color: #9aa7ae;
+}
+
+.seller-cta-btn:hover {
+  background: #1dced8;
+  color: var(--jabsewa-ink);
+}
+
+/* Footer: near-black ink with hairline rules (was pure #000 + navy border) */
+.footer {
+  background: var(--jabsewa-ink);
+}
+
+/* Hero search: border thick enough to feel intentional, not heavy */
+.hero-search-container,
+.consumer-search-container {
+  border-width: 1.5px;
+}
+
+/* Rating values: neutral amber → ink for hierarchy (accent stays teal) */
+
+/* Consumer page hero: editorial, left-aligned, kicker + tight title */
+.consumer-hero {
+  text-align: left;
+  padding: 36px 20px 30px;
+}
+
+.consumer-hero-content {
+  max-width: 960px;
+  margin: 0;
+}
+
+.consumer-hero-title {
+  text-align: left;
+}
+
+.consumer-search-container {
+  max-width: 640px;
+  margin: 0 0 14px;
+}
+
+.consumer-suggestions {
+  justify-content: flex-start;
+}
+
+/* Prices on cards: ink for hierarchy; teal text-teal reserved for links */
+.listing-price,
+.browser-item-price,
+.item-price-solid,
+.hero-visual-price strong,
+.detail-price-row strong {
+  color: var(--jabsewa-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.detail-price-row strong {
+  color: var(--jabsewa-ink);
+}
+
+/* ==========================================================================
+   UI POLISH v5 — PASS 4 · RESPONSIVE REFINEMENTS (tablet 980 / mobile 640)
+   ========================================================================== */
+
+@media (max-width: 980px) {
+  .consumer-hero {
+    padding: 30px 16px 26px;
+  }
+
+  .consumer-hero-content {
+    max-width: none;
+  }}
+
+@media (max-width: 640px) {
+  .hero-section {
+    padding: 32px 0 40px;
+  }
+
+  .hero-inner {
+    gap: 28px;
+  }
+
+  .listing-grid {
+    gap: 14px;
+  }
+
+  .listing-card:first-child .listing-image-wrap {
+    height: 170px;
+  }
+
+  .section-heading {
+    margin-bottom: 24px;
+  }
+
+  .category-section,
+  .featured-section,
+  .how-section,
+  .seller-cta {
+    padding: 44px 0;
+  }
+
+  .consumer-hero-title {
+    font-size: 1.5rem;
+  }
+
+  .consumer-search-container {
+    flex-direction: row;
+  }
+
+  .listing-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .listing-card:first-child {
+    grid-column: auto;
+  }
+
+  .listing-card:first-child .listing-image-wrap {
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+
+  .consumer-search-input {
+    min-width: 0;
+  }
+
+  .texture-dots::before {
+    background-size: 18px 18px;
+  }
+
+  .seller-cta-box {
+    padding: 28px 20px;
+  }}
+
+/* ==========================================================================
+   SELLER CENTER — info toko, aksi pesanan, wishlist buyer
+   ========================================================================== */
+
+/* Info Toko */
+.store-facts {
+  margin-top: 8px;
+}
+
+.store-description,
+.store-address {
+  margin: 16px 0;
+}
+
+.store-description h2,
+.store-address h2 {
+  font-size: 0.95rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.store-description p,
+.store-address p {
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--jabsewa-text-soft);
+}
+
+/* Aksi tolak pesanan (seller) — inline, bukan modal */
+.order-reject-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.order-reject-box .search-box-small {
+  flex: 1 1 180px;
+  min-width: 0;
+}
+
+.order-period-note {
+  font-size: 0.78rem;
+  color: var(--jabsewa-text-soft);
+}
+
+.order-cancel-note {
+  font-size: 0.8rem;
+  color: #b91c1c;
+}
+
+/* Wishlist buyer: baris aksi di bawah harga */
+.buyer-wish-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+/* Catatan penolakan di kartu rental buyer */
+.buyer-rental-reject {
+  margin-top: 10px;
+  font-size: 0.8rem;
+  color: #b91c1c;
+}
+
+.buyer-rental-actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ==========================================================================
+   SELLER APPLICATION SHARED UI — badge/status untuk applicant + admin
+   (sebelumnya direferensikan JSX tapi tidak pernah punya CSS)
+   ========================================================================== */
+
+/* Stepper wizard ajuan seller */
+.seller-app-stepper {
+  display: flex;
+  gap: 6px;
+  list-style: none;
+  margin: 22px 0 26px;
+  padding: 0;
+}
+
+.seller-app-step {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.seller-app-step-dot {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: inline-grid;
+  place-items: center;
+  font-size: 0.72rem;
+  font-weight: 800;
+  background: var(--jabsewa-soft);
+  color: var(--jabsewa-text-soft);
+  border: 1px solid var(--jabsewa-border);
+}
+
+.seller-app-step.is-active .seller-app-step-dot {
+  background: var(--jabsewa-ink);
+  border-color: var(--jabsewa-ink);
+  color: #ffffff;
+}
+
+.seller-app-step.is-done .seller-app-step-dot {
+  background: var(--jabsewa-primary-soft);
+  border-color: var(--jabsewa-primary-line);
+  color: var(--jabsewa-primary-text);
+}
+
+.seller-app-step-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--jabsewa-text-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.seller-app-step.is-active .seller-app-step-label {
+  color: var(--jabsewa-ink);
+}
+
+@media (max-width: 480px) {
+  .seller-app-step-label {
+    display: none; /* cukup nomor langkah di layar sangat kecil */
+  }}
+
+/* Teks perjanjian + checkbox */
+.seller-app-agreement-text {
+  background: var(--jabsewa-soft);
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+
+.seller-app-agreement-text p {
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--jabsewa-text-soft);
+}
+
+.seller-app-agreement-text p:first-child {
+  color: var(--jabsewa-ink);
+  margin-bottom: 6px;
+}
+
+.seller-app-agreement-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--jabsewa-text);
+  cursor: pointer;
+}
+
+.seller-app-agreement-check input {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  accent-color: var(--jabsewa-primary-text);
+}
+
+/* Baris review ringkas (label kiri — nilai kanan, hairline divider) */
+.seller-app-review {
+  border-top: 1px solid var(--jabsewa-line-soft);
+}
+
+.seller-app-review-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--jabsewa-line-soft);
+}
+
+.seller-app-review-row span {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--jabsewa-text-soft);
+  flex-shrink: 0;
+}
+
+.seller-app-review-row strong {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--jabsewa-text);
+  text-align: right;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.seller-app-note {
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--jabsewa-text-soft);
+  margin: 14px 0;
+}
+
+.seller-app-btn-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+/* Badge status ajuan — chip kecil, 3 semantik status */
+.seller-app-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.seller-app-status-badge.is-review {
+  background: var(--jabsewa-primary-soft);
+  border: 1px solid var(--jabsewa-primary-line);
+  color: var(--jabsewa-primary-text);
+}
+
+.seller-app-status-badge.is-approved {
+  background: #dcfce7;
+  border: 1px solid #bbf7d0;
+  color: #15803d;
+}
+
+.seller-app-status-badge.is-rejected {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+}
+
+/* Pulsa kecil pada badge "Sedang Ditinjau" (satu-satunya animasi, halus) */
+.seller-app-pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .seller-app-pulse {
+    animation: seller-app-pulse 2s ease-in-out infinite;
+  }}
+
+@keyframes seller-app-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }}
+
+/* Blok alasan penolakan (applicant side) */
+.seller-app-reject-reason {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin: 16px 0;
+  text-align: left;
+}
+
+.seller-app-reject-reason p {
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: #7f1d1d;
+  margin-top: 4px;
+}
+
+/* Kartu status ajuan (applicant) */
+.seller-app-status {
+  text-align: left;
+}
+
+/* Blok simulasi reviewer (prototype) — sengaja terlihat seperti debug tools */
+
+.seller-app-status-inline {
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 8px;
+  padding: 14px;
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: var(--jabsewa-text);
+}
+
+.seller-app-status-inline p {
+  margin: 10px 0 12px;
+}
+
+/* ==========================================================================
+   ADMIN — SELLER APPLICATIONS (mobile-first)
+   Desktop = ekspansi dari struktur mobile, bukan desain terpisah.
+   ========================================================================== */
+
+/* --- Header editorial: kicker + judul + counter pending --- */
+
+/* Counter pending: angka besar + label, rata kanan */
+
+/* --- Filter: underline tabs, bukan toolbar --- */
+
+/* --- Konten: list dulu (sumber utama di mobile), detail menyusul --- */
+
+/* --- List ajuan: baris datar dengan hairline divider, bukan tumpukan kartu --- */
+
+/* Empty state list */
+
+/* --- Detail: kartu tunggal, konten mengikuti list --- */
+
+/* Section info dalam detail */
+
+/* --- Panel keputusan --- */
+
+/* Konfirmasi dua-langkah: approve ringkas, reject wajib alasan */
+
+/* Placeholder saat belum ada ajuan dipilih */
+
+/* ==================== ADMIN ≥ 640px (large phone / tablet portrait) === */
+@media (min-width: 640px) {}
+
+/* ==================== ADMIN ≥ 980px (desktop, dua kolom) ============== */
+@media (min-width: 980px) {
+
+  /* Detail internal jadi dua kolom: info kiri, keputusan kanan */}
+
+/* ==================== ADMIN ≤ 380px (very small phones) =============== */
+@media (max-width: 380px) {}
+
+/* ==================== STORAGE UPLOAD (listing images & payment proof) ====================
+   Mobile-first, clean, solid — tanpa gradient/neon. Konsisten token existing. */
+.upload-input-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.upload-label-solid {
+  display: block;
+  width: 100%;
+}
+
+.upload-label-solid:focus-within,
+.upload-label-solid:focus {
+  outline: 2px solid var(--jabsewa-text);
+  outline-offset: 2px;
+}
+
+.upload-label-solid:hover {
+  border-color: var(--jabsewa-text-soft);
+}
+
+.upload-hint {
+  font-size: 0.72rem;
+  color: var(--jabsewa-text-soft);
+  text-align: center;
+}
+
+.upload-previews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.upload-preview-thumb {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border: 1px solid var(--jabsewa-border);
+  border-radius: 8px;
+  background: var(--jabsewa-white);
+}
+
+.proof-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.proof-upload-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 2px dashed var(--jabsewa-border);
+  border-radius: 8px;
+  background: var(--jabsewa-bg);
+  color: var(--jabsewa-text-soft);
+  font-size: 0.78rem;
+  padding: 12px 16px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.proof-upload-label:hover {
+  border-color: var(--jabsewa-text-soft);
+}
+
+.proof-upload-label:focus-within {
+  outline: 2px solid var(--jabsewa-text);
+  outline-offset: 2px;
+}
+
+.proof-preview {
+  max-height: 96px;
+  max-width: 100%;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.proof-link {
+  color: var(--jabsewa-text);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}

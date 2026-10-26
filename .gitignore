@@ -41,3 +41,4 @@ supabase/.temp/
 scripts/.audit-out.json
 scripts/.audit-err.txt
 scripts/.frontend-e2e-out.txt
+coverage

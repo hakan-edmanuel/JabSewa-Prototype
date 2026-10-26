@@ -1,0 +1,291 @@
+/* Dipisah dari app.css (baris 4455-4772) — urutan cascade dipertahankan. */
+/* ==================== PROFILE PAGE ==================== */
+.profile-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 4px;
+  border-bottom: 1px solid var(--jabsewa-border);
+}
+
+.profile-row:last-child {
+  border-bottom: none;
+}
+
+.profile-row-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--jabsewa-text-soft);
+}
+
+.profile-row-value {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--jabsewa-text);
+}
+
+.profile-logout-btn {
+  background: transparent;
+  color: #dc2626;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 9px 16px;
+  border: 1px solid #f3c1c1;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.profile-logout-btn:hover {
+  background: #fef2f2;
+}
+
+@media (max-width: 640px) {
+  .profile-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }}
+
+/* ==========================================================================
+   REDESIGN v3 — LAYOUT CLEANUP (override kaskade di akhir file)
+   ========================================================================== */
+
+/* Footer wajib hitam, sederhana */
+.footer {
+  background: #000000;
+  border-top: 1px solid #1f1f1f;
+}
+
+.footer-bottom {
+  border-top-color: #1f1f1f;
+}
+
+/* Spacing section landing yang konsisten */
+.category-section,
+.featured-section,
+.how-section,
+.seller-cta {
+  padding: 72px 0;
+}
+
+.section-subtitle {
+  color: var(--jabsewa-text-soft);
+  font-size: 0.92rem;
+  margin-top: 6px;
+}
+
+/* Landing: hero lebih ringkas */
+.hero-subtitle {
+  font-size: 0.98rem;
+  line-height: 1.6;
+  color: var(--jabsewa-text-soft);
+  margin: 14px 0 20px;
+  max-width: 520px;
+}
+
+.hero-seller-link {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-top: 20px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--jabsewa-primary);
+  cursor: pointer;
+}
+
+.hero-seller-link:hover {
+  text-decoration: underline;
+}
+
+/* Kategori: card bersih, tanpa tag/count */
+.category-card {
+  padding: 0;
+  text-align: left;
+  width: 100%;
+}
+
+.category-image-container {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+.category-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.category-card-content {
+  padding: 16px;
+}
+
+.category-name {
+  font-size: 1.02rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.category-desc {
+  font-size: 0.84rem;
+  color: var(--jabsewa-text-soft);
+  margin-bottom: 12px;
+}
+
+.featured-explore-link {
+  background: transparent;
+  padding: 0;
+}
+
+/* Cara kerja: langkah polos dengan divider, bukan card */
+.step-item {
+  border-top: 2px solid var(--jabsewa-border);
+  padding-top: 16px;
+}
+
+.step-number {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--jabsewa-primary);
+  margin-bottom: 10px;
+}
+
+.step-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.step-description {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--jabsewa-text-soft);
+}
+
+/* Explore: header ringkas + thumbnail asli */
+.consumer-hero {
+  padding: 32px 20px 28px;
+}
+
+.consumer-hero-title {
+  font-size: clamp(1.45rem, 2.4vw, 1.9rem);
+}
+
+.item-badge-container {
+  overflow: hidden;
+  padding: 0;
+}
+
+.browser-item-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Seller items: gambar asli */
+.item-image-box {
+  overflow: hidden;
+}
+
+.item-image-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Buyer wishlist: thumbnail gambar */
+.buyer-wish-thumb {
+  display: block;
+  object-fit: cover;
+}
+
+/* Product detail: layout asimetris + divider */
+.product-detail-grid {
+  grid-template-columns: 1.1fr 0.9fr;
+}
+
+.product-main-image {
+  width: 100%;
+  height: 420px;
+  object-fit: cover;
+  display: block;
+  padding: 0;
+}
+
+.detail-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 18px 0;
+}
+
+.detail-price-row strong {
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: var(--jabsewa-black);
+}
+
+.detail-price-row span {
+  color: var(--jabsewa-text-soft);
+  font-size: 0.9rem;
+}
+
+.product-detail-sections {
+  margin-top: 16px;
+  border-top: 1px solid var(--jabsewa-border);
+}
+
+.product-info-block {
+  padding: 28px 0;
+  border-bottom: 1px solid var(--jabsewa-border);
+  max-width: 720px;
+}
+
+.product-info-block:last-child {
+  border-bottom: none;
+}
+
+.product-info-block h2 {
+  font-size: 1.02rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.product-info-block p {
+  font-size: 0.93rem;
+  line-height: 1.7;
+  color: var(--jabsewa-text-soft);
+}
+
+/* Profile: satu panel, blok dipisah divider */
+.profile-block {
+  padding: 4px 0;
+}
+
+.profile-block-title {
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--jabsewa-text-soft);
+  margin-bottom: 12px;
+}
+
+.profile-block-desc {
+  font-size: 0.88rem;
+  color: var(--jabsewa-text-soft);
+  margin-bottom: 14px;
+}
+
+.profile-divider {
+  height: 1px;
+  background: var(--jabsewa-border);
+  margin: 20px 0;
+}
